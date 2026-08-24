@@ -1,0 +1,2095 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 100,
+      "title": "⚡ Section 1: UHT-01 Live Process KPIs & Operating State (InfluxDB Stream)",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 14000
+              },
+              {
+                "color": "red",
+                "value": 18000
+              }
+            ]
+          },
+          "unit": "litre"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 1
+      },
+      "id": 1,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"FT04\" and r._field == \"value_scaled\") |> yield(name: \"FT04\")",
+          "refId": "A"
+        }
+      ],
+      "title": "FT04 - Product Flow",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 137
+              },
+              {
+                "color": "red",
+                "value": 142
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 1
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"TT01\" and r._field == \"value_scaled\") |> yield(name: \"TT01\")",
+          "refId": "A"
+        }
+      ],
+      "title": "TT01 - Sterilizer (138.4°C)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 32
+              },
+              {
+                "color": "red",
+                "value": 37.5
+              }
+            ]
+          },
+          "unit": "custom:BarG"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 1
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"PT01\" and r._field == \"value_scaled\") |> yield(name: \"PT01\")",
+          "refId": "A"
+        }
+      ],
+      "title": "PT01 - Product Pressure",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 75
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 1
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"LT08\" and r._field == \"value_scaled\") |> yield(name: \"LT08\")",
+          "refId": "A"
+        }
+      ],
+      "title": "LT08 - Buffer Tank Level",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "purple",
+                "value": null
+              }
+            ]
+          },
+          "unit": "custom:BarG"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 1
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"PT44\" and r._field == \"value_scaled\") |> yield(name: \"PT44\")",
+          "refId": "A"
+        }
+      ],
+      "title": "PT44 - Steam Inlet Pressure",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "PE4C706F68A16D390"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 1
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "dataset": "thpack_dashboard",
+          "format": "table",
+          "rawSql": "SELECT COUNT(*) AS 'Configured Sensors (MySQL Master)' FROM process_instruments;",
+          "refId": "A"
+        }
+      ],
+      "title": "MySQL Config Master Sensors",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
+      "id": 109,
+      "title": "🌡️ Section 2: All Temperature Transmitters (Direct InfluxDB Flux Query)",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": false,
+            "fillOpacity": 8,
+            "gradientMode": "opacity"
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      },
+      "id": 50,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max",
+            "min",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "from(bucket: \"telemetry\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name =~ /^TT/ and r._field == \"value_scaled\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "refId": "ALL_TT_INFLUX"
+        }
+      ],
+      "title": "All 15 Temperature Transmitters (InfluxDB Stream)",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "id": 107,
+      "title": "🌊 Section 3: Flow Rates Monitoring: FT04 (Product), FT10 (Hotwater), and (FT10 - FT04)",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "minVizHeight": 10,
+            "minVizWidth": 0
+          },
+          "mappings": [],
+          "max": 25000,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 10000
+              },
+              {
+                "color": "yellow",
+                "value": 20000
+              }
+            ]
+          },
+          "unit": "litre"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 17
+      },
+      "id": 30,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "valueMode": "color"
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "ft04 = from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"FT04\" and r._field == \"value_scaled\") |> last()\nft10 = from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"FT10\" and r._field == \"value_scaled\") |> last()\ndiff = join(tables: {a: ft04, b: ft10}, on: [\"_field\"]) |> map(fn: (r) => ({_start: r._start_a, _stop: r._stop_a, _time: r._time_a, _measurement: \"process_telemetry\", _field: \"value_scaled\", tag_name: \"ΔF (FT10 - FT04)\", _value: r._value_b - r._value_a}))\nunion(tables: [ft04, ft10, diff])",
+          "refId": "A"
+        }
+      ],
+      "title": "Flow Bargraph: FT04, FT10 & ΔF (InfluxDB)",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": false,
+            "fillOpacity": 12,
+            "gradientMode": "opacity"
+          },
+          "unit": "litre"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 16,
+        "x": 8,
+        "y": 17
+      },
+      "id": 31,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max",
+            "min"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "ft04 = from(bucket: \"telemetry\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"FT04\" and r._field == \"value_scaled\") |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\nft10 = from(bucket: \"telemetry\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"FT10\" and r._field == \"value_scaled\") |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\ndiff = join(tables: {a: ft04, b: ft10}, on: [\"_time\", \"_field\"]) |> map(fn: (r) => ({_start: r._start_a, _stop: r._stop_a, _time: r._time, _measurement: \"process_telemetry\", _field: \"value_scaled\", tag_name: \"ΔF (FT10 - FT04)\", _value: r._value_b - r._value_a}))\nunion(tables: [ft04, ft10, diff])",
+          "refId": "DIFF_FLOW"
+        }
+      ],
+      "title": "Flow Line Graph: FT04, FT10 & (FT10 - FT04) Trend (InfluxDB)",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "id": 108,
+      "title": "🌡️ Section 4: Section 11 Thermal Approach: TT44, TT08, and (TT08 - TT44)",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "minVizHeight": 10,
+            "minVizWidth": 0
+          },
+          "mappings": [],
+          "max": 160,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 120
+              },
+              {
+                "color": "orange",
+                "value": 135
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 25
+      },
+      "id": 40,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "valueMode": "color"
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "tt44 = from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"TT44\" and r._field == \"value_scaled\") |> last()\ntt08 = from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"TT08\" and r._field == \"value_scaled\") |> last()\ndiff = join(tables: {a: tt44, b: tt08}, on: [\"_field\"]) |> map(fn: (r) => ({_start: r._start_a, _stop: r._stop_a, _time: r._time_a, _measurement: \"process_telemetry\", _field: \"value_scaled\", tag_name: \"ΔT (TT08 - TT44)\", _value: r._value_b - r._value_a}))\nunion(tables: [tt44, tt08, diff])",
+          "refId": "A"
+        }
+      ],
+      "title": "Section 11 Temp Bargraph: TT44, TT08 & ΔT (InfluxDB)",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": false,
+            "fillOpacity": 12,
+            "gradientMode": "opacity"
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 16,
+        "x": 8,
+        "y": 25
+      },
+      "id": 41,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max",
+            "min"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "tt44 = from(bucket: \"telemetry\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"TT44\" and r._field == \"value_scaled\") |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\ntt08 = from(bucket: \"telemetry\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"TT08\" and r._field == \"value_scaled\") |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\ndiff = join(tables: {a: tt44, b: tt08}, on: [\"_time\", \"_field\"]) |> map(fn: (r) => ({_start: r._start_a, _stop: r._stop_a, _time: r._time, _measurement: \"process_telemetry\", _field: \"value_scaled\", tag_name: \"ΔT (TT08 - TT44)\", _value: r._value_b - r._value_a}))\nunion(tables: [tt44, tt08, diff])",
+          "refId": "DIFF_TEMP"
+        }
+      ],
+      "title": "Section 11 Temp Line Graph: TT44, TT08 & ΔT Trend (InfluxDB)",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 32
+      },
+      "id": 111,
+      "title": "♨️ Section 5: Steam Heating & Heat Recovery Correlation: PT44, TT44, TT08, TT10",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": false,
+            "fillOpacity": 8,
+            "gradientMode": "opacity"
+          },
+          "unit": "celsius"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "PT44_STEAM"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "custom:BarG"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#722ed1",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 3
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    4,
+                    4
+                  ],
+                  "fill": "dash"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "PT44"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "custom:BarG"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#722ed1",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TT44"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#fa8c16",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TT08"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#1890ff",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TT10"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#13c2c2",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 33
+      },
+      "id": 45,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max",
+            "min"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "from(bucket: \"telemetry\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"process_telemetry\" and (r.tag_name == \"PT44\" or r.tag_name == \"TT44\" or r.tag_name == \"TT08\" or r.tag_name == \"TT10\") and r._field == \"value_scaled\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"steam_thermal\")",
+          "refId": "STEAM_THERMAL"
+        }
+      ],
+      "title": "Steam Pressure & Heat Recovery Correlation (PT44 Steam Bar [Right Axis] vs TT44, TT08, TT10 °C [Left Axis])",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 42
+      },
+      "id": 104,
+      "title": "🛡️ Section 6: Section 14 Differential Pressure: PT61A, PT61B, and (PT61A - PT61B)",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "minVizHeight": 10,
+            "minVizWidth": 0
+          },
+          "mappings": [],
+          "max": 10,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 0.5
+              },
+              {
+                "color": "green",
+                "value": 1.0
+              }
+            ]
+          },
+          "unit": "custom:BarG"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 43
+      },
+      "id": 20,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "valueMode": "color"
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "ptA = from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"PT61A\" and r._field == \"value_scaled\") |> last()\nptB = from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"PT61B\" and r._field == \"value_scaled\") |> last()\ndiff = join(tables: {a: ptA, b: ptB}, on: [\"_field\"]) |> map(fn: (r) => ({_start: r._start_a, _stop: r._stop_a, _time: r._time_a, _measurement: \"process_telemetry\", _field: \"value_scaled\", tag_name: \"ΔP (PT61A - PT61B)\", _value: r._value_a - r._value_b}))\nunion(tables: [ptA, ptB, diff])",
+          "refId": "A"
+        }
+      ],
+      "title": "Section 14 Bargraph: PT61A, PT61B & ΔP (InfluxDB)",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": false,
+            "fillOpacity": 12,
+            "gradientMode": "opacity"
+          },
+          "unit": "custom:BarG"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 16,
+        "x": 8,
+        "y": 43
+      },
+      "id": 21,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max",
+            "min"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "ptA = from(bucket: \"telemetry\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"PT61A\" and r._field == \"value_scaled\") |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\nptB = from(bucket: \"telemetry\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"PT61B\" and r._field == \"value_scaled\") |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\ndiff = join(tables: {a: ptA, b: ptB}, on: [\"_time\", \"_field\"]) |> map(fn: (r) => ({_start: r._start_a, _stop: r._stop_a, _time: r._time, _measurement: \"process_telemetry\", _field: \"value_scaled\", tag_name: \"ΔP (PT61A - PT61B)\", _value: r._value_a - r._value_b}))\nunion(tables: [ptA, ptB, diff])",
+          "refId": "DIFF"
+        }
+      ],
+      "title": "Section 14 Line Graph: PT61A, PT61B & ΔP Trend (InfluxDB)",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 50
+      },
+      "id": 105,
+      "title": "🛡️ Section 7: Section 15 Differential Pressure: PT64A, PT64B, and (PT64A - PT64B)",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "minVizHeight": 10,
+            "minVizWidth": 0
+          },
+          "mappings": [],
+          "max": 10,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 0.5
+              },
+              {
+                "color": "green",
+                "value": 1.0
+              }
+            ]
+          },
+          "unit": "custom:BarG"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 51
+      },
+      "id": 22,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "valueMode": "color"
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "ptA = from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"PT64A\" and r._field == \"value_scaled\") |> last()\nptB = from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"PT64B\" and r._field == \"value_scaled\") |> last()\ndiff = join(tables: {a: ptA, b: ptB}, on: [\"_field\"]) |> map(fn: (r) => ({_start: r._start_a, _stop: r._stop_a, _time: r._time_a, _measurement: \"process_telemetry\", _field: \"value_scaled\", tag_name: \"ΔP (PT64A - PT64B)\", _value: r._value_a - r._value_b}))\nunion(tables: [ptA, ptB, diff])",
+          "refId": "A"
+        }
+      ],
+      "title": "Section 15 Bargraph: PT64A, PT64B & ΔP (InfluxDB)",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": false,
+            "fillOpacity": 12,
+            "gradientMode": "opacity"
+          },
+          "unit": "custom:BarG"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 16,
+        "x": 8,
+        "y": 51
+      },
+      "id": 23,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max",
+            "min"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "ptA = from(bucket: \"telemetry\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"PT64A\" and r._field == \"value_scaled\") |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\nptB = from(bucket: \"telemetry\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"PT64B\" and r._field == \"value_scaled\") |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\ndiff = join(tables: {a: ptA, b: ptB}, on: [\"_time\", \"_field\"]) |> map(fn: (r) => ({_start: r._start_a, _stop: r._stop_a, _time: r._time, _measurement: \"process_telemetry\", _field: \"value_scaled\", tag_name: \"ΔP (PT64A - PT64B)\", _value: r._value_a - r._value_b}))\nunion(tables: [ptA, ptB, diff])",
+          "refId": "DIFF"
+        }
+      ],
+      "title": "Section 15 Line Graph: PT64A, PT64B & ΔP Trend (InfluxDB)",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 58
+      },
+      "id": 106,
+      "title": "🛡️ Section 8: Section 12 Differential Pressure: PT67A, PT67B, and (PT67A - PT67B)",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "minVizHeight": 10,
+            "minVizWidth": 0
+          },
+          "mappings": [],
+          "max": 10,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 0.5
+              },
+              {
+                "color": "green",
+                "value": 1.0
+              }
+            ]
+          },
+          "unit": "custom:BarG"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 59
+      },
+      "id": 24,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "valueMode": "color"
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "ptA = from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"PT67A\" and r._field == \"value_scaled\") |> last()\nptB = from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"PT67B\" and r._field == \"value_scaled\") |> last()\ndiff = join(tables: {a: ptA, b: ptB}, on: [\"_field\"]) |> map(fn: (r) => ({_start: r._start_a, _stop: r._stop_a, _time: r._time_a, _measurement: \"process_telemetry\", _field: \"value_scaled\", tag_name: \"ΔP (PT67A - PT67B)\", _value: r._value_a - r._value_b}))\nunion(tables: [ptA, ptB, diff])",
+          "refId": "A"
+        }
+      ],
+      "title": "Section 12 Bargraph: PT67A, PT67B & ΔP (InfluxDB)",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": false,
+            "fillOpacity": 12,
+            "gradientMode": "opacity"
+          },
+          "unit": "custom:BarG"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 16,
+        "x": 8,
+        "y": 59
+      },
+      "id": 25,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max",
+            "min"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "ptA = from(bucket: \"telemetry\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"PT67A\" and r._field == \"value_scaled\") |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\nptB = from(bucket: \"telemetry\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"PT67B\" and r._field == \"value_scaled\") |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\ndiff = join(tables: {a: ptA, b: ptB}, on: [\"_time\", \"_field\"]) |> map(fn: (r) => ({_start: r._start_a, _stop: r._stop_a, _time: r._time, _measurement: \"process_telemetry\", _field: \"value_scaled\", tag_name: \"ΔP (PT67A - PT67B)\", _value: r._value_a - r._value_b}))\nunion(tables: [ptA, ptB, diff])",
+          "refId": "DIFF"
+        }
+      ],
+      "title": "Section 12 Line Graph: PT67A, PT67B & ΔP Trend (InfluxDB)",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 66
+      },
+      "id": 102,
+      "title": "📈 Section 9: Buffer Tank (BTD) Level Continuous Line Graph (InfluxDB)",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": false,
+            "fillOpacity": 20,
+            "gradientMode": "opacity"
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 67
+      },
+      "id": 13,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max",
+            "min"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "from(bucket: \"telemetry\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"LT08\" and r._field == \"value_scaled\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"lt08\")",
+          "refId": "LT08"
+        }
+      ],
+      "title": "Buffer Tank (BTD) Level Line Graph (LT08 - InfluxDB)",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 75
+      },
+      "id": 110,
+      "title": "🖥️ Section 10: Server & Gateway Infrastructure Health (Telegraf Telemetry)",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 76
+      },
+      "id": 60,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "from(bucket: \"telemetry\")\n  |> range(start: -10m)\n  |> filter(fn: (r) => r._measurement == \"cpu\" and r.cpu == \"cpu-total\" and r._field == \"usage_idle\")\n  |> map(fn: (r) => ({_time: r._time, _field: \"cpu_usage\", _value: 100.0 - r._value}))\n  |> last()",
+          "refId": "CPU_GAUGE"
+        }
+      ],
+      "title": "Gateway CPU Load (Telegraf)",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 75
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 76
+      },
+      "id": 61,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "from(bucket: \"telemetry\")\n  |> range(start: -10m)\n  |> filter(fn: (r) => r._measurement == \"mem\" and r._field == \"used_percent\")\n  |> last()",
+          "refId": "MEM_GAUGE"
+        }
+      ],
+      "title": "Gateway RAM Utilization (Telegraf)",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 4
+              },
+              {
+                "color": "red",
+                "value": 8
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 76
+      },
+      "id": 62,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "from(bucket: \"telemetry\")\n  |> range(start: -10m)\n  |> filter(fn: (r) => r._measurement == \"system\" and r._field == \"load1\")\n  |> last()",
+          "refId": "LOAD_STAT"
+        }
+      ],
+      "title": "System Load Average (1m)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 76
+      },
+      "id": 63,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "from(bucket: \"telemetry\")\n  |> range(start: -10m)\n  |> filter(fn: (r) => r._measurement == \"system\" and r._field == \"uptime\")\n  |> last()",
+          "refId": "UPTIME_STAT"
+        }
+      ],
+      "title": "Gateway OS Uptime (Telegraf)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": false,
+            "fillOpacity": 12,
+            "gradientMode": "opacity"
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 80
+      },
+      "id": 64,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "from(bucket: \"telemetry\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"cpu\" and r.cpu == \"cpu-total\" and (r._field == \"usage_user\" or r._field == \"usage_system\" or r._field == \"usage_iowait\"))\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)",
+          "refId": "CPU_HIST"
+        }
+      ],
+      "title": "CPU Usage Breakdown (User, System, I/O Wait) - Telegraf",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": false,
+            "fillOpacity": 15,
+            "gradientMode": "opacity"
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 80
+      },
+      "id": 65,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "from(bucket: \"telemetry\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"mem\" and (r._field == \"used\" or r._field == \"cached\" or r._field == \"buffered\" or r._field == \"free\"))\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)",
+          "refId": "MEM_HIST"
+        }
+      ],
+      "title": "System Memory Allocation (Used, Cached, Free) - Telegraf",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": false,
+            "fillOpacity": 12,
+            "gradientMode": "opacity"
+          },
+          "unit": "Bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 87
+      },
+      "id": 66,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "from(bucket: \"telemetry\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"net\" and (r._field == \"bytes_recv\" or r._field == \"bytes_sent\"))\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)",
+          "refId": "NET_HIST"
+        }
+      ],
+      "title": "Network Interface Traffic Rate (Bytes/sec Recv & Sent) - Telegraf",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": false,
+            "fillOpacity": 12,
+            "gradientMode": "opacity"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 87
+      },
+      "id": 67,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "query": "from(bucket: \"telemetry\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"system\" and (r._field == \"load1\" or r._field == \"load5\" or r._field == \"load15\"))\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)",
+          "refId": "LOAD_HIST"
+        }
+      ],
+      "title": "System Load Averages (load1, load5, load15) - Telegraf",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 94
+      },
+      "id": 103,
+      "title": "⚙️ Section 11: Pump Inverters & Motor Drives Configuration (MySQL Config Master)",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "PE4C706F68A16D390"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 95
+      },
+      "id": 14,
+      "options": {
+        "footer": {
+          "enablePagination": true,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "dataset": "thpack_dashboard",
+          "format": "table",
+          "rawSql": "SELECT i.tag_name AS 'Signal Tag', ig.group_code AS 'Pump Equipment', i.db_number AS 'DB #', CONCAT('Byte ', i.byte_offset, IF(i.plc_data_format='BOOL', CONCAT('.', i.bit_offset), '')) AS 'Siemens Offset', i.plc_data_format AS 'PLC Format', i.engineering_unit AS 'Unit', i.description AS 'Telemetry Description' FROM process_instruments i JOIN instrument_groups ig ON i.group_id = ig.id WHERE i.tag_name LIKE 'SX%' ORDER BY i.id;",
+          "refId": "A"
+        }
+      ],
+      "title": "Pump Inverters & Motor Drives Configuration (vw_siemens_plc_db_map)",
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 102
+      },
+      "id": 101,
+      "title": "📋 Section 12: All 65 SCADA Instruments Catalog & Alarm Interlocks (MySQL Master)",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "PE4C706F68A16D390"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 14,
+        "x": 0,
+        "y": 103
+      },
+      "id": 6,
+      "options": {
+        "footer": {
+          "enablePagination": true,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "dataset": "thpack_dashboard",
+          "format": "table",
+          "rawSql": "SELECT tag_name AS 'Tag Label', db_number AS 'DB #', byte_offset AS 'Byte Offset', bit_offset AS 'Bit Offset', plc_data_format AS 'S7 Type', scale_eng_min AS 'Min', scale_eng_max AS 'Max', engineering_unit AS 'Unit', description AS 'Description' FROM vw_siemens_plc_db_map ORDER BY db_number, byte_offset, bit_offset;",
+          "refId": "A"
+        }
+      ],
+      "title": "All 65 SCADA Instruments Catalog (MySQL Master)",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "PE4C706F68A16D390"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "orange",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 10,
+        "x": 14,
+        "y": 103
+      },
+      "id": 7,
+      "options": {
+        "footer": {
+          "enablePagination": true,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "dataset": "thpack_dashboard",
+          "format": "table",
+          "rawSql": "SELECT tag_name AS 'Tag Name', alarm_type AS 'Alarm Mode', threshold_value AS 'Setpoint / Trigger', engineering_unit AS 'UOM', IF(is_enabled=1, 'ACTIVE', 'DISABLED') AS 'Status' FROM vw_instrument_alarms;",
+          "refId": "A"
+        }
+      ],
+      "title": "Active Alarm Thresholds & Switches (MySQL Master)",
+      "type": "table"
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [
+    "thpack",
+    "siemens",
+    "uht",
+    "scada",
+    "influxdb",
+    "telegraf",
+    "steam",
+    "flux"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "TH-Pack UHT SCADA & Siemens S7 Telemetry",
+  "uid": "thpack_uht_scada",
+  "version": 13,
+  "weekStart": ""
+}

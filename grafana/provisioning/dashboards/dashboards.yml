@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: 'TH-Pack UHT SCADA'
+    orgId: 1
+    folder: 'TH-Pack Systems'
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /etc/grafana/provisioning/dashboards

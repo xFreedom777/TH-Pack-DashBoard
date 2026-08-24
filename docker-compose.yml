@@ -1,0 +1,226 @@
+name: thpack-dashboard
+
+services:
+  # ─────────────────────────────────────────────────────────────
+  # MySQL Database Server (v8.4 LTS)
+  # ─────────────────────────────────────────────────────────────
+  mysql:
+    image: mysql:8.4
+    container_name: thpack_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword123}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-thpack_dashboard}
+      MYSQL_USER: ${MYSQL_USER:-thpack_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-thpack_pass123}
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-rootpassword123}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    networks:
+      - thpack_net
+
+  # ─────────────────────────────────────────────────────────────
+  # FastAPI Siemens S7 SCADA Backend Microservice
+  # ─────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: thpack_backend
+    restart: unless-stopped
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_USER: ${MYSQL_USER:-thpack_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-thpack_pass123}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-thpack_dashboard}
+      PLC_IP_ADDRESS: ${PLC_IP_ADDRESS:-192.168.0.10}
+      PLC_RACK: ${PLC_RACK:-0}
+      PLC_SLOT: ${PLC_SLOT:-1}
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    extra_hosts:
+      - "host-gateway:host-gateway"
+    networks:
+      - thpack_net
+
+  # ─────────────────────────────────────────────────────────────
+  # phpMyAdmin (Web Database GUI Tool)
+  # ─────────────────────────────────────────────────────────────
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: thpack_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword123}
+      UPLOAD_LIMIT: 64M
+    ports:
+      - "${PHPMYADMIN_PORT:-8080}:80"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - thpack_net
+
+  # ─────────────────────────────────────────────────────────────
+  # Adminer (Lightweight Database GUI Tool)
+  # ─────────────────────────────────────────────────────────────
+  adminer:
+    image: adminer:latest
+    container_name: thpack_adminer
+    restart: unless-stopped
+    ports:
+      - "${ADMINER_PORT:-8081}:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - thpack_net
+
+  # ─────────────────────────────────────────────────────────────
+  # TIG STACK: InfluxDB 2.7 (Time-Series Database)
+  # ─────────────────────────────────────────────────────────────
+  influxdb:
+    image: influxdb:2.7
+    container_name: thpack_influxdb
+    restart: unless-stopped
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: ${INFLUXDB_USER:-admin}
+      DOCKER_INFLUXDB_INIT_PASSWORD: ${INFLUXDB_PASSWORD:-adminpassword123}
+      DOCKER_INFLUXDB_INIT_ORG: ${INFLUXDB_ORG:-thpack}
+      DOCKER_INFLUXDB_INIT_BUCKET: ${INFLUXDB_BUCKET:-telemetry}
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: ${INFLUXDB_ADMIN_TOKEN:-thpack-telemetry-token-123}
+    ports:
+      - "${INFLUXDB_PORT:-8086}:8086"
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+      - influxdb_config:/etc/influxdb2
+    healthcheck:
+      test: ["CMD", "influx", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - thpack_net
+
+  # ─────────────────────────────────────────────────────────────
+  # TIG STACK: Telegraf (Telemetry Collector Agent)
+  # ─────────────────────────────────────────────────────────────
+  telegraf:
+    image: telegraf:latest
+    container_name: thpack_telegraf
+    restart: unless-stopped
+    environment:
+      INFLUXDB_ADMIN_TOKEN: ${INFLUXDB_ADMIN_TOKEN:-thpack-telemetry-token-123}
+      INFLUXDB_ORG: ${INFLUXDB_ORG:-thpack}
+      INFLUXDB_BUCKET: ${INFLUXDB_BUCKET:-telemetry}
+    volumes:
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    depends_on:
+      influxdb:
+        condition: service_healthy
+    networks:
+      - thpack_net
+
+  # ─────────────────────────────────────────────────────────────
+  # TIG STACK: Grafana (Monitoring & Visualization Dashboards)
+  # ─────────────────────────────────────────────────────────────
+  grafana:
+    image: grafana/grafana:latest
+    container_name: thpack_grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-adminpassword123}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    ports:
+      - "${GRAFANA_PORT:-3002}:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      influxdb:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+    networks:
+      - thpack_net
+
+  # ─────────────────────────────────────────────────────────────
+  # RabbitMQ Message Broker (v3.x Management)
+  # ─────────────────────────────────────────────────────────────
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: thpack_rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-admin}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-adminpassword123}
+    ports:
+      - "${RABBITMQ_PORT:-5672}:5672"
+      - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    networks:
+      - thpack_net
+
+  # ─────────────────────────────────────────────────────────────
+  # Frontend Application (Dashboard Web UI)
+  # ─────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: thpack_frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      backend:
+        condition: service_started
+      influxdb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - thpack_net
+
+networks:
+  thpack_net:
+    driver: bridge
+    name: thpack_network
+
+volumes:
+  mysql_data:
+    name: thpack_mysql_data
+  influxdb_data:
+    name: thpack_influxdb_data
+  influxdb_config:
+    name: thpack_influxdb_config
+  grafana_data:
+    name: thpack_grafana_data
+  rabbitmq_data:
+    name: thpack_rabbitmq_data

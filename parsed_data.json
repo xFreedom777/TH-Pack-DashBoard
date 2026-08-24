@@ -1,0 +1,4105 @@
+{
+  "project": {
+    "company": "Tetra Pak",
+    "project_number": "Ord_T5844151405",
+    "serial_number": "T5844151405",
+    "material_number": "3078300-0100",
+    "description": "Tetra Therm Aseptic Flex",
+    "date": "2018-04-13",
+    "issued_by": "Niklas Persson",
+    "revision": "0, 2018-07-02"
+  },
+  "dimensions_weights": {
+    "product_volume_litres": 501.0,
+    "net_weight_kg": 2978.0,
+    "filled_weight_kg": 4704.0,
+    "width_mm": 1440,
+    "height_mm": 2040,
+    "length_mm": 6370
+  },
+  "vessels": [
+    {
+      "vessel_type": "CMP 85/4x20C-6",
+      "manuf_no_range": "1183366-1-8",
+      "qty": 8,
+      "max_press_shell_kpa": 1600.0,
+      "max_press_tube_kpa": 4000.0,
+      "max_temp_shell_c": 180.0,
+      "max_temp_tube_c": 180.0,
+      "volume_shell_litres": 23.6,
+      "volume_tube_litres": 6.0,
+      "material_standard": "1.4404/316L"
+    },
+    {
+      "vessel_type": "CMP 85/4x20S-6",
+      "manuf_no_range": "1183366-9-48",
+      "qty": 40,
+      "max_press_shell_kpa": 1600.0,
+      "max_press_tube_kpa": 4000.0,
+      "max_temp_shell_c": 180.0,
+      "max_temp_tube_c": 180.0,
+      "volume_shell_litres": 23.6,
+      "volume_tube_litres": 6.0,
+      "material_standard": "1.4404/316L"
+    },
+    {
+      "vessel_type": "CM 85/12x16S-6",
+      "manuf_no_range": "1183366-49-52",
+      "qty": 4,
+      "max_press_shell_kpa": 1600.0,
+      "max_press_tube_kpa": 4000.0,
+      "max_temp_shell_c": 180.0,
+      "max_temp_tube_c": 180.0,
+      "volume_shell_litres": 16.9,
+      "volume_tube_litres": 11.6,
+      "material_standard": "1.4404/316L"
+    },
+    {
+      "vessel_type": "CD 85/1x51S-6",
+      "manuf_no_range": "1183366-53-53",
+      "qty": 1,
+      "max_press_shell_kpa": 1600.0,
+      "max_press_tube_kpa": 4000.0,
+      "max_temp_shell_c": 180.0,
+      "max_temp_tube_c": 180.0,
+      "volume_shell_litres": 19.0,
+      "volume_tube_litres": 10.6,
+      "material_standard": "1.4404/316L"
+    }
+  ],
+  "articles": {
+    "2827571-0100": {
+      "article_no": "2827571-0100",
+      "sap_description": "Tubular Heat Exchanger C85",
+      "denomination": "Tubular Heat Exchanger C85",
+      "notes": "",
+      "revision": ""
+    },
+    "6-34144 6932 2": {
+      "article_no": "6-34144 6932 2",
+      "sap_description": "CIP feed unit",
+      "denomination": "CIP feed unit",
+      "notes": "",
+      "revision": ""
+    },
+    "90522-0142": {
+      "article_no": "90522-0142",
+      "sap_description": "Pressure gauge",
+      "denomination": "Pressure gauge",
+      "notes": "",
+      "revision": ""
+    },
+    "90515-5472": {
+      "article_no": "90515-5472",
+      "sap_description": "Pressure transmitter",
+      "denomination": "Pressure transmitter",
+      "notes": "",
+      "revision": ""
+    },
+    "90521-2993": {
+      "article_no": "90521-2993",
+      "sap_description": "Pressure transmitter",
+      "denomination": "Pressure transmitter",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9613 16 0901": {
+      "article_no": "6-9613 16 0901",
+      "sap_description": "Tool",
+      "denomination": "Tool",
+      "notes": "",
+      "revision": ""
+    },
+    "6-69696 00": {
+      "article_no": "6-69696 00",
+      "sap_description": "Spanner",
+      "denomination": "Spanner",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9613 17 2901": {
+      "article_no": "6-9613 17 2901",
+      "sap_description": "Mounting Tool",
+      "denomination": "Mounting Tool",
+      "notes": "",
+      "revision": ""
+    },
+    "90510-5633": {
+      "article_no": "90510-5633",
+      "sap_description": "Temperature transmitter",
+      "denomination": "Temperature transmitter",
+      "notes": "",
+      "revision": ""
+    },
+    "344254-0150": {
+      "article_no": "344254-0150",
+      "sap_description": "Sensor cable",
+      "denomination": "Sensor cable",
+      "notes": "",
+      "revision": ""
+    },
+    "90525-6058": {
+      "article_no": "90525-6058",
+      "sap_description": "Thermometer",
+      "denomination": "Thermometer",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9613 36 3185": {
+      "article_no": "6-9613 36 3185",
+      "sap_description": "Single seat valve",
+      "denomination": "Single seat valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-31542 1679 1": {
+      "article_no": "6-31542 1679 1",
+      "sap_description": "Balance tank",
+      "denomination": "Balance tank",
+      "notes": "",
+      "revision": ""
+    },
+    "6-31542 1329 1": {
+      "article_no": "6-31542 1329 1",
+      "sap_description": "CIP Header Batch",
+      "denomination": "CIP Header Batch",
+      "notes": "",
+      "revision": ""
+    },
+    "2565638-0100": {
+      "article_no": "2565638-0100",
+      "sap_description": "CCP",
+      "denomination": "CCP",
+      "notes": "",
+      "revision": ""
+    },
+    "6-31801 9809 1": {
+      "article_no": "6-31801 9809 1",
+      "sap_description": "Steam trap",
+      "denomination": "Steam trap",
+      "notes": "",
+      "revision": ""
+    },
+    "90511-6240": {
+      "article_no": "90511-6240",
+      "sap_description": "Steam trap",
+      "denomination": "Steam trap",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9612 22 0008": {
+      "article_no": "6-9612 22 0008",
+      "sap_description": "Non-return valve",
+      "denomination": "Non-return valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9612 22 0009": {
+      "article_no": "6-9612 22 0009",
+      "sap_description": "Non-return valve",
+      "denomination": "Non-return valve",
+      "notes": "",
+      "revision": ""
+    },
+    "90517-2812": {
+      "article_no": "90517-2812",
+      "sap_description": "Non-return valve",
+      "denomination": "Non-return valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9612 22 0007": {
+      "article_no": "6-9612 22 0007",
+      "sap_description": "Non-return valve",
+      "denomination": "Non-return valve",
+      "notes": "",
+      "revision": ""
+    },
+    "90503-8930": {
+      "article_no": "90503-8930",
+      "sap_description": "Non-return valve",
+      "denomination": "Non-return valve",
+      "notes": "",
+      "revision": ""
+    },
+    "90513-8306": {
+      "article_no": "90513-8306",
+      "sap_description": "Air vent valve SS",
+      "denomination": "Air vent valve SS",
+      "notes": "",
+      "revision": ""
+    },
+    "6-34144 8035 1": {
+      "article_no": "6-34144 8035 1",
+      "sap_description": "Micro bubble separator",
+      "denomination": "Micro bubble separator",
+      "notes": "",
+      "revision": ""
+    },
+    "6-34144 8034 1": {
+      "article_no": "6-34144 8034 1",
+      "sap_description": "Micro bubble separator",
+      "denomination": "Micro bubble separator",
+      "notes": "",
+      "revision": ""
+    },
+    "6-31801 5044 1": {
+      "article_no": "6-31801 5044 1",
+      "sap_description": "Strainer",
+      "denomination": "Strainer",
+      "notes": "",
+      "revision": ""
+    },
+    "90511-1954": {
+      "article_no": "90511-1954",
+      "sap_description": "Sensor cable",
+      "denomination": "Sensor cable",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9613 41 8104": {
+      "article_no": "6-9613 41 8104",
+      "sap_description": "Top unit",
+      "denomination": "Top unit",
+      "notes": "",
+      "revision": ""
+    },
+    "90521-6272": {
+      "article_no": "90521-6272",
+      "sap_description": "Top control",
+      "denomination": "Top control",
+      "notes": "",
+      "revision": ""
+    },
+    "90521-1069": {
+      "article_no": "90521-1069",
+      "sap_description": "Adapter kit",
+      "denomination": "Adapter kit",
+      "notes": "",
+      "revision": ""
+    },
+    "90515-8855": {
+      "article_no": "90515-8855",
+      "sap_description": "Flow indicator",
+      "denomination": "Flow indicator",
+      "notes": "",
+      "revision": ""
+    },
+    "90510-0270": {
+      "article_no": "90510-0270",
+      "sap_description": "Proximity switch",
+      "denomination": "Proximity switch",
+      "notes": "",
+      "revision": ""
+    },
+    "344254-0100": {
+      "article_no": "344254-0100",
+      "sap_description": "Sensor cable, EVT005",
+      "denomination": "Sensor cable, EVT005",
+      "notes": "",
+      "revision": ""
+    },
+    "6-32360 0090 2": {
+      "article_no": "6-32360 0090 2",
+      "sap_description": "Insulation",
+      "denomination": "Insulation",
+      "notes": "",
+      "revision": ""
+    },
+    "6-32871 0175 4": {
+      "article_no": "6-32871 0175 4",
+      "sap_description": "Brazed plate heat exchanger",
+      "denomination": "Brazed plate heat exchanger",
+      "notes": "",
+      "revision": ""
+    },
+    "6-32249 0310 5": {
+      "article_no": "6-32249 0310 5",
+      "sap_description": "Seal kit",
+      "denomination": "Seal kit",
+      "notes": "",
+      "revision": ""
+    },
+    "90511-7667": {
+      "article_no": "90511-7667",
+      "sap_description": "Connection box",
+      "denomination": "Connection box",
+      "notes": "",
+      "revision": ""
+    },
+    "90522-2085": {
+      "article_no": "90522-2085",
+      "sap_description": "Level Sensor",
+      "denomination": "Level Sensor",
+      "notes": "",
+      "revision": ""
+    },
+    "6-32010 2248 1": {
+      "article_no": "6-32010 2248 1",
+      "sap_description": "Nut",
+      "denomination": "Nut",
+      "notes": "",
+      "revision": ""
+    },
+    "90522-2130": {
+      "article_no": "90522-2130",
+      "sap_description": "Level switch",
+      "denomination": "Level switch",
+      "notes": "",
+      "revision": ""
+    },
+    "90511-2809": {
+      "article_no": "90511-2809",
+      "sap_description": "Level switch",
+      "denomination": "Level switch",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9613 39 4878": {
+      "article_no": "6-9613 39 4878",
+      "sap_description": "Centrifugal pump",
+      "denomination": "Centrifugal pump",
+      "notes": "",
+      "revision": ""
+    },
+    "2589066-0100": {
+      "article_no": "2589066-0100",
+      "sap_description": "Circumferential Piston Pumps",
+      "denomination": "Circumferential Piston Pumps",
+      "notes": "",
+      "revision": ""
+    },
+    "90503-1522": {
+      "article_no": "90503-1522",
+      "sap_description": "Agitator",
+      "denomination": "Agitator",
+      "notes": "Included in BTD01",
+      "revision": ""
+    },
+    "6-9613 39 4866": {
+      "article_no": "6-9613 39 4866",
+      "sap_description": "Centrifugal pump",
+      "denomination": "Centrifugal pump",
+      "notes": "",
+      "revision": ""
+    },
+    "90511-6143": {
+      "article_no": "90511-6143",
+      "sap_description": "Centrifugal pump",
+      "denomination": "Centrifugal pump",
+      "notes": "",
+      "revision": ""
+    },
+    "90503-8200": {
+      "article_no": "90503-8200",
+      "sap_description": "Constant flow valve",
+      "denomination": "Constant flow valve",
+      "notes": "",
+      "revision": ""
+    },
+    "90519-8606": {
+      "article_no": "90519-8606",
+      "sap_description": "Pressure regulator",
+      "denomination": "Pressure regulator",
+      "notes": "",
+      "revision": ""
+    },
+    "90503-3190": {
+      "article_no": "90503-3190",
+      "sap_description": "Air regulator",
+      "denomination": "Air regulator",
+      "notes": "",
+      "revision": ""
+    },
+    "90525-4814": {
+      "article_no": "90525-4814",
+      "sap_description": "Pressure transmitter",
+      "denomination": "Pressure transmitter",
+      "notes": "",
+      "revision": ""
+    },
+    "90510-8981": {
+      "article_no": "90510-8981",
+      "sap_description": "I/P converter",
+      "denomination": "I/P converter",
+      "notes": "",
+      "revision": ""
+    },
+    "90503-4549": {
+      "article_no": "90503-4549",
+      "sap_description": "Conductivity meter",
+      "denomination": "Conductivity meter",
+      "notes": "",
+      "revision": ""
+    },
+    "351552-0043": {
+      "article_no": "351552-0043",
+      "sap_description": "Warning Sign ISO",
+      "denomination": "Warning Sign ISO",
+      "notes": "",
+      "revision": ""
+    },
+    "359705-0018": {
+      "article_no": "359705-0018",
+      "sap_description": "Warning Sign ISO, Hot Cor.Subst.U H P",
+      "denomination": "Warning Sign ISO, Hot Cor.Subst.U H P",
+      "notes": "",
+      "revision": ""
+    },
+    "351552-0004": {
+      "article_no": "351552-0004",
+      "sap_description": "Warning Sign ISO",
+      "denomination": "Warning Sign ISO",
+      "notes": "",
+      "revision": ""
+    },
+    "351554-0005": {
+      "article_no": "351554-0005",
+      "sap_description": "Mandatory Action Sign ISO",
+      "denomination": "Mandatory Action Sign ISO",
+      "notes": "",
+      "revision": ""
+    },
+    "359705-0008": {
+      "article_no": "359705-0008",
+      "sap_description": "Warning Sign ISO, Burn Hazard",
+      "denomination": "Warning Sign ISO, Burn Hazard",
+      "notes": "",
+      "revision": ""
+    },
+    "351552-0065": {
+      "article_no": "351552-0065",
+      "sap_description": "Warning Sign ISO",
+      "denomination": "Warning Sign ISO",
+      "notes": "",
+      "revision": ""
+    },
+    "90511-0145": {
+      "article_no": "90511-0145",
+      "sap_description": "Logotype",
+      "denomination": "Logotype",
+      "notes": "",
+      "revision": ""
+    },
+    "90511-8563": {
+      "article_no": "90511-8563",
+      "sap_description": "Stripe",
+      "denomination": "Stripe",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9612 62 8353": {
+      "article_no": "6-9612 62 8353",
+      "sap_description": "Butterfly valve",
+      "denomination": "Butterfly valve",
+      "notes": "",
+      "revision": ""
+    },
+    "90512-8694": {
+      "article_no": "90512-8694",
+      "sap_description": "Valve connector",
+      "denomination": "Valve connector",
+      "notes": "",
+      "revision": ""
+    },
+    "90521-7263": {
+      "article_no": "90521-7263",
+      "sap_description": "Regulating valve",
+      "denomination": "Regulating valve",
+      "notes": "",
+      "revision": ""
+    },
+    "90503-7947": {
+      "article_no": "90503-7947",
+      "sap_description": "Seat valve",
+      "denomination": "Seat valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9612 62 8355": {
+      "article_no": "6-9612 62 8355",
+      "sap_description": "Butterfly valve",
+      "denomination": "Butterfly valve",
+      "notes": "",
+      "revision": ""
+    },
+    "90512-7413": {
+      "article_no": "90512-7413",
+      "sap_description": "Seat valve",
+      "denomination": "Seat valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9613 36 0002": {
+      "article_no": "6-9613 36 0002",
+      "sap_description": "Single seat valve",
+      "denomination": "Single seat valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9612 62 8709": {
+      "article_no": "6-9612 62 8709",
+      "sap_description": "Butterfly valve",
+      "denomination": "Butterfly valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9613 36 3174": {
+      "article_no": "6-9613 36 3174",
+      "sap_description": "Single seat valve",
+      "denomination": "Single seat valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9612 62 8354": {
+      "article_no": "6-9612 62 8354",
+      "sap_description": "Butterfly valve",
+      "denomination": "Butterfly valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9613 36 0066": {
+      "article_no": "6-9613 36 0066",
+      "sap_description": "Single seat valve",
+      "denomination": "Single seat valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9613 36 3184": {
+      "article_no": "6-9613 36 3184",
+      "sap_description": "Single seat valve",
+      "denomination": "Single seat valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9613 36 0054": {
+      "article_no": "6-9613 36 0054",
+      "sap_description": "Single seat valve",
+      "denomination": "Single seat valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-31801 9423 4": {
+      "article_no": "6-31801 9423 4",
+      "sap_description": "Regulating valve",
+      "denomination": "Regulating valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-31801 9975 2": {
+      "article_no": "6-31801 9975 2",
+      "sap_description": "Seat valve",
+      "denomination": "Seat valve",
+      "notes": "",
+      "revision": ""
+    },
+    "90512-7416": {
+      "article_no": "90512-7416",
+      "sap_description": "Seat valve",
+      "denomination": "Seat valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-31880 0235 1": {
+      "article_no": "6-31880 0235 1",
+      "sap_description": "Back pressure valve",
+      "denomination": "Back pressure valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9612 65 0173": {
+      "article_no": "6-9612 65 0173",
+      "sap_description": "Constant pressure valve",
+      "denomination": "Constant pressure valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9613 36 0457": {
+      "article_no": "6-9613 36 0457",
+      "sap_description": "Single seat valve",
+      "denomination": "Single seat valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9613 32 4048": {
+      "article_no": "6-9613 32 4048",
+      "sap_description": "Single seat valve",
+      "denomination": "Single seat valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-31801 9971 2": {
+      "article_no": "6-31801 9971 2",
+      "sap_description": "Seat valve",
+      "denomination": "Seat valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9612 49 1817": {
+      "article_no": "6-9612 49 1817",
+      "sap_description": "Mounting bracket",
+      "denomination": "Mounting bracket",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9612 19 4001": {
+      "article_no": "6-9612 19 4001",
+      "sap_description": "Actuator",
+      "denomination": "Actuator",
+      "notes": "",
+      "revision": ""
+    },
+    "90511-2615": {
+      "article_no": "90511-2615",
+      "sap_description": "Ball valve",
+      "denomination": "Ball valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-31801 9975 1": {
+      "article_no": "6-31801 9975 1",
+      "sap_description": "Seat valve",
+      "denomination": "Seat valve",
+      "notes": "",
+      "revision": ""
+    },
+    "90518-7758": {
+      "article_no": "90518-7758",
+      "sap_description": "Sensor cable",
+      "denomination": "Sensor cable",
+      "notes": "",
+      "revision": ""
+    },
+    "90523-6505": {
+      "article_no": "90523-6505",
+      "sap_description": "Regulating valve",
+      "denomination": "Regulating valve",
+      "notes": "",
+      "revision": ""
+    },
+    "90513-5612": {
+      "article_no": "90513-5612",
+      "sap_description": "Seat valve",
+      "denomination": "Seat valve",
+      "notes": "",
+      "revision": ""
+    },
+    "90512-6750": {
+      "article_no": "90512-6750",
+      "sap_description": "Non-return valve",
+      "denomination": "Non-return valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9613 41 9801": {
+      "article_no": "6-9613 41 9801",
+      "sap_description": "Top unit",
+      "denomination": "Top unit",
+      "notes": "",
+      "revision": ""
+    },
+    "90503-1879": {
+      "article_no": "90503-1879",
+      "sap_description": "Magnetic Flow meter",
+      "denomination": "Magnetic Flow meter",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9613 39 4833": {
+      "article_no": "6-9613 39 4833",
+      "sap_description": "Centrifugal pump",
+      "denomination": "Centrifugal pump",
+      "notes": "",
+      "revision": ""
+    },
+    "6-31801 1768 1": {
+      "article_no": "6-31801 1768 1",
+      "sap_description": "Reducing valve",
+      "denomination": "Reducing valve",
+      "notes": "",
+      "revision": ""
+    },
+    "90522-0152": {
+      "article_no": "90522-0152",
+      "sap_description": "Pressure gauge",
+      "denomination": "Pressure gauge",
+      "notes": "",
+      "revision": ""
+    },
+    "90522-0156": {
+      "article_no": "90522-0156",
+      "sap_description": "Pressure gauge",
+      "denomination": "Pressure gauge",
+      "notes": "",
+      "revision": ""
+    },
+    "90522-0140": {
+      "article_no": "90522-0140",
+      "sap_description": "Pressure gauge",
+      "denomination": "Pressure gauge",
+      "notes": "",
+      "revision": ""
+    },
+    "90515-5430": {
+      "article_no": "90515-5430",
+      "sap_description": "Pressure transmitter",
+      "denomination": "Pressure transmitter",
+      "notes": "",
+      "revision": ""
+    },
+    "90516-3155": {
+      "article_no": "90516-3155",
+      "sap_description": "Pressure transmitter",
+      "denomination": "Pressure transmitter",
+      "notes": "",
+      "revision": ""
+    },
+    "6-34144 8572 1": {
+      "article_no": "6-34144 8572 1",
+      "sap_description": "Sign",
+      "denomination": "Sign",
+      "notes": "",
+      "revision": ""
+    },
+    "6-34144 8571 1": {
+      "article_no": "6-34144 8571 1",
+      "sap_description": "Sign",
+      "denomination": "Sign",
+      "notes": "",
+      "revision": ""
+    },
+    "90513-3131": {
+      "article_no": "90513-3131",
+      "sap_description": "Regulating valve",
+      "denomination": "Regulating valve",
+      "notes": "",
+      "revision": ""
+    },
+    "90521-7203": {
+      "article_no": "90521-7203",
+      "sap_description": "Regulating valve",
+      "denomination": "Regulating valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-31801 5878 2": {
+      "article_no": "6-31801 5878 2",
+      "sap_description": "Seat valve",
+      "denomination": "Seat valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9613 36 0040": {
+      "article_no": "6-9613 36 0040",
+      "sap_description": "Single seat valve",
+      "denomination": "Single seat valve",
+      "notes": "",
+      "revision": ""
+    },
+    "90510-1963": {
+      "article_no": "90510-1963",
+      "sap_description": "Change over valve",
+      "denomination": "Change over valve",
+      "notes": "",
+      "revision": ""
+    },
+    "90513-3139": {
+      "article_no": "90513-3139",
+      "sap_description": "Regulating valve",
+      "denomination": "Regulating valve",
+      "notes": "",
+      "revision": ""
+    },
+    "90513-3138": {
+      "article_no": "90513-3138",
+      "sap_description": "Regulating valve",
+      "denomination": "Regulating valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9613 36 0577": {
+      "article_no": "6-9613 36 0577",
+      "sap_description": "Single seat valve",
+      "denomination": "Single seat valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9613 36 0506": {
+      "article_no": "6-9613 36 0506",
+      "sap_description": "Single seat valve",
+      "denomination": "Single seat valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-32422 0302 1": {
+      "article_no": "6-32422 0302 1",
+      "sap_description": "Expansion valve",
+      "denomination": "Expansion valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-32422 0724 1": {
+      "article_no": "6-32422 0724 1",
+      "sap_description": "Protection cover",
+      "denomination": "Protection cover",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9613 36 0053": {
+      "article_no": "6-9613 36 0053",
+      "sap_description": "Single seat valve",
+      "denomination": "Single seat valve",
+      "notes": "",
+      "revision": ""
+    },
+    "90521-5830": {
+      "article_no": "90521-5830",
+      "sap_description": "Seat valve",
+      "denomination": "Seat valve",
+      "notes": "",
+      "revision": ""
+    },
+    "90503-4671": {
+      "article_no": "90503-4671",
+      "sap_description": "Change over valve",
+      "denomination": "Change over valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-9613 36 0529": {
+      "article_no": "6-9613 36 0529",
+      "sap_description": "Single seat valve",
+      "denomination": "Single seat valve",
+      "notes": "",
+      "revision": ""
+    },
+    "6-164835312": {
+      "article_no": "6-164835312",
+      "sap_description": "Frame complete triple 4 sections 6m",
+      "denomination": "Frame Complete,C, Triple, 4 modules,6m",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164836301": {
+      "article_no": "6-164836301",
+      "sap_description": "Screw MRT M6x20 A2/A4",
+      "denomination": "Screw, Frame",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164835401": {
+      "article_no": "6-164835401",
+      "sap_description": "Cover 2,7m for 6m frame w plastic ends",
+      "denomination": "Cover,C,6m",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164832402": {
+      "article_no": "6-164832402",
+      "sap_description": "Shell support C85",
+      "denomination": "Shell Support, C85",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164832511": {
+      "article_no": "6-164832511",
+      "sap_description": "Shell C85 6m 304",
+      "denomination": "Shell, C85,1.4307/304L,6m",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-99035374": {
+      "article_no": "6-99035374",
+      "sap_description": "O-ring 75.57x5.33 EPDM E8502",
+      "denomination": "O-ring,Union,Shell,d76",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-99035720": {
+      "article_no": "6-99035720",
+      "sap_description": "O-ring 82.14x3.53 FKM V8T41 Coated",
+      "denomination": "O-ring, C85,Shell",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164833807": {
+      "article_no": "6-164833807",
+      "sap_description": "Shell Connection 0\u00b0 C85 316L, SMS",
+      "denomination": "Shell Connection,C85,SMS,0 degr.,1.4404/316L",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164833903": {
+      "article_no": "6-164833903",
+      "sap_description": "Shell Return C85 6m 316L, SMS",
+      "denomination": "Shell return, C85,6m",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164833707": {
+      "article_no": "6-164833707",
+      "sap_description": "Shell Connection 90\u00b0 C85 316L, SMS",
+      "denomination": "Shell Connection,C85,SMS,90 degr.,1.4404/316L",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164833607": {
+      "article_no": "6-164833607",
+      "sap_description": "Shell Inter Connection C85 316L",
+      "denomination": "Shell Interconnection, C85,1.4404/316L",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164742402": {
+      "article_no": "6-164742402",
+      "sap_description": "W Tube insert C-MT 85/4x20-C 6m 316 FT",
+      "denomination": "Tube Insert, C85,4x20C-6,Pulp,1.4404/316L",
+      "notes": "Spare part number: 6-164763202",
+      "revision": ""
+    },
+    "6-164742401": {
+      "article_no": "6-164742401",
+      "sap_description": "W Tube insert C-MT 85/4x20-S 6m 316 FT",
+      "denomination": "Tube Insert, C85,4x20S-6,Pulp,1.4404/316L",
+      "notes": "Spare part number: 6-164763201",
+      "revision": ""
+    },
+    "6-164739601": {
+      "article_no": "6-164739601",
+      "sap_description": "W Tube insert C-MT 85/12x16-S 6m 316",
+      "denomination": "Tube Insert, C85,12x16S-6,1.4404/316L",
+      "notes": "Spare part number: 6-164763001",
+      "revision": ""
+    },
+    "6-164742901": {
+      "article_no": "6-164742901",
+      "sap_description": "W Tube insert C-MT 85/1x51-S 6m 316",
+      "denomination": "Tube Insert, C85,1x51S-6,1.4404/316L",
+      "notes": "Spare part number: 6-164763601",
+      "revision": ""
+    },
+    "6-99035718": {
+      "article_no": "6-99035718",
+      "sap_description": "O-ring 69.44x3.53 FKM V8T41 Coated",
+      "denomination": "O-ring, C85, Insert",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-9612402604": {
+      "article_no": "6-9612402604",
+      "sap_description": "Seal ring EPDM LKB-F DIN",
+      "denomination": "Product Seal,C85,Monotube,EPDM",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164817601": {
+      "article_no": "6-164817601",
+      "sap_description": "Bend C-MT 85 Ellipse 316L",
+      "denomination": "Return Bend, C85,Elliptic,Multitube,1.4404/316L",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164761201": {
+      "article_no": "6-164761201",
+      "sap_description": "Flange C-MT85 \u00d851x1.5 Multi 316L",
+      "denomination": "Product flange, C85,Multitube,1.4404/316L",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164761101": {
+      "article_no": "6-164761101",
+      "sap_description": "Flange C-MT85 \u00d851x1.5 Mono 316L",
+      "denomination": "Product flange, C85,Monotube,1.4404/316L",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164751301": {
+      "article_no": "6-164751301",
+      "sap_description": "Eccentric Reducer C-MT85",
+      "denomination": "Eccentric Reducer,C85,Drainable,Multitube",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164835601": {
+      "article_no": "6-164835601",
+      "sap_description": "Tube Return C85 c/c140 6m multi, SMS",
+      "denomination": "Tube Return, C85,Close,Multitube,6m",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164835603": {
+      "article_no": "6-164835603",
+      "sap_description": "Tube Return C85 c/c140 6m mono, SMS",
+      "denomination": "Tube Return, C85,Close,Monotube,6m",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-99035338": {
+      "article_no": "6-99035338",
+      "sap_description": "O-ring 50.39x3.53 EPDM E8502",
+      "denomination": "O-ring,Union,Holding tube,d51",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164837613": {
+      "article_no": "6-164837613",
+      "sap_description": "Assembly kit C85 elliptic/drainable",
+      "denomination": "Assembly Kit,C85,Elliptic/drainable",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164760003": {
+      "article_no": "6-164760003",
+      "sap_description": "Split ring C-MT85",
+      "denomination": "Split ring C-MT85",
+      "notes": "",
+      "revision": ""
+    },
+    "6-99030913": {
+      "article_no": "6-99030913",
+      "sap_description": "Screw ISO 4017 A2-70 M6S M10x40 H",
+      "denomination": "Screw ISO 4017 A2-70 M6S M10x40 H",
+      "notes": "",
+      "revision": ""
+    },
+    "6-99032224": {
+      "article_no": "6-99032224",
+      "sap_description": "O-ring 107.54x3.53 AL113 3030-70 EPDM",
+      "denomination": "O-ring 107.54x3.53 AL113 3030-70 EPDM",
+      "notes": "",
+      "revision": ""
+    },
+    "6-164837611": {
+      "article_no": "6-164837611",
+      "sap_description": "Assembly kit C85",
+      "denomination": "Assembly Kit,C85",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-99030912": {
+      "article_no": "6-99030912",
+      "sap_description": "Screw ISO 4017 A2-70 M6S M10x30 H",
+      "denomination": "Screw ISO 4017 A2-70 M6S M10x30 H",
+      "notes": "",
+      "revision": ""
+    },
+    "6-164827501": {
+      "article_no": "6-164827501",
+      "sap_description": "Seal ring C/MT85 multitube E8502",
+      "denomination": "Product Seal,C85,Multitube,EPDM",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164836003": {
+      "article_no": "6-164836003",
+      "sap_description": "HT Single \u00d851 6m 316L, SMS",
+      "denomination": "Holding Tubes, C85/108,Single,1.4404/316L,6m,d51",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164836109": {
+      "article_no": "6-164836109",
+      "sap_description": "HT Double \u00d851 c/c140 red 316L, SMS",
+      "denomination": "Holding Tubes, C85/108,Double",
+      "notes": "1.4404/316L,Reduced, d51,X=4079",
+      "revision": ""
+    },
+    "6-164837503": {
+      "article_no": "6-164837503",
+      "sap_description": "Bend HT \u00d851 c/c140 316L, SMS",
+      "denomination": "Return Bend HT, C85/C108, SMS,1.4404/316L,d51",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164806102": {
+      "article_no": "6-164806102",
+      "sap_description": "Special tool 51 L=240, SMS",
+      "denomination": "Special Tool,d51",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-99030508": {
+      "article_no": "6-99030508",
+      "sap_description": "Tube holder 85/51, c/c=140",
+      "denomination": "Tube Holder, Tube-HC,C85,d51",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-99030521": {
+      "article_no": "6-99030521",
+      "sap_description": "Tube holder 51/51, c/c=140",
+      "denomination": "Tube Holder, HC-HC,C85,d51",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164837703": {
+      "article_no": "6-164837703",
+      "sap_description": "Tube support w Spring C85/53",
+      "denomination": "Tube Support, C85,d53",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164833414": {
+      "article_no": "6-164833414",
+      "sap_description": "Shell support blind C85",
+      "denomination": "Blind, C85",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164837901": {
+      "article_no": "6-164837901",
+      "sap_description": "Template Tetra Spiraflo C",
+      "denomination": "Templates",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164834901": {
+      "article_no": "6-164834901",
+      "sap_description": "Commisioning kit C85",
+      "denomination": "Commissioning kit, C85",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164900901": {
+      "article_no": "6-164900901",
+      "sap_description": "Top bar cover support for 6m frame",
+      "denomination": "Top length bar cover support",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164904301": {
+      "article_no": "6-164904301",
+      "sap_description": "Bracket for top bar",
+      "denomination": "Bracket,Insulation",
+      "notes": "-",
+      "revision": ""
+    },
+    "1183366-2_A_01": {
+      "article_no": "1183366-2_A_01",
+      "sap_description": "",
+      "denomination": "Isometric and Layout drawing,C85",
+      "notes": "",
+      "revision": ""
+    },
+    "6-164834900": {
+      "article_no": "6-164834900",
+      "sap_description": "",
+      "denomination": "Assembly & spare part drawing,C85",
+      "notes": "-",
+      "revision": ""
+    },
+    "6-164834200": {
+      "article_no": "6-164834200",
+      "sap_description": "",
+      "denomination": "Pressure vessel drawing,C85,PED",
+      "notes": "-",
+      "revision": ""
+    }
+  },
+  "bom": [
+    {
+      "article_no": "6-164835312",
+      "qty_level_0": 1,
+      "qty_level_1": 0,
+      "positions": "Frame",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164836301",
+      "qty_level_0": 122,
+      "qty_level_1": 0,
+      "positions": "Frame",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164835401",
+      "qty_level_0": 22,
+      "qty_level_1": 0,
+      "positions": "Frame",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164832402",
+      "qty_level_0": 216,
+      "qty_level_1": 0,
+      "positions": "",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164832511",
+      "qty_level_0": 53,
+      "qty_level_1": 0,
+      "positions": "I6,H6,H5,I5,I1,H1,G1,G2,F2,E2,D2,D3,D4,C4,C3,C2,A1,A2,A3,A4,A5,B5,B6,A6,A9,I2,I8,A12,B12,C12,D12,D11,D10,D9,D8,C8,C 7,D7,E7,F7,G7,I9,H9,G9,G10,H10,I10,I11,H11,H12,I12,G12,E9",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-99035374",
+      "qty_level_0": 26,
+      "qty_level_1": 0,
+      "positions": "I4,I6,F1,I1,E1,C2,A1,A2,A3,A4,A5,A6,A9, A9,I2,I2,I8,A12,G7,I10,I11,I12,G12,G12,E8, E9",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-99035720",
+      "qty_level_0": 212,
+      "qty_level_1": 0,
+      "positions": "I6,H6,H5,I5,I1,H1,G1,G2,F2,E2,D2,D3,D4,C4,C3,C2,A1,A2,A3,A4,A5,B5,B6,A6,A9,I2,I8,A12,B12,C12,D12,D11,D10,D9,D8,C8,C 7,D7,E7,F7,G7,I9,H9,G9,G10,H10,I10,I11,H11,H12,I12,G12,E9",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164833807",
+      "qty_level_0": 5,
+      "qty_level_1": 0,
+      "positions": "C2,A9,I8,G7,E9",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164833903",
+      "qty_level_0": 4,
+      "qty_level_1": 0,
+      "positions": "I4,F1,E1,E8",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164833707",
+      "qty_level_0": 17,
+      "qty_level_1": 0,
+      "positions": "I6,I1,A1,A2,A3,A4,A5,A6,A9,I2,I2,A12,I10, I11,I12,G12,G12",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164833607",
+      "qty_level_0": 40,
+      "qty_level_1": 0,
+      "positions": "I9-I8,I6-H6,H6-H5,H5-I5,I1-H1,H1-G1,G1-G2,G2-F2,E2-D2,D2-D3,D3-D4,D4-C4,C4-C3,C3-C2,A1-A2,A3-A4,A5-B5,B5-B6,B6-A6,A12-B12,B12-C12,C12-D12,D12-D11,D11-D10,D10-D9,D9-D8,D8-C8,C8-C7,C7-D7,D7-E7,E7-F7,F7-G7,I9-H9,H9-G9,G9-G10,G10-H10,H10-I10,I11-H11,H11-H12,H12-I12",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164742402",
+      "qty_level_0": 8,
+      "qty_level_1": 0,
+      "positions": "I6,H6,H5,I5,I11,H11,H12,I12",
+      "notes": "Spare part number: 6-164763202"
+    },
+    {
+      "article_no": "6-164742401",
+      "qty_level_0": 40,
+      "qty_level_1": 0,
+      "positions": "I1,H1,G1,G2,F2,E2,D2,D3,D4,C4,C3,C2,A1, A2,A3,A4,A5,B5,B6,A6,A12,B12,C12,D12, D11,D10,D9,D8,C8,C7,D7,E7,F7,G7,I9,H9, G9,G10,H10,I10",
+      "notes": "Spare part number: 6-164763201"
+    },
+    {
+      "article_no": "6-164739601",
+      "qty_level_0": 4,
+      "qty_level_1": 0,
+      "positions": "A9,I8,G12,E9",
+      "notes": "Spare part number: 6-164763001"
+    },
+    {
+      "article_no": "6-164742901",
+      "qty_level_0": 1,
+      "qty_level_1": 0,
+      "positions": "I2",
+      "notes": "Spare part number: 6-164763601"
+    },
+    {
+      "article_no": "6-99035718",
+      "qty_level_0": 212,
+      "qty_level_1": 0,
+      "positions": "I6,H6,H5,I5,I1,H1,G1,G2,F2,E2,D2,D3,D4,C4,C3,C2,A1,A2,A3,A4,A5,B5,B6,A6,A9,I2,I8,A12,B12,C12,D12,D11,D10,D9,D8,C8,C 7,D7,E7,F7,G7,I9,H9,G9,G10,H10,I10,I11,H11,H12,I12,G12,E9",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-9612402604",
+      "qty_level_0": 2,
+      "qty_level_1": 0,
+      "positions": "I2",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164817601",
+      "qty_level_0": 41,
+      "qty_level_1": 0,
+      "positions": "A2-A3,A4-A5,I6-H6,H6-H5,H5-I5,I1-H1,H1-G1,G1-G2,G2-F2,E2-D2,D2-D3,D3-D4,D4-C4,C4-C3,C3-C2,A1-A2,A3-A4,A5-B5,B5-B6,B6-A6,A12-B12,B12-C12,C12-D12,D12-D11,D11-D10,D10-D9,D9-D8,D8-C8,C8-C7,C7-D7,D7-E7,E7-F7,F7-G7,I9-H9,H9-G9,G9-G10,G10-H10,H10-I10,I11-H11,H11-H12,H12-I12",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164761201",
+      "qty_level_0": 16,
+      "qty_level_1": 0,
+      "positions": "I6,I1,E2,A1,,,A9,,A12,I9,I11,,E9",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164761101",
+      "qty_level_0": 1,
+      "qty_level_1": 0,
+      "positions": "",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164751301",
+      "qty_level_0": 2,
+      "qty_level_1": 0,
+      "positions": "A9,E9",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164835601",
+      "qty_level_0": 4,
+      "qty_level_1": 0,
+      "positions": "C1,H8,G8,G11",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164835603",
+      "qty_level_0": 1,
+      "qty_level_1": 0,
+      "positions": "H2",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-99035338",
+      "qty_level_0": 5,
+      "qty_level_1": 0,
+      "positions": "C1,H2,H8,G8,G11",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164837613",
+      "qty_level_0": 84,
+      "qty_level_1": 0,
+      "positions": "A9,,,,E9",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164760003",
+      "qty_level_0": 0,
+      "qty_level_1": 1,
+      "positions": "",
+      "notes": ""
+    },
+    {
+      "article_no": "6-99030913",
+      "qty_level_0": 0,
+      "qty_level_1": 4,
+      "positions": "",
+      "notes": ""
+    },
+    {
+      "article_no": "6-99032224",
+      "qty_level_0": 0,
+      "qty_level_1": 1,
+      "positions": "",
+      "notes": ""
+    },
+    {
+      "article_no": "6-164837611",
+      "qty_level_0": 22,
+      "qty_level_1": 0,
+      "positions": "I6,H6,H5,I5,I1,H1,G1,G2,F2,C1,E2,D2,D3,D4,C4,C3,C2,A1,A2,A3,A4,A5,B5,B6,A6,A 9,H2,I2,H8,I8,G8,A12,B12,C12,D12,D11,D10,D9,D8,C8,C7,D7,E7,F7,G7,I9,H9,G9,G10, H10,I10,I11,H11,H12,I12,G11,G12,E9",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164760003",
+      "qty_level_0": 0,
+      "qty_level_1": 1,
+      "positions": "",
+      "notes": ""
+    },
+    {
+      "article_no": "6-99030912",
+      "qty_level_0": 0,
+      "qty_level_1": 4,
+      "positions": "",
+      "notes": ""
+    },
+    {
+      "article_no": "6-99032224",
+      "qty_level_0": 0,
+      "qty_level_1": 1,
+      "positions": "",
+      "notes": ""
+    },
+    {
+      "article_no": "6-164827501",
+      "qty_level_0": 104,
+      "qty_level_1": 0,
+      "positions": "I6,H6,H5,I5,I1,H1,G1,G2,F2,E2,D2,D3,D4,C4,C3,C2,A1,A2,A3,A4,A5,B5,B6,A6,A9,I8,A12,B12,C12,D12,D11,D10,D9,D8,C8,C7, D7,E7,F7,G7,I9,H9,G9,G10,H10,I10,I11,H1 1,H12,I12,G12,E9",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164836003",
+      "qty_level_0": 8,
+      "qty_level_1": 0,
+      "positions": "F3,G3,G4,F4,E4,E3,F5,G5,G6,F6,E6,E5",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164836109",
+      "qty_level_0": 1,
+      "qty_level_1": 0,
+      "positions": "F3,G3,G4,F4,E4,E3",
+      "notes": "1.4404/316L,Reduced, d51,X=4094"
+    },
+    {
+      "article_no": "6-164836109",
+      "qty_level_0": 1,
+      "qty_level_1": 0,
+      "positions": "F5,G5,G6,F6,E6,E5",
+      "notes": "1.4404/316L,Reduced, d51,X=4079"
+    },
+    {
+      "article_no": "6-164837503",
+      "qty_level_0": 8,
+      "qty_level_1": 0,
+      "positions": "F3-G3,G3-G4,G4-F4,F4-E4,E4-E3,F5-G5,G5-G6,G6-F6,F6-E6,E6-E5",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164806102",
+      "qty_level_0": 1,
+      "qty_level_1": 0,
+      "positions": "",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-99035338",
+      "qty_level_0": 20,
+      "qty_level_1": 0,
+      "positions": "F3,G3,G4,F4,E4,E3,F3,G3,G4,F4,E4,E3,F5,G5,G6,F6,E6,E5,F5,G5,G6,F6,E6,E5",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-99030508",
+      "qty_level_0": 6,
+      "qty_level_1": 0,
+      "positions": "",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-99030521",
+      "qty_level_0": 3,
+      "qty_level_1": 0,
+      "positions": "",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164837703",
+      "qty_level_0": 94,
+      "qty_level_1": 0,
+      "positions": "C1,H2,H8,G8,G11,F3,G3,G4,F4,E4,E3,F5,G 5,G6,F6,E6,E5",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164833414",
+      "qty_level_0": 72,
+      "qty_level_1": 0,
+      "positions": "B1,B2,B3,B4,C5,C6,A7,B7,A8,B8,B9,C9,A 10,B10,C10,A11,B11,C11,D1,E3,E4,D5,E5, D6,E6,F8,F9,E10,F10,E11,F11,E12,F12,H3,I 3,H4,H7,I7",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164837901",
+      "qty_level_0": 2,
+      "qty_level_1": 0,
+      "positions": "",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164834901",
+      "qty_level_0": 1,
+      "qty_level_1": 0,
+      "positions": "",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164900901",
+      "qty_level_0": 2,
+      "qty_level_1": 0,
+      "positions": "",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164904301",
+      "qty_level_0": 4,
+      "qty_level_1": 0,
+      "positions": "",
+      "notes": "-"
+    },
+    {
+      "article_no": "1183366-2_A_01",
+      "qty_level_0": 1,
+      "qty_level_1": 0,
+      "positions": "",
+      "notes": ""
+    },
+    {
+      "article_no": "6-164834900",
+      "qty_level_0": 1,
+      "qty_level_1": 0,
+      "positions": "",
+      "notes": "-"
+    },
+    {
+      "article_no": "6-164834200",
+      "qty_level_0": 1,
+      "qty_level_1": 0,
+      "positions": "",
+      "notes": "-"
+    }
+  ],
+  "tags": [
+    {
+      "item_no": "1",
+      "label": "HE1",
+      "qty": 1,
+      "article_no": "2827571-0100",
+      "denomination": "Tubular Heat Exchanger C85",
+      "type": "",
+      "doc_no": "1223855-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "M12",
+      "qty": 1,
+      "article_no": "6-34144 6932 2",
+      "denomination": "CIP feed unit",
+      "type": "With 320 l plastic tank Diaphragm pump TR20PTT-7SV, airreg. According to drawing: 34144-6932 Rev. 02",
+      "doc_no": "1222742-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "M13",
+      "qty": 1,
+      "article_no": "6-34144 6932 2",
+      "denomination": "CIP feed unit",
+      "type": "With 320 l plastic tank Diaphragm pump TR20PTT-7SV, airreg. According to drawing: 34144-6932 Rev. 02",
+      "doc_no": "1222742-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PI08",
+      "qty": 1,
+      "article_no": "90522-0142",
+      "denomination": "Pressure gauge",
+      "type": "G3/8\" A 0-25bar v. 233.50.100 lower mount",
+      "doc_no": "1212430-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PT01",
+      "qty": 1,
+      "article_no": "90515-5472",
+      "denomination": "Pressure transmitter",
+      "type": "PMP55 SMS38.0 0-37.5bar(g) 4-20mA , F15 SS house Cablegland M20x1.5 IP66/68",
+      "doc_no": "1229086-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PT60",
+      "qty": 1,
+      "article_no": "90515-5472",
+      "denomination": "Pressure transmitter",
+      "type": "PMP55 SMS38.0 0-37.5bar(g) 4-20mA , F15 SS house Cablegland M20x1.5 IP66/68",
+      "doc_no": "1229086-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PT705",
+      "qty": 1,
+      "article_no": "90521-2993",
+      "denomination": "Pressure transmitter",
+      "type": "PMP55 Varivent N 0-40bar(g) 4-20mA HART, F15 SS housew/o display Gland M20, IP66/68 NEMA4X/6P",
+      "doc_no": "1229086-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "Tool",
+      "qty": 1,
+      "article_no": "6-9613 16 0901",
+      "denomination": "Tool",
+      "type": "For Bonnet bushing",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "Tool",
+      "qty": 1,
+      "article_no": "6-69696 00",
+      "denomination": "Spanner",
+      "type": "SMS 25.0-76.1 / DIN 20-65",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "Tool",
+      "qty": 1,
+      "article_no": "6-9613 17 2901",
+      "denomination": "Mounting Tool",
+      "type": "For Unique SSV Elastomer Plug Seal 1\" /38mm/DN40",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT10",
+      "qty": 1,
+      "article_no": "90510-5633",
+      "denomination": "Temperature transmitter",
+      "type": "TPT12 4-20mA Measuring range 0-160 deg. C",
+      "doc_no": "3283902-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT10",
+      "qty": 1,
+      "article_no": "344254-0150",
+      "denomination": "Sensor cable",
+      "type": "",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT42 REF",
+      "qty": 1,
+      "article_no": "",
+      "denomination": "Plug for PT100",
+      "type": "",
+      "doc_no": "",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT42",
+      "qty": 1,
+      "article_no": "90510-5633",
+      "denomination": "Temperature transmitter",
+      "type": "TPT12 4-20mA Measuring range 0-160 deg. C",
+      "doc_no": "3283902-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT42",
+      "qty": 1,
+      "article_no": "344254-0150",
+      "denomination": "Sensor cable",
+      "type": "",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT44 REF",
+      "qty": 1,
+      "article_no": "",
+      "denomination": "Plug for PT100",
+      "type": "",
+      "doc_no": "",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT44",
+      "qty": 1,
+      "article_no": "344254-0150",
+      "denomination": "Sensor cable",
+      "type": "",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT44",
+      "qty": 1,
+      "article_no": "90510-5633",
+      "denomination": "Temperature transmitter",
+      "type": "TPT12 4-20mA Measuring range 0-160 deg. C",
+      "doc_no": "3283902-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT45",
+      "qty": 1,
+      "article_no": "90510-5633",
+      "denomination": "Temperature transmitter",
+      "type": "TPT12 4-20mA Measuring range 0-160 deg. C",
+      "doc_no": "3283902-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT45",
+      "qty": 1,
+      "article_no": "344254-0150",
+      "denomination": "Sensor cable",
+      "type": "",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT49",
+      "qty": 1,
+      "article_no": "344254-0150",
+      "denomination": "Sensor cable",
+      "type": "",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT49",
+      "qty": 1,
+      "article_no": "90510-5633",
+      "denomination": "Temperature transmitter",
+      "type": "TPT12 4-20mA Measuring range 0-160 deg. C",
+      "doc_no": "3283902-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT50",
+      "qty": 1,
+      "article_no": "344254-0150",
+      "denomination": "Sensor cable",
+      "type": "",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT50",
+      "qty": 1,
+      "article_no": "90510-5633",
+      "denomination": "Temperature transmitter",
+      "type": "TPT12 4-20mA Measuring range 0-160 deg. C",
+      "doc_no": "3283902-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT742",
+      "qty": 1,
+      "article_no": "90525-6058",
+      "denomination": "Thermometer",
+      "type": "DART-50-350F L=51/2 Cl2 230VAC 25ft with calibrationcertificate",
+      "doc_no": "1214474-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V22.1",
+      "qty": 1,
+      "article_no": "6-9613 36 3185",
+      "denomination": "Single seat valve",
+      "type": "SSV-W-51-210-NO-EPDM TP Change Over Maintainableactuator",
+      "doc_no": "1221122-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V22.2",
+      "qty": 1,
+      "article_no": "6-9613 36 3185",
+      "denomination": "Single seat valve",
+      "type": "SSV-W-51-210-NO-EPDM TP Change Over Maintainableactuator",
+      "doc_no": "1221122-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "BTD01",
+      "qty": 1,
+      "article_no": "6-31542 1679 1",
+      "denomination": "Balance tank",
+      "type": "BTD 300 with Scaba Agitator Acc to drawing:31542-1679",
+      "doc_no": "1218895-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "BTD02",
+      "qty": 1,
+      "article_no": "6-31542 1329 1",
+      "denomination": "CIP Header Batch",
+      "type": "CIP HB tank 125L SMS Acc to dwg:31542-1329 Rev04",
+      "doc_no": "3281944-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "CP01",
+      "qty": 1,
+      "article_no": "2565638-0100",
+      "denomination": "CCP",
+      "type": "TA Flex 10/100",
+      "doc_no": "1228796-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "CR41",
+      "qty": 1,
+      "article_no": "6-31801 9809 1",
+      "denomination": "Steam trap",
+      "type": "MST21 G1/2\" NTS-fill PN25",
+      "doc_no": "1212764-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "CR44",
+      "qty": 1,
+      "article_no": "90511-6240",
+      "denomination": "Steam trap",
+      "type": "DN25 FT43-10TV PN16 Flanged",
+      "doc_no": "1225994-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "CV06",
+      "qty": 1,
+      "article_no": "6-9612 22 0008",
+      "denomination": "Non-return valve",
+      "type": "LKC-2-W-ISO-38.0-316L EPDM",
+      "doc_no": "1241273-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "CV11",
+      "qty": 1,
+      "article_no": "6-9612 22 0008",
+      "denomination": "Non-return valve",
+      "type": "LKC-2-W-ISO-38.0-316L EPDM",
+      "doc_no": "1241273-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "CV12",
+      "qty": 1,
+      "article_no": "6-9612 22 0009",
+      "denomination": "Non-return valve",
+      "type": "LKC-2-W-ISO-51.0-316L EPDM",
+      "doc_no": "1241273-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "CV13",
+      "qty": 1,
+      "article_no": "90517-2812",
+      "denomination": "Non-return valve",
+      "type": "1.5\" Sandwich type EPDM",
+      "doc_no": "1224311-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "CV44",
+      "qty": 1,
+      "article_no": "6-9612 22 0008",
+      "denomination": "Non-return valve",
+      "type": "LKC-2-W-ISO-38.0-316L EPDM",
+      "doc_no": "1241273-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "CV66",
+      "qty": 1,
+      "article_no": "6-9612 22 0007",
+      "denomination": "Non-return valve",
+      "type": "LKC-2-W-ISO-25.0-316L EPDM",
+      "doc_no": "1241273-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "CV67",
+      "qty": 1,
+      "article_no": "90503-8930",
+      "denomination": "Non-return valve",
+      "type": "Metal Work 0521/0602-1/4\"",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "CV68",
+      "qty": 1,
+      "article_no": "90503-8930",
+      "denomination": "Non-return valve",
+      "type": "Metal Work 0521/0602-1/4\"",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "DV09",
+      "qty": 1,
+      "article_no": "90513-8306",
+      "denomination": "Air vent valve SS",
+      "type": "With ball valve DN15 PN10, no fitting Type AB050/R002",
+      "doc_no": "1212676-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "DV10.2",
+      "qty": 1,
+      "article_no": "90513-8306",
+      "denomination": "Air vent valve SS",
+      "type": "With ball valve DN15 PN10, no fitting Type AB050/R002",
+      "doc_no": "1212676-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "DV10",
+      "qty": 1,
+      "article_no": "6-34144 8035 1",
+      "denomination": "Micro bubble separator",
+      "type": "NONAIR W DN65 adjusted 15 deg. AISI316 According todrawing: 34144-8035 Rev. 01",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "DV66.2",
+      "qty": 1,
+      "article_no": "90513-8306",
+      "denomination": "Air vent valve SS",
+      "type": "With ball valve DN15 PN10, no fitting Type AB050/R002",
+      "doc_no": "1212676-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "DV66",
+      "qty": 1,
+      "article_no": "6-34144 8034 1",
+      "denomination": "Micro bubble separator",
+      "type": "NONAIR W DN50 adjusted 15 deg. AISI316 According todrawing: 34144-8034 Rev. 01",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "F44",
+      "qty": 1,
+      "article_no": "6-31801 5044 1",
+      "denomination": "Strainer",
+      "type": "Fig 37 SG DN25 PN40 GGG-40 Mesh=0.8mm",
+      "doc_no": "1241073-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "FB83",
+      "qty": 1,
+      "article_no": "90511-1954",
+      "denomination": "Sensor cable",
+      "type": "10m angled M12-connection Without LED",
+      "doc_no": "No Doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "FB83",
+      "qty": 1,
+      "article_no": "6-9613 41 8104",
+      "denomination": "Top unit",
+      "type": "IndiTop 8-30V AC/DC PNP With 0.5m cable, M12-5 contact",
+      "doc_no": "1221736-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "FB84",
+      "qty": 1,
+      "article_no": "90521-6272",
+      "denomination": "Top control",
+      "type": "8697 2 sw 1 M16",
+      "doc_no": "3280255-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "FB84",
+      "qty": 1,
+      "article_no": "90521-1069",
+      "denomination": "Adapter kit",
+      "type": "For 8697 to 50/63/80C actuator",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "FI09",
+      "qty": 1,
+      "article_no": "90515-8855",
+      "denomination": "Flow indicator",
+      "type": "H250/RR/M40 2\" SMS 1145 PN16 1000-10000l/h",
+      "doc_no": "1229491-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "GS40",
+      "qty": 1,
+      "article_no": "90510-0270",
+      "denomination": "Proximity switch",
+      "type": "M18x1 L=70mm, SS, IP69K, M12-conn. 10-36VDC, 3-w.PNP/2w.PNP/NPN Sensing range 0-8mm",
+      "doc_no": "1241250-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "GS40",
+      "qty": 1,
+      "article_no": "344254-0100",
+      "denomination": "Sensor cable, EVT005",
+      "type": "Cable length 10 m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "HE02",
+      "qty": 1,
+      "article_no": "6-32360 0090 2",
+      "denomination": "Insulation",
+      "type": "CB76/CB77 31-60 plates",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "HE02",
+      "qty": 1,
+      "article_no": "6-32871 0175 4",
+      "denomination": "Brazed plate heat exchanger",
+      "type": "CB110-30L B23 O5",
+      "doc_no": "1210229-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "LE08",
+      "qty": 1,
+      "article_no": "6-32249 0310 5",
+      "denomination": "Seal kit",
+      "type": "For bend dial thermometer 12mm",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "LE08",
+      "qty": 1,
+      "article_no": "90511-7667",
+      "denomination": "Connection box",
+      "type": "55x55x37 2 way M20 IP66, gray, polyester",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "LE08",
+      "qty": 1,
+      "article_no": "90522-2085",
+      "denomination": "Level Sensor",
+      "type": "UE-VK15 L1=125 L2=925 \"Resolution 15mm, pipe 12mm\"\"PTFE cable 7m, Float type SV\"",
+      "doc_no": "1241312-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "LE08",
+      "qty": 1,
+      "article_no": "6-32010 2248 1",
+      "denomination": "Nut",
+      "type": "Acc.to drawing: 32010-2248",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "LS50",
+      "qty": 1,
+      "article_no": "90522-2130",
+      "denomination": "Level switch",
+      "type": "FTL33 NPT1/2 10-30V DC, 3-w PNP Compact 316L,Ra<0.76um Plug M12, IP 65/67 NEMA 4X",
+      "doc_no": "3283723-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "LS50",
+      "qty": 1,
+      "article_no": "344254-0100",
+      "denomination": "Sensor cable, EVT005",
+      "type": "Cable length 10 m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "LS51",
+      "qty": 1,
+      "article_no": "344254-0100",
+      "denomination": "Sensor cable, EVT005",
+      "type": "Cable length 10 m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "LS51",
+      "qty": 1,
+      "article_no": "90522-2130",
+      "denomination": "Level switch",
+      "type": "FTL33 NPT1/2 10-30V DC, 3-w PNP Compact 316L,Ra<0.76um Plug M12, IP 65/67 NEMA 4X",
+      "doc_no": "3283723-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "LSL66",
+      "qty": 1,
+      "article_no": "344254-0100",
+      "denomination": "Sensor cable, EVT005",
+      "type": "Cable length 10 m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "LSL66",
+      "qty": 1,
+      "article_no": "90522-2130",
+      "denomination": "Level switch",
+      "type": "FTL33 NPT1/2 10-30V DC, 3-w PNP Compact 316L,Ra<0.76um Plug M12, IP 65/67 NEMA 4X",
+      "doc_no": "3283723-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "LT10",
+      "qty": 1,
+      "article_no": "90511-2809",
+      "denomination": "Level switch",
+      "type": "ALVTC Tri-Cl. 2.5\" L=850mm 2-w. 326L/316Ti ALVTC2.5-TP43A-VK10-L850-SV52V-SR69",
+      "doc_no": "1224261-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "M10",
+      "qty": 1,
+      "article_no": "6-9613 39 4878",
+      "denomination": "Centrifugal pump",
+      "type": "LKH-20/165-DMS-SMS-5.5kW-EPDM is C/SiC 50Hz 230D/400-415Y 2925rpm ABB IE3",
+      "doc_no": "1214246-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "M2",
+      "qty": 1,
+      "article_no": "2589066-0100",
+      "denomination": "Circumferential Piston Pumps",
+      "type": "SCPP2/180 80mm SMS DMS 22kW EPDM SIC/SIC 50HzTwin wing 93degC Horizontal 50Hz 3x400V Nord IE2 IP55",
+      "doc_no": "1226903-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "M30",
+      "qty": 1,
+      "article_no": "90503-1522",
+      "denomination": "Agitator",
+      "type": "Scaba 20D24-TA 0.37kW 750RPM",
+      "doc_no": "No doc.",
+      "note": "Included in BTD01",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "M3",
+      "qty": 1,
+      "article_no": "6-9613 39 4866",
+      "denomination": "Centrifugal pump",
+      "type": "LKH-35/220-SSS-SMS-11.0kW-EPDM is C/SiC 50Hz230D/400-415Y ABB IE3",
+      "doc_no": "1214246-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "M9",
+      "qty": 1,
+      "article_no": "90511-6143",
+      "denomination": "Centrifugal pump",
+      "type": "CRN15-3 DN50 3kW 50Hz SiC/SiC EPDM 230-240D/380-415YV 50Hz Clamp couplings",
+      "doc_no": "1218037-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "MFC10",
+      "qty": 1,
+      "article_no": "90503-8200",
+      "denomination": "Constant flow valve",
+      "type": "Flow restrictor G 1/2 REG-1200-D 0.5l/mi",
+      "doc_no": "1221586-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "MFC21",
+      "qty": 1,
+      "article_no": "90503-8200",
+      "denomination": "Constant flow valve",
+      "type": "Flow restrictor G 1/2 REG-1200-D 0.5l/mi",
+      "doc_no": "1221586-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "MFC25",
+      "qty": 1,
+      "article_no": "90503-8200",
+      "denomination": "Constant flow valve",
+      "type": "Flow restrictor G 1/2 REG-1200-D 0.5l/mi",
+      "doc_no": "1221586-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "OP66",
+      "qty": 1,
+      "article_no": "",
+      "denomination": "Orifice plate incl in P&F. 5mm",
+      "type": "",
+      "doc_no": "",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PC01",
+      "qty": 1,
+      "article_no": "90519-8606",
+      "denomination": "Pressure regulator",
+      "type": "FRL-G3/8-10 ISO228/1 1.5-10bar(g) incl. pressure switch,pressure indicato filter 5um",
+      "doc_no": "3283771-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PC107",
+      "qty": 1,
+      "article_no": "90503-3190",
+      "denomination": "Air regulator",
+      "type": "REG P ISO228/1-G1/4 0-8bar(G) lockable",
+      "doc_no": "1241164-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PC67",
+      "qty": 1,
+      "article_no": "90503-3190",
+      "denomination": "Air regulator",
+      "type": "REG P ISO228/1-G1/4 0-8bar(G) lockable",
+      "doc_no": "1241164-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PC68",
+      "qty": 1,
+      "article_no": "90503-3190",
+      "denomination": "Air regulator",
+      "type": "REG P ISO228/1-G1/4 0-8bar(G) lockable",
+      "doc_no": "1241164-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PC76",
+      "qty": 1,
+      "article_no": "90503-3190",
+      "denomination": "Air regulator",
+      "type": "REG P ISO228/1-G1/4 0-8bar(G) lockable",
+      "doc_no": "1241164-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PI09",
+      "qty": 1,
+      "article_no": "90522-0142",
+      "denomination": "Pressure gauge",
+      "type": "G3/8\" A 0-25bar v. 233.50.100 lower mount",
+      "doc_no": "1212430-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PI10",
+      "qty": 1,
+      "article_no": "90522-0142",
+      "denomination": "Pressure gauge",
+      "type": "G3/8\" A 0-25bar v. 233.50.100 lower mount",
+      "doc_no": "1212430-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PT44",
+      "qty": 1,
+      "article_no": "90525-4814",
+      "denomination": "Pressure transmitter",
+      "type": "PTP31B g1/2 0-10bar(g) PNP 4-20mA SS house display PlugM12, IP65/67 NEMA Type 4X",
+      "doc_no": "3288665-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PT44",
+      "qty": 1,
+      "article_no": "344254-0100",
+      "denomination": "Sensor cable, EVT005",
+      "type": "Cable length 10 m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PT66",
+      "qty": 1,
+      "article_no": "344254-0100",
+      "denomination": "Sensor cable, EVT005",
+      "type": "Cable length 10 m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PT66",
+      "qty": 1,
+      "article_no": "90525-4814",
+      "denomination": "Pressure transmitter",
+      "type": "PTP31B g1/2 0-10bar(g) PNP 4-20mA SS house display PlugM12, IP65/67 NEMA Type 4X",
+      "doc_no": "3288665-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PX74",
+      "qty": 1,
+      "article_no": "90510-8981",
+      "denomination": "I/P converter",
+      "type": "ITV1050 0-0.9MPa 24V DC 4-20m A/PNP ISO228/1-G3/8 M12Male 4-pin",
+      "doc_no": "1224084-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PX74",
+      "qty": 1,
+      "article_no": "344254-0100",
+      "denomination": "Sensor cable, EVT005",
+      "type": "Cable length 10 m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "QT76",
+      "qty": 1,
+      "article_no": "90503-4549",
+      "denomination": "Conductivity meter",
+      "type": "CLD132 ISO Cl51 2x4-20mA 24V AC/DC Display SS house w.5m cable Conductivity HART and temperature output",
+      "doc_no": "1218800-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "Sign",
+      "qty": 2,
+      "article_no": "351552-0043",
+      "denomination": "Warning Sign ISO",
+      "type": "Chemical Hazard, 75 x 75 mm",
+      "doc_no": "3286259-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "Sign",
+      "qty": 1,
+      "article_no": "359705-0018",
+      "denomination": "Warning Sign ISO, Hot Cor.Subst.U H P",
+      "type": "",
+      "doc_no": "3284690-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "Sign",
+      "qty": 2,
+      "article_no": "351552-0004",
+      "denomination": "Warning Sign ISO",
+      "type": "Chemical Hazard, 100 x 100 mm",
+      "doc_no": "3286259-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "Sign",
+      "qty": 1,
+      "article_no": "351554-0005",
+      "denomination": "Mandatory Action Sign ISO",
+      "type": "Wear ear protection",
+      "doc_no": "3286259-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "Sign",
+      "qty": 1,
+      "article_no": "359705-0008",
+      "denomination": "Warning Sign ISO, Burn Hazard",
+      "type": "",
+      "doc_no": "3284690-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "Sign",
+      "qty": 1,
+      "article_no": "351552-0065",
+      "denomination": "Warning Sign ISO",
+      "type": "Hot Outlet, 50 x 50 mm",
+      "doc_no": "3286259-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "Sign",
+      "qty": 1,
+      "article_no": "90511-0145",
+      "denomination": "Logotype",
+      "type": "Tetra Pak 42x316.26mm, white For stripe 70mm",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "Stripe",
+      "qty": 25,
+      "article_no": "90511-8563",
+      "denomination": "Stripe",
+      "type": "Blue, height 70mm Supplied on roll length 25m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "SX02",
+      "qty": 1,
+      "article_no": "",
+      "denomination": "Frequency converter",
+      "type": "",
+      "doc_no": "",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "SX09",
+      "qty": 1,
+      "article_no": "",
+      "denomination": "Freqvency converter",
+      "type": "",
+      "doc_no": "",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "SX10",
+      "qty": 1,
+      "article_no": "",
+      "denomination": "Freqvency converter",
+      "type": "",
+      "doc_no": "",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "SX30",
+      "qty": 1,
+      "article_no": "",
+      "denomination": "Freqvency converter",
+      "type": "",
+      "doc_no": "",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT01",
+      "qty": 1,
+      "article_no": "344254-0100",
+      "denomination": "Sensor cable, EVT005",
+      "type": "Cable length 10 m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT01",
+      "qty": 1,
+      "article_no": "90510-5633",
+      "denomination": "Temperature transmitter",
+      "type": "TPT12 4-20mA Measuring range 0-160 deg. C",
+      "doc_no": "3283902-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT09",
+      "qty": 1,
+      "article_no": "90510-5633",
+      "denomination": "Temperature transmitter",
+      "type": "TPT12 4-20mA Measuring range 0-160 deg. C",
+      "doc_no": "3283902-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT09",
+      "qty": 1,
+      "article_no": "344254-0100",
+      "denomination": "Sensor cable, EVT005",
+      "type": "Cable length 10 m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V05",
+      "qty": 1,
+      "article_no": "6-9612 62 8353",
+      "denomination": "Butterfly valve",
+      "type": "LKB-W-25-316L-EPDM-P85-NC",
+      "doc_no": "1215850-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V08",
+      "qty": 1,
+      "article_no": "90512-8694",
+      "denomination": "Valve connector",
+      "type": "Type A, SAC-3P-10,0-PVC/A Cable 10m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V08",
+      "qty": 1,
+      "article_no": "90521-7263",
+      "denomination": "Regulating valve",
+      "type": "3347/3372-3725 120cm2 W38.0x1.2 NO EN10357-D PN161.4409 SS/SS Kvs16.0",
+      "doc_no": "1224799-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V107",
+      "qty": 1,
+      "article_no": "90503-7947",
+      "denomination": "Seat valve",
+      "type": "ZQ/L W38 AISI316L SS/SS Act.108 A/A Giotto Top2xprox.PNP/2xsol. 3/2 24VDC",
+      "doc_no": "1222092-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V109",
+      "qty": 1,
+      "article_no": "6-9612 62 8355",
+      "denomination": "Butterfly valve",
+      "type": "LKB-W-51-316L-EPDM-P85-NC",
+      "doc_no": "1215850-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V10",
+      "qty": 1,
+      "article_no": "90512-7413",
+      "denomination": "Seat valve",
+      "type": "2000/32 G3/8 NC Kvs=2.4",
+      "doc_no": "3282610-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V114",
+      "qty": 1,
+      "article_no": "6-9613 36 0002",
+      "denomination": "Single seat valve",
+      "type": "SSV-W-51-200-NC-EPDM Shut off",
+      "doc_no": "1221121-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V115",
+      "qty": 1,
+      "article_no": "6-9612 62 8709",
+      "denomination": "Butterfly valve",
+      "type": "LKB-W-51-316L-EPDM-P85-NO",
+      "doc_no": "1215850-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V11",
+      "qty": 1,
+      "article_no": "6-9613 36 3174",
+      "denomination": "Single seat valve",
+      "type": "SSV-W-38-210-NC-EPDM TP Change Over Maintainableactuator",
+      "doc_no": "1221122-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V13",
+      "qty": 1,
+      "article_no": "6-9612 62 8354",
+      "denomination": "Butterfly valve",
+      "type": "LKB-W-38-316L-EPDM-P85-NC",
+      "doc_no": "1215850-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V14",
+      "qty": 1,
+      "article_no": "6-9613 36 0066",
+      "denomination": "Single seat valve",
+      "type": "SSV-W-38-210-NO-EPDM Change Over",
+      "doc_no": "1221122-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V15",
+      "qty": 1,
+      "article_no": "6-9613 36 3184",
+      "denomination": "Single seat valve",
+      "type": "SSV-W-38-210-NO-EPDM TP Change Over Maintainableactuator",
+      "doc_no": "1221122-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V16",
+      "qty": 1,
+      "article_no": "6-9613 36 0054",
+      "denomination": "Single seat valve",
+      "type": "SSV-W-51-210-NC-EPDM Change Over",
+      "doc_no": "1221122-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V17",
+      "qty": 1,
+      "article_no": "6-9612 62 8355",
+      "denomination": "Butterfly valve",
+      "type": "LKB-W-51-316L-EPDM-P85-NC",
+      "doc_no": "1215850-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V18",
+      "qty": 1,
+      "article_no": "6-9612 62 8709",
+      "denomination": "Butterfly valve",
+      "type": "LKB-W-51-316L-EPDM-P85-NO",
+      "doc_no": "1215850-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V25",
+      "qty": 1,
+      "article_no": "90512-7413",
+      "denomination": "Seat valve",
+      "type": "2000/32 G3/8 NC Kvs=2.4",
+      "doc_no": "3282610-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V44",
+      "qty": 1,
+      "article_no": "90512-8694",
+      "denomination": "Valve connector",
+      "type": "Type A, SAC-3P-10,0-PVC/A Cable 10m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V44",
+      "qty": 1,
+      "article_no": "6-31801 9423 4",
+      "denomination": "Regulating valve",
+      "type": "Samson 3321/3372 120cm2 GG DIN DN32 PN16 Kvs=16SS/SS NC",
+      "doc_no": "1224796-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V59",
+      "qty": 1,
+      "article_no": "6-31801 9975 2",
+      "denomination": "Seat valve",
+      "type": "2000/63 W38*1.2 NO 16bar(g) Kvs=35",
+      "doc_no": "1218030-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V66.2",
+      "qty": 1,
+      "article_no": "90512-7416",
+      "denomination": "Seat valve",
+      "type": "2000/32 W17.2*1.6 NC Kvs=2.4",
+      "doc_no": "3282610-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V66",
+      "qty": 1,
+      "article_no": "90512-7416",
+      "denomination": "Seat valve",
+      "type": "2000/32 W17.2*1.6 NC Kvs=2.4",
+      "doc_no": "3282610-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V68",
+      "qty": 1,
+      "article_no": "6-31880 0235 1",
+      "denomination": "Back pressure valve",
+      "type": "Designed for 8 bar at 175 deg.C Acc.to drawing 6-31880-0235Rev.01",
+      "doc_no": "1223553-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V74",
+      "qty": 1,
+      "article_no": "6-9612 65 0173",
+      "denomination": "Constant pressure valve",
+      "type": "CPMI-2-W-51-Kvs 23 EPDM PTFE//",
+      "doc_no": "1214498-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V75",
+      "qty": 1,
+      "article_no": "6-9613 36 0457",
+      "denomination": "Single seat valve",
+      "type": "SSV-W-38-111-NC-EPDM RA Change Over",
+      "doc_no": "1221124-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V76",
+      "qty": 1,
+      "article_no": "6-9613 32 4048",
+      "denomination": "Single seat valve",
+      "type": "SSV-W-38-112-NO-EPDM RA Change Over",
+      "doc_no": "1221124-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V80",
+      "qty": 1,
+      "article_no": "6-31801 9971 2",
+      "denomination": "Seat valve",
+      "type": "2000/63 W25*1.2 NC 11bar(g) Kvs=19",
+      "doc_no": "1218030-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V82",
+      "qty": 1,
+      "article_no": "6-31801 9971 2",
+      "denomination": "Seat valve",
+      "type": "2000/63 W25*1.2 NC 11bar(g) Kvs=19",
+      "doc_no": "1218030-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V83",
+      "qty": 1,
+      "article_no": "6-9612 49 1817",
+      "denomination": "Mounting bracket",
+      "type": "LKLA 85 for Meca-Inox ball valve For body size DN8-15",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V83",
+      "qty": 1,
+      "article_no": "6-9612 19 4001",
+      "denomination": "Actuator",
+      "type": "LKLA-T-85-NC",
+      "doc_no": "1215850-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V83",
+      "qty": 1,
+      "article_no": "90511-2615",
+      "denomination": "Ball valve",
+      "type": "Manual SMS-W 25x1.2 red. bore DV20+CVMM 3-way",
+      "doc_no": "1224238-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V84",
+      "qty": 1,
+      "article_no": "6-31801 9975 1",
+      "denomination": "Seat valve",
+      "type": "2000/63 W25*1.2 NO 16bar(g) Kvs=19",
+      "doc_no": "1218030-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V85.1",
+      "qty": 1,
+      "article_no": "6-31801 9971 2",
+      "denomination": "Seat valve",
+      "type": "2000/63 W25*1.2 NC 11bar(g) Kvs=19",
+      "doc_no": "1218030-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V85.2",
+      "qty": 1,
+      "article_no": "6-31801 9971 2",
+      "denomination": "Seat valve",
+      "type": "2000/63 W25*1.2 NC 11bar(g) Kvs=19",
+      "doc_no": "1218030-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V86",
+      "qty": 1,
+      "article_no": "90518-7758",
+      "denomination": "Sensor cable",
+      "type": "15m, PVC, 8-pole 1xM12 angled, A-coded",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V86",
+      "qty": 1,
+      "article_no": "90523-6505",
+      "denomination": "Regulating valve",
+      "type": "8802GD/8694 24VDC 70E Kvs 7.1 NC EN10357-DW25.0.x1.2 316L SS/SS Max. dP 16 bar(g)",
+      "doc_no": "1226927-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V87",
+      "qty": 1,
+      "article_no": "90513-5612",
+      "denomination": "Seat valve",
+      "type": "2000/125 W51*1.2 NC 10bar(g) Kvs 55",
+      "doc_no": "1218030-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "CR46",
+      "qty": 1,
+      "article_no": "6-31801 9809 1",
+      "denomination": "Steam trap",
+      "type": "MST21 G1/2\" NTS-fill PN25",
+      "doc_no": "1212764-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "CR49.1",
+      "qty": 1,
+      "article_no": "6-31801 9809 1",
+      "denomination": "Steam trap",
+      "type": "MST21 G1/2\" NTS-fill PN25",
+      "doc_no": "1212764-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "CR50.1",
+      "qty": 1,
+      "article_no": "6-31801 9809 1",
+      "denomination": "Steam trap",
+      "type": "MST21 G1/2\" NTS-fill PN25",
+      "doc_no": "1212764-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "CV07",
+      "qty": 1,
+      "article_no": "6-9612 22 0008",
+      "denomination": "Non-return valve",
+      "type": "LKC-2-W-ISO-38.0-316L EPDM",
+      "doc_no": "1241273-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "CV53",
+      "qty": 1,
+      "article_no": "90512-6750",
+      "denomination": "Non-return valve",
+      "type": "Aseptomag RSV1.5\" TVE Clamp Ra0.8 EPDM",
+      "doc_no": "1219823-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "FB71",
+      "qty": 1,
+      "article_no": "6-9613 41 9801",
+      "denomination": "Top unit",
+      "type": "ThinkTop Basic 10-30VDC PNP/NPN",
+      "doc_no": "1222265-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "FT04",
+      "qty": 1,
+      "article_no": "90503-1879",
+      "denomination": "Magnetic Flow meter",
+      "type": "Promag 50H ISO W25.0 0-18000l/h PFA Display 20-55V AC/16-62V DC w.10m cable Pulse signal / 4-20mA HART0.5% cal.",
+      "doc_no": "1218415-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "GS10",
+      "qty": 1,
+      "article_no": "90510-0270",
+      "denomination": "Proximity switch",
+      "type": "M18x1 L=70mm, SS, IP69K, M12-conn. 10-36VDC, 3-w.PNP/2w.PNP/NPN Sensing range 0-8mm",
+      "doc_no": "1241250-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "GS10",
+      "qty": 1,
+      "article_no": "344254-0100",
+      "denomination": "Sensor cable, EVT005",
+      "type": "Cable length 10 m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "GS11",
+      "qty": 1,
+      "article_no": "90510-0270",
+      "denomination": "Proximity switch",
+      "type": "M18x1 L=70mm, SS, IP69K, M12-conn. 10-36VDC, 3-w.PNP/2w.PNP/NPN Sensing range 0-8mm",
+      "doc_no": "1241250-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "GS11",
+      "qty": 1,
+      "article_no": "344254-0100",
+      "denomination": "Sensor cable, EVT005",
+      "type": "Cable length 10 m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "GS12",
+      "qty": 1,
+      "article_no": "344254-0100",
+      "denomination": "Sensor cable, EVT005",
+      "type": "Cable length 10 m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "GS12",
+      "qty": 1,
+      "article_no": "90510-0270",
+      "denomination": "Proximity switch",
+      "type": "M18x1 L=70mm, SS, IP69K, M12-conn. 10-36VDC, 3-w.PNP/2w.PNP/NPN Sensing range 0-8mm",
+      "doc_no": "1241250-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "GS16",
+      "qty": 1,
+      "article_no": "90510-0270",
+      "denomination": "Proximity switch",
+      "type": "M18x1 L=70mm, SS, IP69K, M12-conn. 10-36VDC, 3-w.PNP/2w.PNP/NPN Sensing range 0-8mm",
+      "doc_no": "1241250-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "GS16",
+      "qty": 1,
+      "article_no": "344254-0100",
+      "denomination": "Sensor cable, EVT005",
+      "type": "Cable length 10 m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "GS20",
+      "qty": 1,
+      "article_no": "344254-0100",
+      "denomination": "Sensor cable, EVT005",
+      "type": "Cable length 10 m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "GS20",
+      "qty": 1,
+      "article_no": "90510-0270",
+      "denomination": "Proximity switch",
+      "type": "M18x1 L=70mm, SS, IP69K, M12-conn. 10-36VDC, 3-w.PNP/2w.PNP/NPN Sensing range 0-8mm",
+      "doc_no": "1241250-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "GS21",
+      "qty": 1,
+      "article_no": "90510-0270",
+      "denomination": "Proximity switch",
+      "type": "M18x1 L=70mm, SS, IP69K, M12-conn. 10-36VDC, 3-w.PNP/2w.PNP/NPN Sensing range 0-8mm",
+      "doc_no": "1241250-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "GS21",
+      "qty": 1,
+      "article_no": "344254-0100",
+      "denomination": "Sensor cable, EVT005",
+      "type": "Cable length 10 m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "M4",
+      "qty": 1,
+      "article_no": "6-9613 39 4833",
+      "denomination": "Centrifugal pump",
+      "type": "LKHM-114/163-FSS-SMS-15.0kW-EPDM is C/SiC 50Hz230D/400-415Y ABB IE3",
+      "doc_no": "1214248-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PC46",
+      "qty": 1,
+      "article_no": "6-31801 1768 1",
+      "denomination": "Reducing valve",
+      "type": "BRV2S DN20 ISO7/1-Rp3/4 GGG-40.3 0.14-1.7bar(g) Kvs=2.5",
+      "doc_no": "1248679-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PC51A",
+      "qty": 1,
+      "article_no": "90503-3190",
+      "denomination": "Air regulator",
+      "type": "REG P ISO228/1-G1/4 0-8bar(G) lockable",
+      "doc_no": "1241164-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PC53B",
+      "qty": 1,
+      "article_no": "90503-3190",
+      "denomination": "Air regulator",
+      "type": "REG P ISO228/1-G1/4 0-8bar(G) lockable",
+      "doc_no": "1241164-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PI03",
+      "qty": 1,
+      "article_no": "90522-0152",
+      "denomination": "Pressure gauge",
+      "type": "SMS38 0-2.5MPa/0-25bar(g) v. 233.50.100 lower mount990.19 DN 1 1/2\" union nut",
+      "doc_no": "1212430-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PI07",
+      "qty": 1,
+      "article_no": "90522-0156",
+      "denomination": "Pressure gauge",
+      "type": "SMS38 0-1MPa/0-10bar(g) h. 233.50.100 lower back mount990.19 DN 1 1/2\" union nut",
+      "doc_no": "1212430-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PI46",
+      "qty": 1,
+      "article_no": "90522-0140",
+      "denomination": "Pressure gauge",
+      "type": "G3/8\" 0-1MPa/0-10bar(g) v. 233.50.100 lower mount",
+      "doc_no": "1212430-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PT06",
+      "qty": 1,
+      "article_no": "90515-5430",
+      "denomination": "Pressure transmitter",
+      "type": "PMP55 SMS38.0 0-10bar(g) 4-20mA , F15 SS house Cablegland M20x1.5 IP66/68",
+      "doc_no": "1229086-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PT51",
+      "qty": 1,
+      "article_no": "90515-5472",
+      "denomination": "Pressure transmitter",
+      "type": "PMP55 SMS38.0 0-37.5bar(g) 4-20mA , F15 SS house Cablegland M20x1.5 IP66/68",
+      "doc_no": "1229086-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PT61A",
+      "qty": 1,
+      "article_no": "90515-5430",
+      "denomination": "Pressure transmitter",
+      "type": "PMP55 SMS38.0 0-10bar(g) 4-20mA , F15 SS house Cablegland M20x1.5 IP66/68",
+      "doc_no": "1229086-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PT61B",
+      "qty": 1,
+      "article_no": "90516-3155",
+      "denomination": "Pressure transmitter",
+      "type": "PMP51 ISO228 G1/2 0-10bar(g) 4-20mA F15 SS house w/odisplay Cable gland M20x1.5 IP66/68",
+      "doc_no": "1229086-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PT64A",
+      "qty": 1,
+      "article_no": "90515-5430",
+      "denomination": "Pressure transmitter",
+      "type": "PMP55 SMS38.0 0-10bar(g) 4-20mA , F15 SS house Cablegland M20x1.5 IP66/68",
+      "doc_no": "1229086-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PT64B",
+      "qty": 1,
+      "article_no": "90516-3155",
+      "denomination": "Pressure transmitter",
+      "type": "PMP51 ISO228 G1/2 0-10bar(g) 4-20mA F15 SS house w/odisplay Cable gland M20x1.5 IP66/68",
+      "doc_no": "1229086-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PT67A",
+      "qty": 1,
+      "article_no": "90515-5430",
+      "denomination": "Pressure transmitter",
+      "type": "PMP55 SMS38.0 0-10bar(g) 4-20mA , F15 SS house Cablegland M20x1.5 IP66/68",
+      "doc_no": "1229086-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PT67B",
+      "qty": 1,
+      "article_no": "90516-3155",
+      "denomination": "Pressure transmitter",
+      "type": "PMP51 ISO228 G1/2 0-10bar(g) 4-20mA F15 SS house w/odisplay Cable gland M20x1.5 IP66/68",
+      "doc_no": "1229086-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PX78",
+      "qty": 1,
+      "article_no": "90510-8981",
+      "denomination": "I/P converter",
+      "type": "ITV1050 0-0.9MPa 24V DC 4-20m A/PNP ISO228/1-G3/8 M12Male 4-pin",
+      "doc_no": "1224084-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "PX78",
+      "qty": 1,
+      "article_no": "344254-0100",
+      "denomination": "Sensor cable, EVT005",
+      "type": "Cable length 10 m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "Sign",
+      "qty": 1,
+      "article_no": "6-34144 8572 1",
+      "denomination": "Sign",
+      "type": "Open route Self adhesive plastic film According to drawing:34144-8572_02",
+      "doc_no": "3284690-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "Sign",
+      "qty": 1,
+      "article_no": "6-34144 8571 1",
+      "denomination": "Sign",
+      "type": "Self adhesive plastic film Air pressure for V51 According todrawing: 34144-8571_01",
+      "doc_no": "3284690-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "Stripe",
+      "qty": 20,
+      "article_no": "90511-8563",
+      "denomination": "Stripe",
+      "type": "Blue, height 70mm Supplied on roll length 25m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "SX04",
+      "qty": 1,
+      "article_no": "",
+      "denomination": "Frequency converter",
+      "type": "",
+      "doc_no": "",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT02",
+      "qty": 1,
+      "article_no": "90510-5633",
+      "denomination": "Temperature transmitter",
+      "type": "TPT12 4-20mA Measuring range 0-160 deg. C",
+      "doc_no": "3283902-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT02",
+      "qty": 1,
+      "article_no": "344254-0100",
+      "denomination": "Sensor cable, EVT005",
+      "type": "Cable length 10 m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT03",
+      "qty": 1,
+      "article_no": "344254-0100",
+      "denomination": "Sensor cable, EVT005",
+      "type": "Cable length 10 m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT03",
+      "qty": 1,
+      "article_no": "90510-5633",
+      "denomination": "Temperature transmitter",
+      "type": "TPT12 4-20mA Measuring range 0-160 deg. C",
+      "doc_no": "3283902-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT06",
+      "qty": 1,
+      "article_no": "344254-0100",
+      "denomination": "Sensor cable, EVT005",
+      "type": "Cable length 10 m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT06",
+      "qty": 1,
+      "article_no": "90510-5633",
+      "denomination": "Temperature transmitter",
+      "type": "TPT12 4-20mA Measuring range 0-160 deg. C",
+      "doc_no": "3283902-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT08",
+      "qty": 1,
+      "article_no": "344254-0100",
+      "denomination": "Sensor cable, EVT005",
+      "type": "Cable length 10 m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT08",
+      "qty": 1,
+      "article_no": "90510-5633",
+      "denomination": "Temperature transmitter",
+      "type": "TPT12 4-20mA Measuring range 0-160 deg. C",
+      "doc_no": "3283902-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT26",
+      "qty": 1,
+      "article_no": "90510-5633",
+      "denomination": "Temperature transmitter",
+      "type": "TPT12 4-20mA Measuring range 0-160 deg. C",
+      "doc_no": "3283902-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT26",
+      "qty": 1,
+      "article_no": "344254-0150",
+      "denomination": "Sensor cable",
+      "type": "",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT51",
+      "qty": 1,
+      "article_no": "344254-0100",
+      "denomination": "Sensor cable, EVT005",
+      "type": "Cable length 10 m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT51",
+      "qty": 1,
+      "article_no": "90510-5633",
+      "denomination": "Temperature transmitter",
+      "type": "TPT12 4-20mA Measuring range 0-160 deg. C",
+      "doc_no": "3283902-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT63",
+      "qty": 1,
+      "article_no": "90510-5633",
+      "denomination": "Temperature transmitter",
+      "type": "TPT12 4-20mA Measuring range 0-160 deg. C",
+      "doc_no": "3283902-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT63",
+      "qty": 1,
+      "article_no": "344254-0150",
+      "denomination": "Sensor cable",
+      "type": "",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT64",
+      "qty": 1,
+      "article_no": "344254-0150",
+      "denomination": "Sensor cable",
+      "type": "",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT64",
+      "qty": 1,
+      "article_no": "90510-5633",
+      "denomination": "Temperature transmitter",
+      "type": "TPT12 4-20mA Measuring range 0-160 deg. C",
+      "doc_no": "3283902-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT67",
+      "qty": 1,
+      "article_no": "344254-0150",
+      "denomination": "Sensor cable",
+      "type": "",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT67",
+      "qty": 1,
+      "article_no": "90510-5633",
+      "denomination": "Temperature transmitter",
+      "type": "TPT12 4-20mA Measuring range 0-160 deg. C",
+      "doc_no": "3283902-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT71 REF",
+      "qty": 1,
+      "article_no": "",
+      "denomination": "Plug for PT100",
+      "type": "",
+      "doc_no": "",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT71",
+      "qty": 1,
+      "article_no": "90510-5633",
+      "denomination": "Temperature transmitter",
+      "type": "TPT12 4-20mA Measuring range 0-160 deg. C",
+      "doc_no": "3283902-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "TT71",
+      "qty": 1,
+      "article_no": "344254-0100",
+      "denomination": "Sensor cable, EVT005",
+      "type": "Cable length 10 m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V26",
+      "qty": 1,
+      "article_no": "90518-7758",
+      "denomination": "Sensor cable",
+      "type": "15m, PVC, 8-pole 1xM12 angled, A-coded",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V26",
+      "qty": 1,
+      "article_no": "90513-3131",
+      "denomination": "Regulating valve",
+      "type": "8802YG/90E/8694 W DN40 NC SS/PTFE Kvs 34 SMS 300838,0",
+      "doc_no": "1226927-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V27",
+      "qty": 1,
+      "article_no": "6-9613 36 0066",
+      "denomination": "Single seat valve",
+      "type": "SSV-W-38-210-NO-EPDM Change Over",
+      "doc_no": "1221122-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V28",
+      "qty": 1,
+      "article_no": "6-9613 36 0066",
+      "denomination": "Single seat valve",
+      "type": "SSV-W-38-210-NO-EPDM Change Over",
+      "doc_no": "1221122-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V46",
+      "qty": 1,
+      "article_no": "6-31801 9971 2",
+      "denomination": "Seat valve",
+      "type": "2000/63 W25*1.2 NC 11bar(g) Kvs=19",
+      "doc_no": "1218030-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V49",
+      "qty": 1,
+      "article_no": "90512-8694",
+      "denomination": "Valve connector",
+      "type": "Type A, SAC-3P-10,0-PVC/A Cable 10m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V49",
+      "qty": 1,
+      "article_no": "90521-7203",
+      "denomination": "Regulating valve",
+      "type": "3321/3372-3725 120cm2 DN20 Kvs6.3 NC EN1092 PN16 EN-JL1040 SS/SS Pressure gauge",
+      "doc_no": "1224797-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V50",
+      "qty": 1,
+      "article_no": "90521-7203",
+      "denomination": "Regulating valve",
+      "type": "3321/3372-3725 120cm2 DN20 Kvs6.3 NC EN1092 PN16 EN-JL1040 SS/SS Pressure gauge",
+      "doc_no": "1224797-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V50",
+      "qty": 1,
+      "article_no": "90512-8694",
+      "denomination": "Valve connector",
+      "type": "Type A, SAC-3P-10,0-PVC/A Cable 10m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V51",
+      "qty": 1,
+      "article_no": "6-31801 5878 2",
+      "denomination": "Seat valve",
+      "type": "YQ/T W38 AISI316L SS/SS Act.108 A/A Empty Giotto Top",
+      "doc_no": "1222092-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V52",
+      "qty": 1,
+      "article_no": "6-9613 36 0040",
+      "denomination": "Single seat valve",
+      "type": "SSV-W-38-300-NO-EPDM Shut off",
+      "doc_no": "1221121-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V53",
+      "qty": 1,
+      "article_no": "90510-1963",
+      "denomination": "Change over valve",
+      "type": "ZQ/LL W38 AISI316L SS/PTFE Act. 108 A/A, Empty GiottoTop",
+      "doc_no": "1222092-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V63",
+      "qty": 1,
+      "article_no": "90518-7758",
+      "denomination": "Sensor cable",
+      "type": "15m, PVC, 8-pole 1xM12 angled, A-coded",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V63",
+      "qty": 1,
+      "article_no": "90513-3139",
+      "denomination": "Regulating valve",
+      "type": "8802YG/70E/8694 W DN32 NC SS/PTFE Kvs 23 SMS 300838,0",
+      "doc_no": "1226927-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V64",
+      "qty": 1,
+      "article_no": "90513-3138",
+      "denomination": "Regulating valve",
+      "type": "8802YG/70E/8694 W DN20 NC SS/PTFE Kvs 10 SMS 300825,0",
+      "doc_no": "1226927-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V64",
+      "qty": 1,
+      "article_no": "90518-7758",
+      "denomination": "Sensor cable",
+      "type": "15m, PVC, 8-pole 1xM12 angled, A-coded",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V67",
+      "qty": 1,
+      "article_no": "90513-3138",
+      "denomination": "Regulating valve",
+      "type": "8802YG/70E/8694 W DN20 NC SS/PTFE Kvs 10 SMS 300825,0",
+      "doc_no": "1226927-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V67",
+      "qty": 1,
+      "article_no": "90518-7758",
+      "denomination": "Sensor cable",
+      "type": "15m, PVC, 8-pole 1xM12 angled, A-coded",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V71",
+      "qty": 1,
+      "article_no": "6-9613 36 0577",
+      "denomination": "Single seat valve",
+      "type": "SSV-W-38-220-NC-EPDM as. Change Over",
+      "doc_no": "1222462-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V778",
+      "qty": 1,
+      "article_no": "6-9613 36 0506",
+      "denomination": "Single seat valve",
+      "type": "SSV-W-51-200-NC-EPDM as. Shut off",
+      "doc_no": "1222444-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V78",
+      "qty": 1,
+      "article_no": "6-32422 0302 1",
+      "denomination": "Expansion valve",
+      "type": "AISI 316 APC W ISO 51 Kvs=14",
+      "doc_no": "1215611-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V78",
+      "qty": 1,
+      "article_no": "6-32422 0724 1",
+      "denomination": "Protection cover",
+      "type": "For APC dia51mm With hinge and pipe holder, EN 1.4301Acc. to dwg:32422-0724 Rev.01",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V90",
+      "qty": 1,
+      "article_no": "90510-1963",
+      "denomination": "Change over valve",
+      "type": "ZQ/LL W38 AISI316L SS/PTFE Act. 108 A/A, Empty GiottoTop",
+      "doc_no": "1222092-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V91",
+      "qty": 1,
+      "article_no": "6-9613 36 0040",
+      "denomination": "Single seat valve",
+      "type": "SSV-W-38-300-NO-EPDM Shut off",
+      "doc_no": "1221121-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V92",
+      "qty": 1,
+      "article_no": "6-9613 36 0053",
+      "denomination": "Single seat valve",
+      "type": "SSV-W-38-210-NC-EPDM Change Over",
+      "doc_no": "1221122-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V93",
+      "qty": 1,
+      "article_no": "90521-5830",
+      "denomination": "Seat valve",
+      "type": "ZQ/T W38 AISI316L SS/PTFE Act.108 A/A Empty Giotto Top",
+      "doc_no": "1222092-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V96",
+      "qty": 1,
+      "article_no": "90503-4671",
+      "denomination": "Change over valve",
+      "type": "ZQ/LT W38 AISI316L SS/PTFE Act.108 A/A Empty Giotto Top",
+      "doc_no": "1222092-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V97",
+      "qty": 1,
+      "article_no": "90512-8694",
+      "denomination": "Valve connector",
+      "type": "Type A, SAC-3P-10,0-PVC/A Cable 10m",
+      "doc_no": "No doc.",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V97",
+      "qty": 1,
+      "article_no": "90521-7263",
+      "denomination": "Regulating valve",
+      "type": "3347/3372-3725 120cm2 W38.0x1.2 NO EN10357-D PN161.4409 SS/SS Kvs16.0",
+      "doc_no": "1224799-0101",
+      "note": "",
+      "rev": ""
+    },
+    {
+      "item_no": "1",
+      "label": "V98",
+      "qty": 1,
+      "article_no": "6-9613 36 0529",
+      "denomination": "Single seat valve",
+      "type": "SSV-W-38-300-NC-EPDM as. Shut off",
+      "doc_no": "1222444-0101",
+      "note": "",
+      "rev": ""
+    }
+  ]
+}
