@@ -53,15 +53,20 @@
               },
               {
                 "color": "yellow",
-                "value": 14000
+                "value": 12000
               },
               {
                 "color": "red",
-                "value": 18000
+                "value": 15000
               }
             ]
           },
-          "unit": "litre"
+          "unit": "LPH",
+          "custom": {
+            "suffix": " LPH"
+          },
+          "decimals": 1,
+          "max": 15000
         },
         "overrides": []
       },
@@ -124,7 +129,12 @@
               }
             ]
           },
-          "unit": "celsius"
+          "unit": "LPH",
+          "max": 15000,
+          "decimals": 1,
+          "custom": {
+            "suffix": " LPH"
+          }
         },
         "overrides": []
       },
@@ -152,11 +162,11 @@
       "pluginVersion": "10.0.0",
       "targets": [
         {
-          "query": "from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"TT01\" and r._field == \"value_scaled\") |> yield(name: \"TT01\")",
+          "query": "from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"FT10\" and r._field == \"value_scaled\") |> yield(name: \"FT10\")",
           "refId": "A"
         }
       ],
-      "title": "TT01 - Sterilizer (138.4°C)",
+      "title": "FT10 - Hotwater Flow",
       "type": "stat"
     },
     {
@@ -187,7 +197,9 @@
               }
             ]
           },
-          "unit": "custom:BarG"
+          "unit": "celsius",
+          "decimals": 2,
+          "max": 200
         },
         "overrides": []
       },
@@ -215,11 +227,11 @@
       "pluginVersion": "10.0.0",
       "targets": [
         {
-          "query": "from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"PT01\" and r._field == \"value_scaled\") |> yield(name: \"PT01\")",
+          "query": "from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"TT01\" and r._field == \"value_scaled\") |> yield(name: \"TT01\")",
           "refId": "A"
         }
       ],
-      "title": "PT01 - Product Pressure",
+      "title": "TT01 - Raw Product In Feed",
       "type": "stat"
     },
     {
@@ -250,7 +262,8 @@
               }
             ]
           },
-          "unit": "percent"
+          "unit": "celsius",
+          "max": 200
         },
         "overrides": []
       },
@@ -278,11 +291,11 @@
       "pluginVersion": "10.0.0",
       "targets": [
         {
-          "query": "from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"LT08\" and r._field == \"value_scaled\") |> yield(name: \"LT08\")",
+          "query": "from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"TT44\" and r._field == \"value_scaled\") |> yield(name: \"TT44\")",
           "refId": "A"
         }
       ],
-      "title": "LT08 - Buffer Tank Level",
+      "title": "TT44 - Sec 11 HC Inlet Temp",
       "type": "stat"
     },
     {
@@ -305,7 +318,9 @@
               }
             ]
           },
-          "unit": "custom:BarG"
+          "unit": "celsius",
+          "decimals": 2,
+          "max": 200
         },
         "overrides": []
       },
@@ -333,11 +348,11 @@
       "pluginVersion": "10.0.0",
       "targets": [
         {
-          "query": "from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"PT44\" and r._field == \"value_scaled\") |> yield(name: \"PT44\")",
+          "query": "from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"TT42\" and r._field == \"value_scaled\") |> yield(name: \"TT42\")",
           "refId": "A"
         }
       ],
-      "title": "PT44 - Steam Inlet Pressure",
+      "title": "TT42 - Product Outlet HC Temp",
       "type": "stat"
     },
     {
@@ -359,7 +374,9 @@
                 "value": null
               }
             ]
-          }
+          },
+          "unit": "celsius",
+          "max": 200
         },
         "overrides": []
       },
@@ -387,13 +404,11 @@
       "pluginVersion": "10.0.0",
       "targets": [
         {
-          "dataset": "thpack_dashboard",
-          "format": "table",
-          "rawSql": "SELECT COUNT(*) AS 'Configured Sensors (MySQL Master)' FROM process_instruments;",
+          "query": "from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"TT06\" and r._field == \"value_scaled\") |> yield(name: \"TT06\")",
           "refId": "A"
         }
       ],
-      "title": "MySQL Config Master Sensors",
+      "title": "TT06 - Sec 15 Product Temp",
       "type": "stat"
     },
     {
@@ -425,7 +440,8 @@
             "fillOpacity": 8,
             "gradientMode": "opacity"
           },
-          "unit": "celsius"
+          "unit": "celsius",
+          "max": 200
         },
         "overrides": []
       },
@@ -487,10 +503,11 @@
           },
           "custom": {
             "minVizHeight": 10,
-            "minVizWidth": 0
+            "minVizWidth": 0,
+            "suffix": " LPH"
           },
           "mappings": [],
-          "max": 25000,
+          "max": 15000,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -501,15 +518,16 @@
               },
               {
                 "color": "green",
-                "value": 10000
+                "value": 12000
               },
               {
                 "color": "yellow",
-                "value": 20000
+                "value": 15000
               }
             ]
           },
-          "unit": "litre"
+          "unit": "LPH",
+          "decimals": 1
         },
         "overrides": []
       },
@@ -560,9 +578,12 @@
             "showPoints": "auto",
             "spanNulls": false,
             "fillOpacity": 12,
-            "gradientMode": "opacity"
+            "gradientMode": "opacity",
+            "suffix": " LPH"
           },
-          "unit": "litre"
+          "unit": "LPH",
+          "decimals": 1,
+          "max": 15000
         },
         "overrides": []
       },
@@ -609,7 +630,7 @@
         "y": 24
       },
       "id": 108,
-      "title": "🌡️ Section 4: Section 11 Thermal Approach: TT44, TT08, and (TT08 - TT44)",
+      "title": "🔥 Section 5: Section 11 Thermal Approach: TT44, TT08, and (TT08 - TT44)",
       "type": "row"
     },
     {
@@ -627,7 +648,7 @@
             "minVizWidth": 0
           },
           "mappings": [],
-          "max": 160,
+          "max": 200,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -699,7 +720,8 @@
             "fillOpacity": 12,
             "gradientMode": "opacity"
           },
-          "unit": "celsius"
+          "unit": "celsius",
+          "max": 200
         },
         "overrides": []
       },
@@ -746,7 +768,7 @@
         "y": 32
       },
       "id": 111,
-      "title": "♨️ Section 5: Steam Heating & Heat Recovery Correlation: PT44, TT44, TT08, TT10",
+      "title": "💨 Section 6: Steam Heating & Heat Recovery Correlation: PT44, TT44, TT08, TT10",
       "type": "row"
     },
     {
@@ -766,7 +788,8 @@
             "fillOpacity": 8,
             "gradientMode": "opacity"
           },
-          "unit": "celsius"
+          "unit": "celsius",
+          "max": 200
         },
         "overrides": [
           {
@@ -923,7 +946,7 @@
         "y": 42
       },
       "id": 104,
-      "title": "🛡️ Section 6: Section 14 Differential Pressure: PT61A, PT61B, and (PT61A - PT61B)",
+      "title": "⚖️ Section 4: Differential Pressure Monitoring: Sec 14 (PT61A/B), Sec 15 (PT64A/B), Sec 12 (PT67A/B)",
       "type": "row"
     },
     {
@@ -938,7 +961,8 @@
           },
           "custom": {
             "minVizHeight": 10,
-            "minVizWidth": 0
+            "minVizWidth": 0,
+            "suffix": " BarG"
           },
           "mappings": [],
           "max": 10,
@@ -960,7 +984,8 @@
               }
             ]
           },
-          "unit": "custom:BarG"
+          "unit": "none",
+          "decimals": 2
         },
         "overrides": []
       },
@@ -1011,9 +1036,11 @@
             "showPoints": "auto",
             "spanNulls": false,
             "fillOpacity": 12,
-            "gradientMode": "opacity"
+            "gradientMode": "opacity",
+            "suffix": " BarG"
           },
-          "unit": "custom:BarG"
+          "unit": "none",
+          "decimals": 2
         },
         "overrides": []
       },
@@ -1075,7 +1102,8 @@
           },
           "custom": {
             "minVizHeight": 10,
-            "minVizWidth": 0
+            "minVizWidth": 0,
+            "suffix": " BarG"
           },
           "mappings": [],
           "max": 10,
@@ -1097,7 +1125,8 @@
               }
             ]
           },
-          "unit": "custom:BarG"
+          "unit": "none",
+          "decimals": 2
         },
         "overrides": []
       },
@@ -1148,9 +1177,11 @@
             "showPoints": "auto",
             "spanNulls": false,
             "fillOpacity": 12,
-            "gradientMode": "opacity"
+            "gradientMode": "opacity",
+            "suffix": " BarG"
           },
-          "unit": "custom:BarG"
+          "unit": "none",
+          "decimals": 2
         },
         "overrides": []
       },
@@ -1212,7 +1243,8 @@
           },
           "custom": {
             "minVizHeight": 10,
-            "minVizWidth": 0
+            "minVizWidth": 0,
+            "suffix": " BarG"
           },
           "mappings": [],
           "max": 10,
@@ -1234,7 +1266,8 @@
               }
             ]
           },
-          "unit": "custom:BarG"
+          "unit": "none",
+          "decimals": 2
         },
         "overrides": []
       },
@@ -1285,9 +1318,11 @@
             "showPoints": "auto",
             "spanNulls": false,
             "fillOpacity": 12,
-            "gradientMode": "opacity"
+            "gradientMode": "opacity",
+            "suffix": " BarG"
           },
-          "unit": "custom:BarG"
+          "unit": "none",
+          "decimals": 2
         },
         "overrides": []
       },
@@ -1334,7 +1369,7 @@
         "y": 66
       },
       "id": 102,
-      "title": "📈 Section 9: Buffer Tank (BTD) Level Continuous Line Graph (InfluxDB)",
+      "title": "🛢️ Section 7: Buffer Tank (BTD) Level Continuous Line Graph (InfluxDB)",
       "type": "row"
     },
     {
@@ -1401,7 +1436,7 @@
         "y": 75
       },
       "id": 110,
-      "title": "🖥️ Section 10: Server & Gateway Infrastructure Health (Telegraf Telemetry)",
+      "title": "🖥️ Section 8: Server & Gateway Infrastructure Health (Telegraf Telemetry)",
       "type": "row"
     },
     {
@@ -1870,7 +1905,7 @@
         "y": 94
       },
       "id": 103,
-      "title": "⚙️ Section 11: Pump Inverters & Motor Drives Configuration (MySQL Config Master)",
+      "title": "⚙️ Section 9: Pump Inverters & Motor Drives Configuration (MySQL Config Master)",
       "type": "row"
     },
     {
@@ -1942,7 +1977,7 @@
         "y": 102
       },
       "id": 101,
-      "title": "📋 Section 12: All 65 SCADA Instruments Catalog & Alarm Interlocks (MySQL Master)",
+      "title": "📋 Section 10: All SCADA Instruments Catalog & Alarm Interlocks (MySQL Master)",
       "type": "row"
     },
     {

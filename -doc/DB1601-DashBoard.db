@@ -1,0 +1,15 @@
+﻿DATA_BLOCK "DB1601-DashBoard"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+NON_RETAIN
+   VAR 
+      xEng { S7_SetPoint := 'False'} : Array[0..31] of "xUDT_EngValue";
+      xPID : Array[0..31] of "xUDT_EngValue";
+      xStatus { S7_SetPoint := 'True'} : Array[0..31] of Int;
+   END_VAR
+
+
+BEGIN
+
+END_DATA_BLOCK
+

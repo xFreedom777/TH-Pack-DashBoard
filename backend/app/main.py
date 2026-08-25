@@ -31,14 +31,15 @@ async def startup_event():
     asyncio.create_task(background_plc_poll_loop())
 
 async def background_plc_poll_loop():
+    print("Started background Siemens S7 PLC polling loop.")
     while True:
         try:
-            db_map = fetch_all("SELECT * FROM vw_siemens_plc_db_map;")
+            db_map = await asyncio.to_thread(fetch_all, "SELECT * FROM vw_siemens_plc_db_map;")
             if db_map:
-                readings = plc_reader.read_datablock_tags(db_map)
+                readings = await asyncio.to_thread(plc_reader.read_datablock_tags, db_map)
                 
                 # 1. Write all live readings to InfluxDB time-series database (Dedicated Time-Series Storage)
-                influx_writer.write_readings(readings)
+                await asyncio.to_thread(influx_writer.write_readings, readings)
 
                 # 2. Broadcast live readings to active WebSockets for UI
                 if connected_websockets:
@@ -63,27 +64,30 @@ def root():
     }
 
 @app.get("/api/v1/health")
-def health_check():
+async def health_check():
+    is_conn = plc_reader.is_connected
+    if not is_conn:
+        is_conn = plc_reader.connect()
     return {
         "status": "HEALTHY",
-        "plc_connected": plc_reader.is_connected,
+        "plc_connected": bool(is_conn),
         "active_websockets": len(connected_websockets)
     }
 
 @app.get("/api/v1/instruments")
-def get_instruments():
+async def get_instruments():
     return fetch_all("SELECT * FROM vw_scada_live_metrics;")
 
 @app.get("/api/v1/plc/datablocks")
-def get_siemens_db_map():
+async def get_siemens_db_map():
     return fetch_all("SELECT * FROM vw_siemens_plc_db_map;")
 
 @app.get("/api/v1/alarms")
-def get_alarms():
+async def get_alarms():
     return fetch_all("SELECT * FROM vw_instrument_alarms;")
 
 @app.get("/api/v1/telemetry/live")
-def get_live_telemetry():
+async def get_live_telemetry():
     db_map = fetch_all("SELECT * FROM vw_siemens_plc_db_map;")
     if not db_map:
         return []

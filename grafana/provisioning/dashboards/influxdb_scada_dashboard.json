@@ -53,15 +53,20 @@
               },
               {
                 "color": "yellow",
-                "value": 14000
+                "value": 12000
               },
               {
                 "color": "red",
-                "value": 18000
+                "value": 15000
               }
             ]
           },
-          "unit": "litre"
+          "unit": "LPH",
+          "custom": {
+            "suffix": " LPH"
+          },
+          "decimals": 1,
+          "max": 15000
         },
         "overrides": []
       },
@@ -93,7 +98,7 @@
           "refId": "A"
         }
       ],
-      "title": "FT04 - Product Flow (InfluxDB)",
+      "title": "FT04 - Product Flow",
       "type": "stat"
     },
     {
@@ -124,7 +129,12 @@
               }
             ]
           },
-          "unit": "celsius"
+          "unit": "LPH",
+          "max": 15000,
+          "decimals": 1,
+          "custom": {
+            "suffix": " LPH"
+          }
         },
         "overrides": []
       },
@@ -152,11 +162,11 @@
       "pluginVersion": "10.0.0",
       "targets": [
         {
-          "query": "from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"TT01\" and r._field == \"value_scaled\") |> yield(name: \"TT01\")",
+          "query": "from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"FT10\" and r._field == \"value_scaled\") |> yield(name: \"FT10\")",
           "refId": "A"
         }
       ],
-      "title": "TT01 - Sterilizer (InfluxDB)",
+      "title": "FT10 - Hotwater Flow",
       "type": "stat"
     },
     {
@@ -187,7 +197,12 @@
               }
             ]
           },
-          "unit": "custom:BarG"
+          "unit": "celsius",
+          "custom": {
+            "suffix": " BarG"
+          },
+          "decimals": 2,
+          "max": 200
         },
         "overrides": []
       },
@@ -215,11 +230,11 @@
       "pluginVersion": "10.0.0",
       "targets": [
         {
-          "query": "from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"PT01\" and r._field == \"value_scaled\") |> yield(name: \"PT01\")",
+          "query": "from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"TT01\" and r._field == \"value_scaled\") |> yield(name: \"TT01\")",
           "refId": "A"
         }
       ],
-      "title": "PT01 - Pressure (InfluxDB)",
+      "title": "TT01 - Raw Product In Feed",
       "type": "stat"
     },
     {
@@ -250,7 +265,8 @@
               }
             ]
           },
-          "unit": "percent"
+          "unit": "celsius",
+          "max": 200
         },
         "overrides": []
       },
@@ -278,11 +294,11 @@
       "pluginVersion": "10.0.0",
       "targets": [
         {
-          "query": "from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"LT08\" and r._field == \"value_scaled\") |> yield(name: \"LT08\")",
+          "query": "from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"TT44\" and r._field == \"value_scaled\") |> yield(name: \"TT44\")",
           "refId": "A"
         }
       ],
-      "title": "LT08 - Buffer Level (InfluxDB)",
+      "title": "TT44 - Sec 11 HC Inlet Temp",
       "type": "stat"
     },
     {
@@ -305,14 +321,19 @@
               }
             ]
           },
-          "unit": "custom:BarG"
+          "unit": "celsius",
+          "custom": {
+            "suffix": " BarG"
+          },
+          "decimals": 2,
+          "max": 200
         },
         "overrides": []
       },
       "gridPos": {
         "h": 4,
         "w": 4,
-        "x": 16,
+        "x": 20,
         "y": 1
       },
       "id": 5,
@@ -333,11 +354,11 @@
       "pluginVersion": "10.0.0",
       "targets": [
         {
-          "query": "from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"PT44\" and r._field == \"value_scaled\") |> yield(name: \"PT44\")",
+          "query": "from(bucket: \"telemetry\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"process_telemetry\" and r.tag_name == \"TT06\" and r._field == \"value_scaled\") |> yield(name: \"TT06\")",
           "refId": "A"
         }
       ],
-      "title": "PT44 - Steam Pressure (InfluxDB)",
+      "title": "TT06 - Sec 15 Product Temp",
       "type": "stat"
     },
     {
@@ -423,7 +444,8 @@
             "fillOpacity": 8,
             "gradientMode": "opacity"
           },
-          "unit": "celsius"
+          "unit": "celsius",
+          "max": 200
         },
         "overrides": []
       },
@@ -470,7 +492,7 @@
         "y": 16
       },
       "id": 102,
-      "title": "🌊 Section 3: Flow Rates & Differential Pressures (InfluxDB Flux)",
+      "title": " Section 4: Differential Pressure Monitoring (PT61A/B, PT64A/B, PT67A/B)",
       "type": "row"
     },
     {
@@ -488,9 +510,12 @@
             "showPoints": "auto",
             "spanNulls": false,
             "fillOpacity": 12,
-            "gradientMode": "opacity"
+            "gradientMode": "opacity",
+            "suffix": " LPH"
           },
-          "unit": "litre"
+          "unit": "LPH",
+          "decimals": 1,
+          "max": 15000
         },
         "overrides": []
       },
@@ -543,9 +568,11 @@
             "showPoints": "auto",
             "spanNulls": false,
             "fillOpacity": 12,
-            "gradientMode": "opacity"
+            "gradientMode": "opacity",
+            "suffix": " BarG"
           },
-          "unit": "custom:BarG"
+          "unit": "BarG",
+          "decimals": 2
         },
         "overrides": []
       },

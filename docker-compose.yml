@@ -42,11 +42,13 @@ services:
       MYSQL_USER: ${MYSQL_USER:-thpack_user}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-thpack_pass123}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-thpack_dashboard}
-      PLC_IP_ADDRESS: ${PLC_IP_ADDRESS:-192.168.0.10}
+      PLC_IP_ADDRESS: ${PLC_IP_ADDRESS:-192.168.0.101}
       PLC_RACK: ${PLC_RACK:-0}
       PLC_SLOT: ${PLC_SLOT:-1}
     ports:
       - "${BACKEND_PORT:-8000}:8000"
+    volumes:
+      - ./backend/app:/app/app
     depends_on:
       mysql:
         condition: service_healthy
@@ -105,7 +107,7 @@ services:
       DOCKER_INFLUXDB_INIT_BUCKET: ${INFLUXDB_BUCKET:-telemetry}
       DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: ${INFLUXDB_ADMIN_TOKEN:-thpack-telemetry-token-123}
     ports:
-      - "${INFLUXDB_PORT:-8086}:8086"
+      - "${INFLUXDB_PORT:-8087}:8086"
     volumes:
       - influxdb_data:/var/lib/influxdb2
       - influxdb_config:/etc/influxdb2

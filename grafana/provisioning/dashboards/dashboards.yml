@@ -9,3 +9,6 @@ providers:
     editable: true
     options:
       path: /etc/grafana/provisioning/dashboards
+      foldersFromFilesStructure: false
+    updateIntervalSeconds: 5
+    allowUiUpdates: true

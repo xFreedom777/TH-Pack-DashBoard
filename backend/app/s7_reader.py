@@ -10,27 +10,44 @@ except Exception:
     HAS_SNAP7 = False
 
 class SiemensPLCReader:
-    def __init__(self, ip="192.168.0.10", rack=0, slot=1):
+    def __init__(self, ip="192.168.0.101", rack=0, slot=1):
         self.ip = os.getenv("PLC_IP_ADDRESS", ip)
         self.rack = int(os.getenv("PLC_RACK", rack))
         self.slot = int(os.getenv("PLC_SLOT", slot))
         self.client = None
-        self.is_connected = False
+        self._connected = False
+
+    @property
+    def is_connected(self):
+        if self.client and HAS_SNAP7:
+            try:
+                return bool(self.client.get_connected())
+            except Exception:
+                return False
+        return bool(self._connected)
 
     def connect(self):
         if not HAS_SNAP7:
             print("python-snap7 not installed or libsnap7.so unavailable; running in SIMULATED Mode.")
-            self.is_connected = False
+            self._connected = False
             return False
         try:
+            if self.client:
+                try:
+                    if self.client.get_connected():
+                        self._connected = True
+                        return True
+                    self.client.disconnect()
+                except Exception:
+                    pass
             self.client = snap7.client.Client()
             self.client.connect(self.ip, self.rack, self.slot)
-            self.is_connected = self.client.get_connected()
-            print(f"Siemens S7 PLC Connection State ({self.ip}): {self.is_connected}")
-            return self.is_connected
+            self._connected = bool(self.client.get_connected())
+            print(f"Siemens S7 PLC Connection State ({self.ip}): {self._connected}")
+            return self._connected
         except Exception as e:
             print(f"Siemens PLC Connection Exception ({self.ip}): {e}. Using SIMULATED mode.")
-            self.is_connected = False
+            self._connected = False
             return False
 
     def read_datablock_tags(self, tags_map):
@@ -40,7 +57,17 @@ class SiemensPLCReader:
         Returns list of parsed telemetry readouts with tag_name, scaled_value, raw_value, quality.
         """
         results = []
-        now = time.time()
+
+        # Update IP if provided in db_map
+        if tags_map and 'ip_address' in tags_map[0]:
+            target_ip = tags_map[0]['ip_address']
+            if target_ip:
+                self.ip = target_ip
+
+        if not self.is_connected or not self.client:
+            self.connect()
+        else:
+            self._connected = self.client.get_connected()
 
         for tag in tags_map:
             db_num = tag['db_number']
@@ -55,6 +82,9 @@ class SiemensPLCReader:
             raw_val = 0.0
             scaled_val = 0.0
             digital_val = False
+            quality = "GOOD"
+
+            read_success = False
 
             if self.is_connected and self.client:
                 try:
@@ -62,7 +92,7 @@ class SiemensPLCReader:
                     size = 4 if fmt == 'REAL' else 2
                     data = self.client.db_read(db_num, int(byte_off), size)
                     if fmt == 'REAL':
-                        scaled_val = get_real(data, 0)
+                        scaled_val = round(get_real(data, 0), 2)
                         raw_val = scaled_val
                     elif fmt == 'INT':
                         raw_val = float(get_int(data, 0))
@@ -70,26 +100,39 @@ class SiemensPLCReader:
                     elif fmt == 'BOOL':
                         digital_val = get_bool(data, 0, bit_off)
                         scaled_val = 1.0 if digital_val else 0.0
-                except Exception:
-                    self.is_connected = False
+                    read_success = True
+                except Exception as err:
+                    quality = "BAD"
+                    # Check if connection was actually lost
+                    if not self.client.get_connected():
+                        self._connected = False
 
-            if not self.is_connected:
-                # Simulated realistic S7 DataBlock telemetry
+            if not read_success and not self.is_connected:
+                # Simulated fallback only if PLC is not connected
                 if fmt == 'REAL':
-                    # Simulate realistic engineering values within scaled limits
-                    if 'FT' in tag_name: # Flow
-                        scaled_val = round(random.uniform(scale_eng_max * 0.6, scale_eng_max * 0.85), 2)
-                    elif 'TT' in tag_name or 'TIC' in tag_name: # Temperature
-                        scaled_val = round(138.4 + random.uniform(-0.4, 0.4), 2) if '138' in tag.get('description', '') else round(random.uniform(75.0, 95.0), 2)
-                    elif 'PT' in tag_name: # Pressure
-                        scaled_val = round(random.uniform(3.5, 8.2), 2)
-                    elif 'LT' in tag_name: # Level
+                    if 'FT' in tag_name:
+                        scaled_val = round(random.uniform(scale_eng_max * 0.65, scale_eng_max * 0.85), 2)
+                    elif 'TT' in tag_name or 'TIC' in tag_name:
+                        if 'Raw Product' in tag.get('description', ''):
+                            scaled_val = round(random.uniform(4.0, 10.0), 2)
+                        elif 'Outlet' in tag.get('description', '') or 'Sterile' in tag.get('description', ''):
+                            scaled_val = round(138.4 + random.uniform(-0.5, 0.5), 2)
+                        else:
+                            scaled_val = round(random.uniform(65.0, 95.0), 2)
+                    elif 'PT' in tag_name:
+                        scaled_val = round(random.uniform(3.5, 8.5), 2)
+                    elif 'LT' in tag_name:
                         scaled_val = round(random.uniform(45.0, 75.0), 2)
+                    elif 'SX' in tag_name:
+                        scaled_val = round(random.uniform(48.0, 50.0), 2)
                     else:
                         scaled_val = round(random.uniform(scale_eng_min, scale_eng_max), 2)
                     raw_val = round(scaled_val * 27648.0 / max(scale_eng_max, 1.0), 2)
-                else: # INT / BOOL digital switches
-                    digital_val = random.choice([True, True, True, False])
+                else:
+                    if 'HH' in tag_name or 'LL' in tag_name:
+                        digital_val = False
+                    else:
+                        digital_val = True
                     scaled_val = 1.0 if digital_val else 0.0
                     raw_val = scaled_val
 
@@ -105,7 +148,8 @@ class SiemensPLCReader:
                 "digital_value": digital_val,
                 "unit_of_measure": tag.get("engineering_unit", ""),
                 "description": tag.get("description", ""),
-                "quality_status": "GOOD"
+                "quality_status": quality
             })
 
         return results
+
