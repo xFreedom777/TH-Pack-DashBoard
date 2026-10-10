@@ -5,6 +5,24 @@
 > **Host Node:** `xuht-001` (`192.168.1.2`)  
 > **Target PLC:** Siemens SIMATIC S7-1500 (`192.168.1.11` / `192.168.0.101`)
 
+<div align="center">
+
+[![NODE.JS](https://img.shields.io/badge/NODE.JS-20.X_LTS-528540?style=for-the-badge&logo=nodedotjs&logoColor=white)](#)
+[![SIEMENS](https://img.shields.io/badge/SIEMENS-S7--1500_PLC-3c888d?style=for-the-badge&logo=siemens&logoColor=white)](#)
+[![ALGORITHM](https://img.shields.io/badge/ALGORITHM-PIDCOMPACT_V2-ea6b28?style=for-the-badge)](#)
+
+[![PLATFORM](https://img.shields.io/badge/PLATFORM-LENOVO_THINKCENTRE_TINY_(AMD64)-1e5ad7?style=for-the-badge&logo=linux&logoColor=white)](#)
+[![ARCH](https://img.shields.io/badge/ARCH-X86__64_%2F_AMD64-e05d26?style=for-the-badge&logo=ubuntu&logoColor=white)](#)
+
+[![POWER-CUT PROOF](https://img.shields.io/badge/POWER--CUT_PROOF-OVERLAYFS_READ--ONLY-f5c538?style=for-the-badge&labelColor=484848&color=f5c538)](#)
+[![DISPLAY](https://img.shields.io/badge/DISPLAY-X11_KIOSK_(60FPS_GPU)-8b1a1a?style=for-the-badge&logo=googlechrome&logoColor=white)](#)
+
+[![ENGINEER](https://img.shields.io/badge/ENGINEER-XFREEDOM777-6d28d9?style=for-the-badge&logo=github&logoColor=white)](https://github.com/xFreedom777)
+[![DOCKER](https://img.shields.io/badge/DOCKER-10_SERVICES-2496ed?style=for-the-badge&logo=docker&logoColor=white)](#)
+[![FASTAPI](https://img.shields.io/badge/FASTAPI-0.110.0-009688?style=for-the-badge&logo=fastapi&logoColor=white)](#)
+
+</div>
+
 ---
 
 ## 🌐 Quick Access Directory (สารบัญพอร์ตและบริการ)
