@@ -153,3 +153,52 @@ class SiemensPLCReader:
 
         return results
 
+    def read_custom_tag(self, db_number: int, byte_offset: float, bit_offset: int = 0, plc_format: str = "REAL"):
+        """
+        Directly reads an arbitrary DB and offset from S7-1500 PLC.
+        Formats: REAL, INT, DINT, BOOL, WORD, DWORD.
+        """
+        if not self.is_connected or not self.client:
+            self.connect()
+
+        fmt = (plc_format or "REAL").upper()
+        int_byte = int(byte_offset)
+        size = 4 if fmt in ('REAL', 'DWORD', 'DINT') else (2 if fmt in ('INT', 'WORD') else 1)
+
+        result = {
+            "db_number": db_number,
+            "byte_offset": byte_offset,
+            "bit_offset": bit_offset,
+            "plc_format": fmt,
+            "value": None,
+            "raw_hex": None,
+            "quality": "BAD",
+            "error": None
+        }
+
+        if not self.is_connected or not self.client:
+            result["error"] = "PLC not connected"
+            return result
+
+        try:
+            data = self.client.db_read(db_number, int_byte, size)
+            result["raw_hex"] = data.hex()
+            if fmt == 'REAL':
+                result["value"] = round(get_real(data, 0), 4)
+            elif fmt == 'INT':
+                result["value"] = get_int(data, 0)
+            elif fmt == 'DINT':
+                result["value"] = int.from_bytes(data, byteorder='big', signed=True)
+            elif fmt == 'WORD':
+                result["value"] = int.from_bytes(data, byteorder='big', signed=False)
+            elif fmt == 'DWORD':
+                result["value"] = int.from_bytes(data, byteorder='big', signed=False)
+            elif fmt == 'BOOL':
+                result["value"] = get_bool(data, 0, bit_offset)
+            else:
+                result["value"] = round(get_real(data, 0), 4)
+            result["quality"] = "GOOD"
+        except Exception as e:
+            result["error"] = str(e)
+            result["quality"] = "BAD"
+        return result

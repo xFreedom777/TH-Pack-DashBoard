@@ -1,206 +1,519 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TH-Pack Control & Monitoring Dashboard</title>
+  <title>Product Processing System | Thermal Alert &amp; Daily Audit Report</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/src/style.css">
 </head>
 <body>
   <div id="app">
-    <!-- Top Navigation Header -->
-    <header class="navbar">
-      <div class="brand">
-        <div class="logo-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+    <!-- Top Executive Header Bar -->
+    <header class="header-bar">
+      <div class="brand-section">
+        <div class="brand-logo-icon" style="background: linear-gradient(135deg, #059669, #0284c7);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         </div>
-        <div>
-          <h1 class="brand-title">TH-PACK <span class="badge-tech">DASHBOARD</span></h1>
-          <p class="brand-subtitle">UHT Packaging & Processing Control System</p>
+        <div class="brand-titles">
+          <h1>
+            PRODUCT PROCESSING SYSTEM
+            <span class="brand-tag" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); border-color: rgba(16, 185, 129, 0.3);">UHT-01 • PROCESS &amp; CIP</span>
+          </h1>
+          <div class="brand-sub">Thermal Compliance • Loss Accounting • Audit Readiness</div>
         </div>
       </div>
 
-      <div class="nav-right">
-        <div class="status-chip pulse">
-          <span class="dot green"></span>
-          <span>Siemens Backend & Stack: Healthy</span>
+      <!-- Navigation Tabs (Live Cockpit vs Daily Audit Report) -->
+      <div class="view-tabs">
+        <button class="tab-btn active" id="tab-btn-live">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          🚨 เฝ้าระวังสด &amp; คุมจุดวิกฤต
+        </button>
+        <button class="tab-btn" id="tab-btn-report">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          📑 รายงาน Audit ประจำวัน (Daily Report)
+        </button>
+      </div>
+
+      <div class="header-right">
+        <div class="plc-status-pill" id="plc-status-pill">
+          <span class="pulse-dot"></span>
+          <span id="plc-status-text">S7-1500 (192.168.1.11) • DB1601 CONNECTED</span>
         </div>
-        <div class="time-display" id="clock">00:00:00</div>
+        
+        <button class="btn-tag-linkage" id="btn-open-ot-modal">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          OT Tag Tool
+        </button>
+
+        <div class="time-box" id="clock">00:00:00</div>
       </div>
     </header>
 
-    <!-- Main Container -->
-    <main class="main-container">
+    <!-- Main Content Area -->
+    <main class="main-wrapper">
       
-      <!-- Banner / Developer & Telemetry Tools Bar -->
-      <section class="tools-card">
-        <div class="tools-info">
-          <h2>Siemens S7 PLC Backend, Database & Telemetry Tools</h2>
-          <p>Quick access to FastAPI REST/WebSockets, MySQL admin, RabbitMQ broker, InfluxDB metrics, and Grafana dashboards.</p>
-        </div>
-        <div class="tools-buttons">
-          <a href="http://localhost:8000/docs" target="_blank" class="btn btn-fastapi">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-            FastAPI Docs (8000)
-          </a>
-          <a href="http://localhost:15672" target="_blank" class="btn btn-rabbitmq">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            RabbitMQ (15672)
-          </a>
-          <a href="http://localhost:3002" target="_blank" class="btn btn-grafana">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
-            Grafana (3002)
-          </a>
-          <a href="http://localhost:8086" target="_blank" class="btn btn-influx">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            InfluxDB (8086)
-          </a>
-          <a href="http://localhost:8080" target="_blank" class="btn btn-pma">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-            phpMyAdmin (8080)
-          </a>
-          <a href="http://localhost:8081" target="_blank" class="btn btn-adminer">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-            Adminer (8081)
-          </a>
-        </div>
-      </section>
-
-      <!-- KPI Stat Cards -->
-      <section class="kpi-grid">
-        <div class="kpi-card glass">
-          <div class="kpi-header">
-            <span class="kpi-title">Overall OEE</span>
-            <span class="kpi-icon cyan">📊</span>
-          </div>
-          <div class="kpi-value" id="kpi-oee">87.5<span class="unit">%</span></div>
-          <div class="kpi-trend positive">+2.4% vs last shift</div>
-        </div>
-
-        <div class="kpi-card glass">
-          <div class="kpi-header">
-            <span class="kpi-title">Production Output</span>
-            <span class="kpi-icon blue">⚡</span>
-          </div>
-          <div class="kpi-value" id="kpi-throughput">26,500 <span class="unit">u/h</span></div>
-          <div class="kpi-trend positive">Operating at 96% capacity</div>
-        </div>
-
-        <div class="kpi-card glass">
-          <div class="kpi-header">
-            <span class="kpi-title">Sterilizer Temp</span>
-            <span class="kpi-icon orange">🔥</span>
-          </div>
-          <div class="kpi-value" id="kpi-temp">138.4 <span class="unit">°C</span></div>
-          <div class="kpi-trend neutral">Stable aseptic range (137 - 140°C)</div>
-        </div>
-
-        <div class="kpi-card glass">
-          <div class="kpi-header">
-            <span class="kpi-title">Siemens S7 PLC Backend</span>
-            <span class="kpi-icon green">⚡</span>
-          </div>
-          <div class="kpi-value green-text">FASTAPI ACTIVE</div>
-          <div class="kpi-trend neutral">S7 DataBlocks DB100/DB101 @ 8000</div>
-        </div>
-      </section>
-
-      <!-- Content Grid: Lines + Equipment -->
-      <div class="content-grid">
+      <!-- ==========================================================================
+           VIEW 1: LIVE MONITORING & THERMAL ALERTING COCKPIT
+           ========================================================================== -->
+      <div id="view-live">
         
-        <!-- Left: Production Line Status -->
-        <div class="card glass">
-          <div class="card-header">
-            <h3>Active Production Lines</h3>
-            <span class="badge">4 Lines Configured</span>
+        <!-- Thermal & Quality Safe Banner -->
+        <div class="thermal-alert-banner" id="thermal-alert-banner">
+          <div class="alert-left-group">
+            <span class="alert-badge-tag">✓ ALL CCP NORMAL</span>
+            <div class="alert-title-text" id="alert-banner-text">
+              จุดวิกฤตอุณหภูมิและความดันปลอดเชื้อทั้งหมดอยู่ในเกณฑ์มาตรฐานความปลอดภัย (Safe Band) • ไม่พบอุณหภูมิวูบ/Divert
+            </div>
           </div>
-          <div class="lines-list">
-            <div class="line-item">
-              <div class="line-info">
-                <span class="line-code">PL-UHT-01</span>
-                <span class="line-name">UHT Processing Line 01</span>
-              </div>
-              <span class="pill green">RUNNING • 12k UPH</span>
+          <div style="font-size: 0.78rem; color: var(--accent-emerald); font-weight: 600;">
+            ความถี่ตรวจวัด: 2.0 วินาที (S7-1500)
+          </div>
+        </div>
+
+        <!-- Critical Control Points (CCP) Thermal Grid -->
+        <div class="ccp-thermal-grid">
+          <!-- CCP 1: Holding Tube -->
+          <div class="ccp-card">
+            <div class="ccp-card-top">
+              <span class="ccp-tag-name">TIC49_pv • CCP-01</span>
+              <span class="ccp-target-spec">เกณฑ์: 137.0 - 142.0 °C</span>
             </div>
-            <div class="line-item">
-              <div class="line-info">
-                <span class="line-code">PL-UHT-02</span>
-                <span class="line-name">UHT Processing Line 02</span>
-              </div>
-              <span class="pill green">RUNNING • 15k UPH</span>
+            <div style="font-size: 0.78rem; color: var(--text-secondary);">Holding Tube Sterilization (ฆ่าเชื้อ)</div>
+            <div class="ccp-current-val"><span id="live-tic49">138.4</span> <span style="font-size: 1rem; color: var(--text-secondary);">°C</span></div>
+            <div class="ccp-band-meter">
+              <div class="ccp-band-fill" style="width: 72%;"></div>
             </div>
-            <div class="line-item">
-              <div class="line-info">
-                <span class="line-code">PL-PACK-01</span>
-                <span class="line-name">Tetra Pak Packaging Line 01</span>
-              </div>
-              <span class="pill green">RUNNING • 8k UPH</span>
+            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--accent-emerald);">
+              <span>✓ อยู่ในช่วงปลอดเชื้อสมบูรณ์</span>
+              <strong>Dev: +0.4°C</strong>
             </div>
-            <div class="line-item">
-              <div class="line-info">
-                <span class="line-code">PL-PACK-02</span>
-                <span class="line-name">Tetra Pak Packaging Line 02</span>
-              </div>
-              <span class="pill orange">MAINTENANCE</span>
+          </div>
+
+          <!-- CCP 2: Regeneration Outlet -->
+          <div class="ccp-card">
+            <div class="ccp-card-top">
+              <span class="ccp-tag-name">TIC50_sp • CCP-02</span>
+              <span class="ccp-target-spec">เกณฑ์: 20.0 - 26.0 °C</span>
+            </div>
+            <div style="font-size: 0.78rem; color: var(--text-secondary);">Product Outlet Temp (หล่อเย็นส่งถังพัก)</div>
+            <div class="ccp-current-val"><span id="live-tic50">24.5</span> <span style="font-size: 1rem; color: var(--text-secondary);">°C</span></div>
+            <div class="ccp-band-meter">
+              <div class="ccp-band-fill" style="width: 60%;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--accent-emerald);">
+              <span>✓ อุณหภูมิส่งเข้าถัง Alsafe ปกติ</span>
+              <strong>Dev: 0.0°C</strong>
+            </div>
+          </div>
+
+          <!-- CCP 3: Sterile Barrier Return -->
+          <div class="ccp-card">
+            <div class="ccp-card-top">
+              <span class="ccp-tag-name">TIC63_pv • CCP-03</span>
+              <span class="ccp-target-spec">เกณฑ์: 80.0 - 90.0 °C</span>
+            </div>
+            <div style="font-size: 0.78rem; color: var(--text-secondary);">Sterile Barrier Return (ม่านไอน้ำกั้นเชื้อ)</div>
+            <div class="ccp-current-val"><span id="live-tic63">85.2</span> <span style="font-size: 1rem; color: var(--text-secondary);">°C</span></div>
+            <div class="ccp-band-meter">
+              <div class="ccp-band-fill" style="width: 55%;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--accent-emerald);">
+              <span>✓ ม่านไอน้ำปิดกั้นเชื้อสมบูรณ์</span>
+              <strong>Dev: +0.2°C</strong>
+            </div>
+          </div>
+
+          <!-- CCP 4: Section 03 CIP Caustic -->
+          <div class="ccp-card">
+            <div class="ccp-card-top">
+              <span class="ccp-tag-name">CIP SEC-03 • QA</span>
+              <span class="ccp-target-spec">เกณฑ์ด่าง: ≥ 85.0 °C</span>
+            </div>
+            <div style="font-size: 0.78rem; color: var(--text-secondary);">Section 03 Caustic Temp &amp; Conc.</div>
+            <div class="ccp-current-val"><span>85.4</span> <span style="font-size: 1rem; color: var(--text-secondary);">°C</span></div>
+            <div class="ccp-band-meter">
+              <div class="ccp-band-fill" style="width: 85%;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--accent-emerald);">
+              <span>✓ ผ่านสเปกล้าง 3A/EHEDG</span>
+              <strong>42.5 mS/cm</strong>
             </div>
           </div>
         </div>
 
-        <!-- Right: Equipment Inventory -->
-        <div class="card glass">
-          <div class="card-header">
-            <h3>Equipment Inventory (Tetra Pak / UHT)</h3>
-            <span class="badge blue-badge">5 Items</span>
+        <!-- Process OEE Summary Grid (Availability, Flow Performance, Yield) -->
+        <section class="executive-summary-grid">
+          
+          <!-- OEE Master Gauge Card -->
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span class="kpi-label">Process OEE (ประสิทธิผลกระบวนการ)</span>
+              <span class="kpi-pill">WORLD CLASS (>85%)</span>
+            </div>
+            <div class="oee-display-row">
+              <div class="oee-gauge-container">
+                <svg class="oee-gauge-svg" viewBox="0 0 100 100">
+                  <defs>
+                    <linearGradient id="gauge-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#38bdf8" />
+                      <stop offset="100%" stop-color="#10b981" />
+                    </linearGradient>
+                  </defs>
+                  <circle class="gauge-bg" cx="50" cy="50" r="45" />
+                  <circle class="gauge-bar" id="gauge-circle" cx="50" cy="50" r="45" />
+                </svg>
+                <div class="gauge-center-text">
+                  <div class="gauge-number" id="val-oee">85.3</div>
+                  <div class="gauge-unit">% OEE</div>
+                </div>
+              </div>
+              <div class="oee-pillars">
+                <div class="pillar-item">
+                  <div class="pillar-row">
+                    <span class="pillar-name">Availability (รันนมจริง vs วนน้ำ/ล้าง)</span>
+                    <span class="pillar-val" id="val-avail">91.4%</span>
+                  </div>
+                  <div class="pillar-bar-bg"><div class="pillar-bar-fill fill-avail" style="width: 91.4%;"></div></div>
+                </div>
+                <div class="pillar-item">
+                  <div class="pillar-row">
+                    <span class="pillar-name">Performance (อัตราไหล vs พิกัดท่อ)</span>
+                    <span class="pillar-val" id="val-perf">95.0%</span>
+                  </div>
+                  <div class="pillar-bar-bg"><div class="pillar-bar-fill fill-perf" style="width: 95.0%;"></div></div>
+                </div>
+                <div class="pillar-item">
+                  <div class="pillar-row">
+                    <span class="pillar-name">Quality / Yield (ผ่านสเปก vs สูญเสีย)</span>
+                    <span class="pillar-val" id="val-qual">98.2%</span>
+                  </div>
+                  <div class="pillar-bar-bg"><div class="pillar-bar-fill fill-qual" style="width: 98.2%;"></div></div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="table-container">
-            <table>
+
+          <!-- Shift Processed Volume -->
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span class="kpi-label">ปริมาตรน้ำนมผ่านกระบวนการ (Shift Volume)</span>
+              <span class="kpi-pill">เป้า 105,000 ลิตร</span>
+            </div>
+            <div class="stat-big" id="val-actual-volume">92,625 <span style="font-size: 1.1rem; color: var(--text-secondary); font-weight: 500;">Liters</span></div>
+            <div class="stat-sub-text">อัตราความสำเร็จ: <strong id="val-completion-pct" style="color: var(--accent-emerald);">88.2%</strong> ของเป้าหมายกะ 2</div>
+            <div class="progress-track">
+              <div class="progress-bar-inner" id="val-volume-bar" style="width: 88.2%;"></div>
+            </div>
+            <div class="stat-footer-metrics">
+              <span>นมดีเข้าถัง Aseptic: <strong id="val-good-liters">90,950 L</strong></span>
+              <span>สูญเสีย (Flush &amp; Divert): <strong id="val-loss-liters" style="color: var(--accent-amber);">1,675 L (1.8%)</strong></span>
+            </div>
+          </div>
+
+          <!-- Heat Exchanger Flow Rate -->
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span class="kpi-label">อัตราการไหลจริง (Heat Exchanger Flow)</span>
+              <span class="kpi-pill">พิกัด 15,000 L/h</span>
+            </div>
+            <div class="stat-big" id="val-flow">14,250 <span style="font-size: 1.1rem; color: var(--text-secondary); font-weight: 500;">L/h</span></div>
+            <div class="stat-sub-text">Flow Rate ประสิทธิภาพ 95.0% • แรงดันสม่ำเสมอ</div>
+            <div class="rate-speed-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+              แรงดัน Drop คงที่ ไม่พบคราบนมเกาะท่อรุนแรง (Low Fouling)
+            </div>
+          </div>
+
+          <!-- Process Operating State -->
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span class="kpi-label">สถานะกระบวนการ (Process State)</span>
+              <span class="kpi-pill" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); border-color: rgba(16, 185, 129, 0.3);">UHT-01</span>
+            </div>
+            <div class="operating-state-box">
+              <div class="state-badge-big">
+                <span class="pulse-dot"></span>
+                <span id="val-state-label">STERILE MILK TO BUFFER</span>
+              </div>
+              <div class="stat-footer-metrics" style="margin-top: 0.6rem;">
+                <span>รันนมจริง: <strong>6 ชม. 30 นาที</strong></span>
+                <span>วนน้ำรอ Filler: <strong style="color: var(--accent-amber);">28 นาที</strong></span>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- Hourly Flow & Volume Chart -->
+        <section class="hourly-trend-section">
+          <div class="hourly-header">
+            <div class="hourly-title-group">
+              <h2>
+                HOURLY FLOW &amp; VOLUME PERFORMANCE (ยอดผ่านกระบวนการรายชั่วโมง)
+                <span class="cip-badge-highlight" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); border-color: rgba(16, 185, 129, 0.3);">เป้าหมาย 15,000 ลิตร/ชม.</span>
+              </h2>
+            </div>
+            <div class="hourly-legend">
+              <div class="legend-item"><span class="legend-color passed"></span> สปีดปกติ (≥14.5k L/h)</div>
+              <div class="legend-item"><span class="legend-color shortfall"></span> วนน้ำรอ/สตาร์ต (&lt;14.5k L/h)</div>
+              <div class="legend-item"><span class="legend-color running"></span> กำลังรันปัจจุบัน</div>
+              <div class="legend-item"><span class="legend-color target"></span> พิกัดเครื่อง (15k L/h)</div>
+            </div>
+          </div>
+
+          <div class="hourly-bars-grid">
+            <div class="hourly-col">
+              <div class="hour-label">14:00 - 15:00</div>
+              <div class="hour-chart-slot">
+                <div class="target-guideline"></div>
+                <div class="hour-bar status-shortfall" style="height: 56.6%;"><span class="hour-val-badge">8.5k L</span></div>
+              </div>
+              <div class="hour-stats">
+                <div class="hour-stat-row"><span>น้ำนมเข้าถัง:</span><strong>8,500 L</strong></div>
+                <div class="hour-stat-row"><span>Flush Loss:</span><strong style="color: var(--accent-amber);">450 L</strong></div>
+                <div class="hour-status-pill pill-shortfall">Sterilize &amp; Startup</div>
+              </div>
+            </div>
+
+            <div class="hourly-col">
+              <div class="hour-label">15:00 - 16:00</div>
+              <div class="hour-chart-slot">
+                <div class="target-guideline"></div>
+                <div class="hour-bar status-passed" style="height: 97.3%;"><span class="hour-val-badge">14.6k L</span></div>
+              </div>
+              <div class="hour-stats">
+                <div class="hour-stat-row"><span>น้ำนมเข้าถัง:</span><strong>14,600 L</strong></div>
+                <div class="hour-stat-row"><span>Loss:</span><strong>0 L</strong></div>
+                <div class="hour-status-pill pill-passed">✓ รันสปีดเสถียร</div>
+              </div>
+            </div>
+
+            <div class="hourly-col">
+              <div class="hour-label">16:00 - 17:00</div>
+              <div class="hour-chart-slot">
+                <div class="target-guideline"></div>
+                <div class="hour-bar status-passed" style="height: 98.6%;"><span class="hour-val-badge">14.8k L</span></div>
+              </div>
+              <div class="hour-stats">
+                <div class="hour-stat-row"><span>น้ำนมเข้าถัง:</span><strong>14,800 L</strong></div>
+                <div class="hour-stat-row"><span>Loss:</span><strong>0 L</strong></div>
+                <div class="hour-status-pill pill-passed">✓ สปีดสูงสุด (Peak)</div>
+              </div>
+            </div>
+
+            <div class="hourly-col">
+              <div class="hour-label">17:00 - 18:00</div>
+              <div class="hour-chart-slot">
+                <div class="target-guideline"></div>
+                <div class="hour-bar status-shortfall" style="height: 61.3%;"><span class="hour-val-badge">9.2k L</span></div>
+              </div>
+              <div class="hour-stats">
+                <div class="hour-stat-row"><span>น้ำนมเข้าถัง:</span><strong>9,200 L</strong></div>
+                <div class="hour-stat-row"><span>วนน้ำเปล่า:</span><strong style="color: var(--accent-amber);">28 นาที</strong></div>
+                <div class="hour-status-pill pill-shortfall">วนน้ำรอ Filler</div>
+              </div>
+            </div>
+
+            <div class="hourly-col">
+              <div class="hour-label">18:00 - 19:00</div>
+              <div class="hour-chart-slot">
+                <div class="target-guideline"></div>
+                <div class="hour-bar status-passed" style="height: 96.6%;"><span class="hour-val-badge">14.5k L</span></div>
+              </div>
+              <div class="hour-stats">
+                <div class="hour-stat-row"><span>น้ำนมเข้าถัง:</span><strong>14,500 L</strong></div>
+                <div class="hour-stat-row"><span>Loss:</span><strong>0 L</strong></div>
+                <div class="hour-status-pill pill-passed">✓ รันสปีดเสถียร</div>
+              </div>
+            </div>
+
+            <div class="hourly-col">
+              <div class="hour-label">19:00 - 20:00</div>
+              <div class="hour-chart-slot">
+                <div class="target-guideline"></div>
+                <div class="hour-bar status-passed" style="height: 96.0%;"><span class="hour-val-badge">14.4k L</span></div>
+              </div>
+              <div class="hour-stats">
+                <div class="hour-stat-row"><span>น้ำนมเข้าถัง:</span><strong>14,400 L</strong></div>
+                <div class="hour-stat-row"><span>Loss:</span><strong>0 L</strong></div>
+                <div class="hour-status-pill pill-passed">✓ รันสปีดเสถียร</div>
+              </div>
+            </div>
+
+            <div class="hourly-col">
+              <div class="hour-label">20:00 - 21:00</div>
+              <div class="hour-chart-slot">
+                <div class="target-guideline"></div>
+                <div class="hour-bar status-passed" style="height: 92.0%;"><span class="hour-val-badge">13.8k L</span></div>
+              </div>
+              <div class="hour-stats">
+                <div class="hour-stat-row"><span>น้ำนมเข้าถัง:</span><strong>13,800 L</strong></div>
+                <div class="hour-stat-row"><span>Divert Loss:</span><strong style="color: var(--accent-amber);">180 L</strong></div>
+                <div class="hour-status-pill pill-passed">✓ Temp วูบเล็กน้อย</div>
+              </div>
+            </div>
+
+            <div class="hourly-col active-now">
+              <div class="hour-label">21:00 - 22:00</div>
+              <div class="hour-chart-slot">
+                <div class="target-guideline"></div>
+                <div class="hour-bar status-running" style="height: 92.6%;"><span class="hour-val-badge">13.9k L</span></div>
+              </div>
+              <div class="hour-stats">
+                <div class="hour-stat-row"><span>น้ำนมเข้าถัง:</span><strong>13,900 L</strong></div>
+                <div class="hour-stat-row"><span>Loss:</span><strong>0 L</strong></div>
+                <div class="hour-status-pill pill-running">● กำลังรันปัจจุบัน</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3 CIP Monitoring -->
+        <section class="section-cip-container">
+          <div class="cip-header">
+            <div class="cip-title-group">
+              <h2>
+                SECTION 03: CLEAN-IN-PLACE (CIP) EFFICIENCY &amp; SANITIZATION
+                <span class="cip-badge-highlight">STERILE ZONE VALIDATED</span>
+              </h2>
+              <div class="cip-subtitle">ประสิทธิภาพเวลารอบล้าง (CIP Turnaround Time) &amp; พารามิเตอร์ตรวจสอบ Section 03</div>
+            </div>
+            <div class="cip-audit-status">
+              <div class="audit-tag">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                AUDIT COMPLIANT (3A/EHEDG PASSED)
+              </div>
+            </div>
+          </div>
+
+          <div class="cip-telemetry-grid">
+            <div class="cip-metric-box">
+              <div class="cip-metric-label">
+                <span>Circulation Temp (TIC49 / TIC63)</span>
+                <span class="cip-plc-tag">DB1601.DBD984</span>
+              </div>
+              <div class="cip-metric-val"><span id="cip-live-temp">138.4</span> <span class="cip-metric-unit">°C</span></div>
+              <div class="cip-metric-state"><span class="pulse-dot"></span> อุณหภูมิควบคุมอยู่ในเกณฑ์มาตรฐานฆ่าเชื้อ</div>
+            </div>
+
+            <div class="cip-metric-box">
+              <div class="cip-metric-label">
+                <span>Circulation Pump (SX10)</span>
+                <span class="cip-plc-tag">DB1601.DBW1002</span>
+              </div>
+              <div class="cip-metric-val"><span id="cip-pump-state">49.85</span> <span class="cip-metric-unit">Hz / ON</span></div>
+              <div class="cip-metric-state">✓ ปั๊มหมุนเวียนหลักทำงานปกติ อัตราไหลเสถียร</div>
+            </div>
+
+            <div class="cip-metric-box">
+              <div class="cip-metric-label">
+                <span>Conductivity (ความเข้มข้นสารเคมี)</span>
+                <span class="cip-plc-tag">ANALOG SENSOR</span>
+              </div>
+              <div class="cip-metric-val"><span>42.5</span> <span class="cip-metric-unit">mS/cm</span></div>
+              <div class="cip-metric-state">✓ ค่า Conductivity ผ่านเกณฑ์สเปก CIP</div>
+            </div>
+
+            <div class="cip-metric-box">
+              <div class="cip-metric-label">
+                <span>CIP Turnaround Time (เวลารอบล้าง)</span>
+                <span class="cip-plc-tag">KPI</span>
+              </div>
+              <div class="cip-metric-val" style="font-size: 1.5rem;"><span>58 นาที</span> <span class="cip-metric-unit">(เป้า 45 นาที)</span></div>
+              <div class="cip-metric-state" style="color: var(--accent-amber);">⚠️ ล้างเกินเป้า +13 นาที (CIP Efficiency: 77.6%)</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Process Loss Breakdown -->
+        <div class="two-col-grid">
+          <div class="ops-card">
+            <div class="ops-card-header">
+              <h3>PROCESS LOSS BREAKDOWN (การสูญเสียในกระบวนการผลิตกะนี้)</h3>
+              <span class="kpi-pill" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); border-color: rgba(245, 158, 11, 0.3);">สูญเสียรวม 1,675 L / หยุด 41 นาที</span>
+            </div>
+            <div class="downtime-list">
+              <div class="downtime-row">
+                <div class="downtime-info-line">
+                  <span class="dt-cause">1. วนน้ำเปล่ารอฝั่งบรรจุ (Water Recirculation รอ Filler)</span>
+                  <span class="dt-duration">28 นาที (43.8% ของเวลาสูญเสีย)</span>
+                </div>
+                <div class="dt-bar-track"><div class="dt-bar-fill" style="width: 43.8%;"></div></div>
+              </div>
+
+              <div class="downtime-row">
+                <div class="downtime-info-line">
+                  <span class="dt-cause">2. ล้าง CIP เกินเวลามาตรฐาน (CIP Turnaround Overrun)</span>
+                  <span class="dt-duration">13 นาที (20.3% ของเวลาสูญเสีย)</span>
+                </div>
+                <div class="dt-bar-track"><div class="dt-bar-fill" style="width: 20.3%;"></div></div>
+              </div>
+
+              <div class="downtime-row">
+                <div class="downtime-info-line">
+                  <span class="dt-cause">3. สูญเสียนมช่วงดันน้ำ-นม (Water-to-Milk Interface Flush)</span>
+                  <span class="dt-duration">920 ลิตร (54.9% ของ Product Loss)</span>
+                </div>
+                <div class="dt-bar-track"><div class="dt-bar-fill" style="width: 54.9%; background: linear-gradient(90deg, #38bdf8, #f43f5e);"></div></div>
+              </div>
+
+              <div class="downtime-row">
+                <div class="downtime-info-line">
+                  <span class="dt-cause">4. อุณหภูมิตก นมถูก Divert ตีกลับ (Temp Diversion Loss)</span>
+                  <span class="dt-duration">755 ลิตร (45.1% ของ Product Loss)</span>
+                </div>
+                <div class="dt-bar-track"><div class="dt-bar-fill" style="width: 45.1%; background: linear-gradient(90deg, #f59e0b, #f43f5e);"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ops-card">
+            <div class="ops-card-header">
+              <h3>UHT PROCESS CRITICAL CONTROL POINTS (จุดควบคุมวิกฤต)</h3>
+              <span class="kpi-pill">ASEPTIC SAFETY</span>
+            </div>
+            <table class="ccp-table">
               <thead>
                 <tr>
-                  <th>Item No</th>
-                  <th>Label</th>
-                  <th>Material No</th>
-                  <th>Serial</th>
-                  <th>Status</th>
+                  <th>พารามิเตอร์</th>
+                  <th>PLC Tag</th>
+                  <th>ค่าจริง</th>
+                  <th>เกณฑ์มาตรฐาน</th>
+                  <th>สถานะ</th>
                 </tr>
               </thead>
-              <tbody id="equipment-tbody">
+              <tbody>
                 <tr>
-                  <td><code>EQ-3078300</code></td>
-                  <td>Tetra Therm Aseptic Flex</td>
-                  <td>3078300-0100</td>
-                  <td>T5844151405</td>
-                  <td><span class="pill green">OPERATIONAL</span></td>
+                  <td>Holding Tube Sterilization</td>
+                  <td><code>TIC49_pv</code></td>
+                  <td><strong id="tbl-tic49">138.4 °C</strong></td>
+                  <td>137.0 - 142.0 °C</td>
+                  <td><span class="status-chip-sm chip-normal">ปกติ</span></td>
                 </tr>
                 <tr>
-                  <td><code>EQ-3078301</code></td>
-                  <td>Tetra Alsafe Buffer Tank</td>
-                  <td>3078301-0200</td>
-                  <td>T5844151406</td>
-                  <td><span class="pill green">OPERATIONAL</span></td>
+                  <td>Product Outlet Temp</td>
+                  <td><code>TIC50_sp</code></td>
+                  <td><strong id="tbl-tic50">24.5 °C</strong></td>
+                  <td>20.0 - 26.0 °C</td>
+                  <td><span class="status-chip-sm chip-normal">ปกติ</span></td>
                 </tr>
                 <tr>
-                  <td><code>EQ-3078302</code></td>
-                  <td>Homogenizer Alex 30</td>
-                  <td>3078302-0150</td>
-                  <td>T5844151407</td>
-                  <td><span class="pill yellow">WARNING</span></td>
+                  <td>Sterile Barrier Return Temp</td>
+                  <td><code>TIC63_pv</code></td>
+                  <td><strong id="tbl-tic63">85.2 °C</strong></td>
+                  <td>80.0 - 90.0 °C</td>
+                  <td><span class="status-chip-sm chip-normal">ปกติ</span></td>
                 </tr>
                 <tr>
-                  <td><code>EQ-3078303</code></td>
-                  <td>Tetra Pak E3/Speed</td>
-                  <td>3078303-0300</td>
-                  <td>T5844151408</td>
-                  <td><span class="pill green">OPERATIONAL</span></td>
-                </tr>
-                <tr>
-                  <td><code>EQ-3078304</code></td>
-                  <td>Cap Applicator 30 Speed</td>
-                  <td>3078304-0110</td>
-                  <td>T5844151409</td>
-                  <td><span class="pill red">INACTIVE</span></td>
+                  <td>Hotwater Level Switch</td>
+                  <td><code>LSL66</code></td>
+                  <td><strong>HIGH / OK</strong></td>
+                  <td>Normal Level</td>
+                  <td><span class="status-chip-sm chip-normal">ปกติ</span></td>
                 </tr>
               </tbody>
             </table>
@@ -209,25 +522,286 @@
 
       </div>
 
-      <!-- System Logs Section -->
-      <section class="card glass mt-4">
-        <div class="card-header">
-          <h3>Recent System Telemetry & Logs</h3>
-          <span class="badge neutral-badge">Live Updates</span>
+      <!-- ==========================================================================
+           VIEW 2: OFFICIAL DAILY AUDIT & PRODUCTION REPORT
+           ========================================================================== -->
+      <div id="view-report" class="audit-report-container">
+        
+        <div class="report-actions-bar">
+          <button class="btn-print" id="btn-print-report">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            🖨️ พิมพ์รายงาน / Export PDF
+          </button>
         </div>
-        <div class="logs-container" id="logs-box">
-          <div class="log-entry info"><span class="log-time">[22:39:01]</span> <span class="log-tag">INFO</span> FastAPI Siemens Backend running on http://localhost:8000.</div>
-          <div class="log-entry success"><span class="log-time">[22:39:02]</span> <span class="log-tag">SUCCESS</span> Siemens S7 DataBlock Reader initialized for DB100 (REAL) and DB101 (INT/BOOL).</div>
-          <div class="log-entry success"><span class="log-time">[22:39:03]</span> <span class="log-tag">SUCCESS</span> WebSocket stream listener active on ws://localhost:8000/ws/telemetry.</div>
-          <div class="log-entry success"><span class="log-time">[22:39:04]</span> <span class="log-tag">SUCCESS</span> MySQL, InfluxDB, RabbitMQ, and Grafana connected cleanly.</div>
+
+        <div class="audit-report-paper">
+          <!-- Report Header -->
+          <div class="report-header-banner">
+            <div class="report-company-title">
+              <h1>MITR PHOL DAIRY &amp; BEVERAGE</h1>
+              <p>รายงานสรุปการผลิตและการตรวจรับรองคุณภาพประจำวัน (Daily Processing &amp; Quality Audit Report)</p>
+            </div>
+            <div style="text-align: right;">
+              <span class="report-badge-pass" style="font-size: 0.9rem; padding: 0.4rem 0.8rem;">
+                ✓ AUDIT CERTIFIED (FSSC 22000 / 3A)
+              </span>
+              <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.4rem;">Doc Ref: MP-UHT-RPT-20261009</div>
+            </div>
+          </div>
+
+          <!-- Report Metadata -->
+          <div class="report-meta-grid">
+            <div class="meta-field">
+              <label>วันที่ทำการผลิต (Date)</label>
+              <strong>09 ตุลาคม 2569</strong>
+            </div>
+            <div class="meta-field">
+              <label>กะการผลิต (Shift)</label>
+              <strong>กะ 2 (14:00 - 22:00 น.)</strong>
+            </div>
+            <div class="meta-field">
+              <label>สายการผลิต (Line / Unit)</label>
+              <strong>UHT-01 Process (Section 03)</strong>
+            </div>
+            <div class="meta-field">
+              <label>หมายเลขล็อต (Batch No.)</label>
+              <strong>MP-UHT-261009-B2</strong>
+            </div>
+          </div>
+
+          <!-- Section 1: Mass Balance & Production Yield -->
+          <div class="report-section-title">
+            <span>1. สรุปปริมาตรการผลิตและสมดุลมวลสาร (Mass Balance &amp; Yield)</span>
+            <span style="font-size: 0.85rem; color: #059669; font-weight: 600;">Overall Process Yield: 98.2%</span>
+          </div>
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>รายการตรวจสอบ</th>
+                <th>ปริมาตรเป้าหมาย (Plan)</th>
+                <th>ปริมาตรจริง (Actual)</th>
+                <th>ผลต่าง (Variance)</th>
+                <th>อัตราส่วน (%)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>ปริมาตรน้ำนมดิบเข้าสู่ระบบ (Raw Milk Intake)</strong></td>
+                <td>105,000 ลิตร</td>
+                <td>105,000 ลิตร</td>
+                <td>0 L</td>
+                <td>100.0%</td>
+              </tr>
+              <tr>
+                <td><strong>น้ำนมปลอดเชื้อส่งเข้าถังพัก (Aseptic Milk to Buffer)</strong></td>
+                <td>102,900 ลิตร</td>
+                <td><strong>90,950 ลิตร</strong></td>
+                <td>-11,950 L (วนน้ำรอ 28 นาที)</td>
+                <td><span class="report-badge-pass">98.2% Yield</span></td>
+              </tr>
+              <tr>
+                <td><strong>สูญเสียในกระบวนการผลิตรวม (Total Process Losses)</strong></td>
+                <td>&lt; 2,100 ลิตร (2.0%)</td>
+                <td><strong>1,675 ลิตร</strong></td>
+                <td>-425 L (ดีกว่าเป้าหมาย)</td>
+                <td>1.8% Loss</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Section 2: Itemized Loss Ledger (ของเสียที่พิสูจน์สาเหตุได้ครบ 100%) -->
+          <div class="report-section-title">
+            <span>2. บัญชีแจกแจงการสูญเสียที่ตรวจสอบสาเหตุได้ (Itemized Loss Accounting)</span>
+            <span style="font-size: 0.82rem; color: #64748b;">สูญเสียที่หาสาเหตุไม่ได้: 0 ลิตร (100% Accounted)</span>
+          </div>
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>เวลาเกิดเหตุ</th>
+                <th>ประเภทเหตุการณ์ (Event)</th>
+                <th>ตำแหน่งเซนเซอร์ / วาล์ว</th>
+                <th>ปริมาตรสูญเสีย</th>
+                <th>สาเหตุและการจัดการ (Root Cause)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>14:15 น.</td>
+                <td>Water-to-Milk Interface Flush</td>
+                <td>Mix-proof Valve XV102</td>
+                <td>450 ลิตร</td>
+                <td>ช่วงสลับจากน้ำร้อนเป็นน้ำนมช่วงเริ่มกะ (ระบายลงถังกู้คืน Recover Tank)</td>
+              </tr>
+              <tr>
+                <td>17:10 น.</td>
+                <td>Milk-to-Water Recirculation Flush</td>
+                <td>Balance Tank V101</td>
+                <td>470 ลิตร</td>
+                <td>ถัง Alsafe Buffer Tank เต็ม ต้องดันนมออกเพื่อวนน้ำเปล่ารอ Filler ปลายทาง</td>
+              </tr>
+              <tr>
+                <td>20:25 น.</td>
+                <td>Temperature Dip Holding Tube Divert</td>
+                <td>3-Way Divert Valve V108</td>
+                <td>755 ลิตร</td>
+                <td>อุณหภูมิ TIC49 วูบลงที่ 136.6°C สับนมกลับถัง Balance Tank เพื่อ Re-pasteurize</td>
+              </tr>
+              <tr>
+                <td>21:05 น.</td>
+                <td>Deaerator Foam &amp; Sediment Purge</td>
+                <td>Purge Valve PV104</td>
+                <td>310 ลิตร</td>
+                <td>ไล่ฟองอากาศและกากนมตามรอบการทำงานปกติ</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Section 3: Thermal & CIP Aseptic Validation -->
+          <div class="report-section-title">
+            <span>3. บันทึกผลการตรวจรับรองจุดวิกฤตและการล้างทำความสะอาด (Thermal &amp; CIP Audit Log)</span>
+            <span style="font-size: 0.82rem; color: #059669; font-weight: 600;">ผลการตรวจ: ผ่านการรับรองความปลอดภัย</span>
+          </div>
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>จุดควบคุมวิกฤต (CCP)</th>
+                <th>สเปกมาตรฐาน (Standard)</th>
+                <th>ค่าที่วัดได้จริง (Measured)</th>
+                <th>ระยะเวลาควบคุม</th>
+                <th>สถานะการรับรอง</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Holding Tube Sterilization (TIC49)</strong></td>
+                <td>137.0 - 142.0 °C</td>
+                <td>138.4 °C (Min 137.2°C)</td>
+                <td>ตลอดรอบการเดินนม 6.5 ชม.</td>
+                <td><span class="report-badge-pass">✓ PASSED</span></td>
+              </tr>
+              <tr>
+                <td><strong>Sterile Barrier Steam Seal (TIC63)</strong></td>
+                <td>80.0 - 90.0 °C</td>
+                <td>85.2 °C</td>
+                <td>ม่านไอน้ำต่อเนื่อง</td>
+                <td><span class="report-badge-pass">✓ PASSED</span></td>
+              </tr>
+              <tr>
+                <td><strong>Section 03 CIP Caustic Wash (NaOH 2.0%)</strong></td>
+                <td>≥ 85.0 °C / ≥ 20 นาที</td>
+                <td>85.4 °C (42.5 mS/cm)</td>
+                <td>22 นาที</td>
+                <td><span class="report-badge-pass">✓ PASSED</span></td>
+              </tr>
+              <tr>
+                <td><strong>Section 03 CIP Acid Wash (HNO3 1.2%)</strong></td>
+                <td>≥ 70.0 °C / ≥ 15 นาที</td>
+                <td>71.2 °C</td>
+                <td>16 นาที</td>
+                <td><span class="report-badge-pass">✓ PASSED</span></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Signatures Footer -->
+          <div class="report-sign-off-grid">
+            <div class="sign-box">
+              <div class="sign-line"></div>
+              <div class="sign-name">นายสมชาย พร้อมเพรียง</div>
+              <div class="sign-label">หัวหน้ากะผู้ควบคุมกระบวนการ (Process Supervisor)</div>
+            </div>
+            <div class="sign-box">
+              <div class="sign-line"></div>
+              <div class="sign-name">นางสาวศิริพร คุณภาพดี</div>
+              <div class="sign-label">เจ้าหน้าที่ประกันคุณภาพ (QA Compliance Auditor)</div>
+            </div>
+            <div class="sign-box">
+              <div class="sign-line"></div>
+              <div class="sign-name">ผู้จัดการฝ่ายผลิต (Plant Operations Director)</div>
+              <div class="sign-label">ผู้อนุมัติรายงาน (Approved by)</div>
+            </div>
+          </div>
+
         </div>
-      </section>
+      </div>
 
     </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-      <p>TH-Pack Dashboard Control Environment • FastAPI Siemens S7 Backend • Docker Compose Architecture</p>
+    <!-- OT Tag Linkage Tool Modal -->
+    <div class="modal-overlay" id="ot-modal">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <h3>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            SIEMENS S7-1500 OT TAG LINKAGE &amp; TEST TOOL
+          </h3>
+          <button class="modal-close-btn" id="btn-close-ot-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 1rem;">
+            ฟังก์ชันทดสอบอ่านค่าสดจาก S7-1500 PLC โดยระบุ DB Number และ Byte Offset สำหรับเตรียมลิงก์ข้อมูล Process ในเฟสถัดไป
+          </p>
+
+          <form id="tag-test-form" class="form-row">
+            <div class="form-group">
+              <label>DB Number</label>
+              <input type="number" id="input-db" class="form-input" value="1601" required>
+            </div>
+            <div class="form-group">
+              <label>Byte Offset</label>
+              <input type="number" step="0.1" id="input-offset" class="form-input" value="984.0" required>
+            </div>
+            <div class="form-group">
+              <label>Bit Offset</label>
+              <input type="number" id="input-bit" class="form-input" value="0">
+            </div>
+            <div class="form-group">
+              <label>Data Format</label>
+              <select id="input-format" class="form-select">
+                <option value="REAL">REAL (Float 4B)</option>
+                <option value="INT">INT (16-bit)</option>
+                <option value="BOOL">BOOL (Bit)</option>
+                <option value="DWORD">DWORD (32-bit)</option>
+              </select>
+            </div>
+            <button type="submit" class="btn-read-tag">Read Tag Live</button>
+          </form>
+
+          <div class="test-result-box" id="test-result-box"></div>
+
+          <h4 style="font-size: 0.85rem; font-weight: 600; color: #fff; margin-bottom: 0.6rem;">
+            รายการ 80 Process Tags ที่ Mapping ใน DB1601 ปัจจุบัน
+          </h4>
+          <div class="tags-table-container">
+            <table class="ccp-table">
+              <thead>
+                <tr>
+                  <th>Tag Name</th>
+                  <th>DB / Offset</th>
+                  <th>Format</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody id="db-tags-list-body">
+                <tr><td colspan="4" style="text-align: center; color: var(--text-tertiary);">กำลังโหลดข้อมูลจาก MySQL/Backend...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Footer (Tucked away tools) -->
+    <footer class="footer-bar">
+      <div>Mitr Phol Dairy &amp; Beverage • Product Processing System (UHT-01)</div>
+      <div class="quick-links">
+        <a href="http://localhost:3002" target="_blank">Grafana (3002)</a>
+        <a href="http://localhost:8000/docs" target="_blank">FastAPI Swagger (8000)</a>
+        <a href="http://localhost:8080" target="_blank">phpMyAdmin (8080)</a>
+        <a href="http://localhost:8081" target="_blank">Adminer (8081)</a>
+        <a href="http://localhost:15672" target="_blank">RabbitMQ (15672)</a>
+      </div>
     </footer>
   </div>
 
