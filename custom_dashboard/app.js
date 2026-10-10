@@ -487,12 +487,41 @@ const sectionRecorders = {
   }
 };
 
+function initRecorderForSection(sec) {
+  if (sec === 'uht' && !sectionRecorders.uht.chart) initUhtRecorder();
+  else if (sec === 'atank' && !sectionRecorders.atank.chart) initAtankRecorder();
+  else if (sec === 'cip' && !sectionRecorders.cip.chart) initCipRecorder();
+  else if (sec === 'prod' && !sectionRecorders.prod.chart) initProdRecorder();
+}
+
 function initAllSectionRecorders() {
-  initUhtRecorder();
-  initAtankRecorder();
-  initCipRecorder();
-  initProdRecorder();
   setupSectionRecorderControls();
+
+  // Attach ResizeObserver to all recorder wrappers so any layout or zoom change immediately resizes charts
+  if (window.ResizeObserver) {
+    document.querySelectorAll('.recorder-canvas-wrap').forEach(wrap => {
+      const ro = new ResizeObserver(entries => {
+        for (const entry of entries) {
+          if (entry.contentRect.height > 100) {
+            const canvas = wrap.querySelector('canvas');
+            if (canvas) {
+              const chart = Chart.getChart(canvas);
+              if (chart) {
+                chart.resize();
+              }
+            }
+          }
+        }
+      });
+      ro.observe(wrap);
+    });
+  }
+
+  // If initial active tab is a recorder tab, initialize it
+  const activeTab = document.querySelector('.tab-content.active');
+  if (activeTab) {
+    onTabActivated(activeTab.id);
+  }
 }
 
 // 1. UHT RECORDER
@@ -879,12 +908,42 @@ function onTabActivated(tabId) {
     'tab-prod': 'prod'
   };
   const sec = secMap[tabId];
-  if (sec && sectionRecorders[sec] && sectionRecorders[sec].chart) {
-    setTimeout(() => {
+  if (sec) {
+    // Lazily initialize recorder if not initialized yet while container is now visible
+    initRecorderForSection(sec);
+    const rec = sectionRecorders[sec];
+    if (rec && rec.chart) {
+      rec.chart.resize();
+      updateSingleSectionRecorder(sec);
+    }
+  }
+
+  // Trigger resize events across multiple ticks to guarantee Chart.js adapts to visible geometry
+  window.dispatchEvent(new Event('resize'));
+
+  requestAnimationFrame(() => {
+    window.dispatchEvent(new Event('resize'));
+    if (sec && sectionRecorders[sec] && sectionRecorders[sec].chart) {
       sectionRecorders[sec].chart.resize();
       updateSingleSectionRecorder(sec);
-    }, 50);
-  }
+    }
+  });
+
+  setTimeout(() => {
+    window.dispatchEvent(new Event('resize'));
+    if (sec && sectionRecorders[sec] && sectionRecorders[sec].chart) {
+      sectionRecorders[sec].chart.resize();
+      updateSingleSectionRecorder(sec);
+    }
+  }, 100);
+
+  setTimeout(() => {
+    window.dispatchEvent(new Event('resize'));
+    if (sec && sectionRecorders[sec] && sectionRecorders[sec].chart) {
+      sectionRecorders[sec].chart.resize();
+      updateSingleSectionRecorder(sec);
+    }
+  }, 260); // After CSS fadeIn finishes
 }
 
 // ================= LUXURY SINAMICS G120C DRIVE BAY COCKPIT =================
