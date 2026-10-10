@@ -11,7 +11,7 @@
 [![SIEMENS](https://img.shields.io/badge/SIEMENS-S7--1500_PLC-3c888d?style=for-the-badge&logo=siemens&logoColor=white)](#)
 [![ALGORITHM](https://img.shields.io/badge/ALGORITHM-PIDCOMPACT_V2-ea6b28?style=for-the-badge)](#)
 
-[![PLATFORM](https://img.shields.io/badge/PLATFORM-LENOVO_THINKCENTRE_TINY_(AMD64)-1e5ad7?style=for-the-badge&logo=linux&logoColor=white)](#)
+[![PLATFORM](https://img.shields.io/badge/PLATFORM-DELL_TOWER_ECT1250_(AMD64)-007db8?style=for-the-badge&logo=dell&logoColor=white)](#)
 [![ARCH](https://img.shields.io/badge/ARCH-X86__64_%2F_AMD64-e05d26?style=for-the-badge&logo=ubuntu&logoColor=white)](#)
 
 [![POWER-CUT PROOF](https://img.shields.io/badge/POWER--CUT_PROOF-OVERLAYFS_READ--ONLY-f5c538?style=for-the-badge&labelColor=484848&color=f5c538)](#)
