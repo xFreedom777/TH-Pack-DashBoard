@@ -1,8 +1,7 @@
 # 🏭 TH-PACK INTELLIGENT SCADA & PLANT ANALYTICS SYSTEM
 ## ระบบควบคุมและวิเคราะห์ข้อมูลอัจฉริยะ TH-Pack (Siemens S7-1500 & Multi-Tier Architecture)
 
-> **Architect & Lead Developer:** xFreedom777 (<xDev.0777@gmail.com>)  
-> **Project Owner / Supervisor:** Dream Piyapong / CJ (<x92120@gmail.com>)  
+> **Engineer & System Developer:** Dream Piyapong xFreedom777 ([xDev.0777@gmail.com](mailto:xDev.0777@gmail.com))  
 > **Host Node:** `xuht-001` (`192.168.1.2`)  
 > **Target PLC:** Siemens SIMATIC S7-1500 (`192.168.1.11` / `192.168.0.101`)
 
@@ -150,6 +149,5 @@ GRAFANA_ADMIN_PASSWORD=adminpassword123
 
 ## 👥 Contributors & Version Control
 
-- **Lead Engineer & System Architect:** **xFreedom777** ([xDev.0777@gmail.com](mailto:xDev.0777@gmail.com))
-- **Owner & Supervisor:** **Dream Piyapong (CJ)** ([x92120@gmail.com](mailto:x92120@gmail.com))
-- **Repository:** `https://github.com/x92120/TH-Pack-DashBoard.git`
+- **Engineer & System Developer:** **Dream Piyapong xFreedom777** ([xDev.0777@gmail.com](mailto:xDev.0777@gmail.com))
+- **Repository:** `https://github.com/xFreedom777/TH-Pack-DashBoard.git`
