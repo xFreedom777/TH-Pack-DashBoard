@@ -3,9 +3,8 @@
 
 
 > **Engineer & System Developer:** Dream Piyapong xFreedom777 ([xDev.0777@gmail.com](mailto:xDev.0777@gmail.com))  
-> **Host Node:** `xuht-001` (`192.168.1.2`)  
-> **Target PLC:** Siemens SIMATIC S7-1500 (`192.168.1.11` / `192.168.0.101`)  
-
+> **Host Node:** `xuht-001`   
+> **Target PLC:** Siemens SIMATIC S7-1500
 <div align="center">
 
 [![NODE.JS](https://img.shields.io/badge/NODE.JS-20.X_LTS-528540?style=for-the-badge&logo=nodedotjs&logoColor=white)](#)
@@ -105,7 +104,7 @@ graph TD
 ```
 
 ### 1. ระดับอุปกรณ์และเครื่องมือวัดภาคสนาม (Field Instrumentation & PLC Layer)
-- **Siemens SIMATIC S7-1500 PLC (`192.168.1.11` / `192.168.0.101`)**: ศูนย์กลางควบคุมกระบวนการผลิตผ่านโปรโตคอล S7comm (Rack 0, Slot 1)
+- **Siemens SIMATIC S7-1500 PLC**: ศูนย์กลางควบคุมกระบวนการผลิตผ่านโปรโตคอล S7comm 
 - **Data Block Mapping & TIA Portal Text Lists**:
   1. **UHT Sterilizer (DB1200)**: อุณหภูมิสเตอริไลซ์ TT01 (CCP: 137–142°C), อุณหภูมิพรีฮีท TT02/TT04, อัตราไหล FT04, ระดับถังบาลานซ์ LT
   2. **Aseptic Tank ATANK (DB1301)**: แรงดันอากาศปลอดเชื้อ PT460 (2.10–2.80 bar), อุณหภูมิสเตอร์ไรด์ TT460, อุณหภูมิแบริเออร์ TT477, ระดับถัง LC %, พร้อมลำดับขั้นตอน **`A_TANK_STEP` ครบ 0 ถึง 128** ตาม TIA Portal Text list (เช่น Step 24/26 Condensate Drain, Step 28 Ready Production, Step 30 Production, Step 66 Plant Cleaning)
@@ -153,7 +152,7 @@ graph TD
 | **2** | **Step Transition Engine (`step_tracker.py`)** | ✅ เสร็จสมบูรณ์ | เชื่อมต่อเข้ากับ Background PLC Polling Loop ตรวจจับ Step เปลี่ยนค่าแบบ Real-time และบันทึกลงฐานข้อมูลอัตโนมัติ |
 | **3** | **ATANK Step List 0–128 (TIA Portal Text List)** | ✅ เสร็จสมบูรณ์ | ปรับปรุงพจนานุกรมขั้นตอน A_TANK_STEP ครบ 100% ตามหน้างานจริง (Step 24/26 Condensate Drain, Step 28 Ready Production, Step 30 Production, Step 66 Plant Cleaning ฯลฯ) |
 | **4** | **Official A4 BMR Report Generator** | ✅ เสร็จสมบูรณ์ | สร้างระบบรายงานมาตรฐาน A4 Portrait พร้อมฝัง Base64 ตราสัญลักษณ์ **marine (มารีน)** เต็มใบขอบมน, ตารางข้อมูล Step, และช่องลงนาม 3 ฝ่าย (Operator, QC, ผจก.ผลิต) |
-| **5** | **RUNGSAPPATTANA (THAILAND) Branding** | ✅ เสร็จสมบูรณ์ | ปรับเปลี่ยนชื่อโรงงานหน้างานจริงเป็น **บริษัท รุ่งทรัพย์พัฒนา (ประเทศไทย) จำกัด (RUNGSAPPATTANA (THAILAND) CO., LTD.)** ทั้งในหัวเอกสารและแถบหลักแดชบอร์ด |
+| **5** | | ✅ เสร็จสมบูรณ์ | ปรับเปลี่ยนชื่อโรงงานหน้างานจริง** ทั้งในหัวเอกสารและแถบหลักแดชบอร์ด |
 | **6** | **From-To Date & Time Filter (Historian & Reports)** | ✅ เสร็จสมบูรณ์ | เพิ่มกล่องเลือกวัน-เวลาเริ่มต้น (From) และสิ้นสุด (To) ในตัวบันทึกกราฟและหน้าต่างออกรายงาน Step Log พร้อมปรับ Sampling Resolution |
 | **7** | **Overview Date Picker & Strict FAULT NO DATA** | ✅ เสร็จสมบูรณ์ | เพิ่มตัวกรองเลือกวันที่ในหน้า Overview พร้อมตั้งเงื่อนไขวันเริ่มติดตั้งจริง (10 ต.ค. 2026) หากเลือกวันก่อนหน้านี้จะแสดง **`FAULT: NO DATA`** โปร่งใส ไม่มีการปั้นข้อมูล |
 | **8** | **Decoupled Worker & Watchdog Auto-Recover** | ✅ เสร็จสมบูรณ์ | แยก Ingestion Worker (`telemetry_worker.py`) ออกจาก FastAPI พร้อมระบบ Watchdog Supervisor ตรวจจับ Heartbeat และกู้ชีพโพรเซสกลับคืนทันทีหากล้มเหลว รองรับความเสถียรเกรดอุตสาหกรรม (OT High Availability) |
