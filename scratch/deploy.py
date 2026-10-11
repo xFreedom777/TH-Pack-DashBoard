@@ -31,6 +31,8 @@ def deploy():
         # Copy telemetry_worker to root /app inside container
         f"docker cp '{REMOTE_BASE}/backend/telemetry_worker.py' thpack_backend:/app/telemetry_worker.py",
         f"docker cp '{REMOTE_BASE}/backend/app/main.py' thpack_backend:/app/app/main.py",
+        f"docker cp '{REMOTE_BASE}/backend/app/vsd_analytics.py' thpack_backend:/app/app/vsd_analytics.py",
+        f"docker cp '{REMOTE_BASE}/backend/app/vsd_analytics.py' thpack_backend:/app/vsd_analytics.py",
         # Restart backend container to pick up supervisor & decoupled architecture
         "docker restart thpack_backend",
         # Wait a moment for container to start
