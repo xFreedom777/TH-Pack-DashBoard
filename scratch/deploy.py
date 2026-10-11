@@ -15,6 +15,7 @@ def deploy():
     sftp = ssh.open_sftp()
 
     files_to_sync = [
+        ('backend/master_reader.py', f'{REMOTE_BASE}/backend/master_reader.py'),
         ('backend/app/main.py', f'{REMOTE_BASE}/backend/app/main.py'),
         ('backend/app/vsd_analytics.py', f'{REMOTE_BASE}/backend/app/vsd_analytics.py'),
         ('backend/telemetry_worker.py', f'{REMOTE_BASE}/backend/telemetry_worker.py'),
@@ -28,7 +29,8 @@ def deploy():
     sftp.close()
 
     commands = [
-        # Copy telemetry_worker to root /app inside container
+        # Copy telemetry_worker and master_reader to root /app inside container
+        f"docker cp '{REMOTE_BASE}/backend/master_reader.py' thpack_backend:/app/master_reader.py",
         f"docker cp '{REMOTE_BASE}/backend/telemetry_worker.py' thpack_backend:/app/telemetry_worker.py",
         f"docker cp '{REMOTE_BASE}/backend/app/main.py' thpack_backend:/app/app/main.py",
         f"docker cp '{REMOTE_BASE}/backend/app/vsd_analytics.py' thpack_backend:/app/app/vsd_analytics.py",

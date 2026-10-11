@@ -431,15 +431,23 @@ def seed_demo_step_logs():
 
     uht_seq = [
         (2, "Standby Wait to Start", 10, 10, 25.5, 0.0, 0.5),
-        (6, "Flush-01 Water Rinse", 10, 15, 28.0, 1200.0, 1.2),
-        (10, "Flush Process Circulation", 600, 600, 55.4, 2500.0, 1.4),
-        (14, "Heating Step 1 (Regeneration)", 5, 120, 85.2, 2800.0, 1.5),
-        (16, "Heating Step 2 (Sterile Target)", 5, 180, 138.5, 3000.0, 1.5),
-        (18, "Sterile Timer (Sterilization Hold)", 1800, 1800, 140.2, 3000.0, 1.5),
+        (4, "Empty BTD", 5, 10, 26.0, 0.0, 0.2),
+        (6, "Flush-01", 10, 15, 28.0, 1200.0, 1.2),
+        (8, "Flush-02", 30, 30, 30.0, 1500.0, 1.3),
+        (10, "Flush Process", 600, 600, 55.4, 2500.0, 1.4),
+        (12, "Plant Circulation", 60, 60, 60.0, 2600.0, 1.4),
+        (14, "Heating Step 1", 5, 120, 85.2, 2800.0, 1.5),
+        (16, "Heating Step 2", 5, 180, 138.5, 3000.0, 1.5),
+        (18, "Sterile Timer", 1800, 1800, 140.2, 3000.0, 1.5),
         (20, "Cool Down Step 1", 300, 300, 80.5, 3000.0, 1.5),
-        (24, "Water Production Mode", 120, 180, 30.2, 3000.0, 1.5),
-        (28, "Start Production (Product Intake)", 3, 120, 28.5, 3000.0, 1.5),
-        (30, "Product Push Water To Drain", 1, 45, 28.4, 3000.0, 1.5)
+        (22, "Cool Down Step 2", 300, 300, 35.0, 3000.0, 1.5),
+        (24, "Water Production", 120, 180, 30.2, 3000.0, 1.5),
+        (26, "Wait for BTD Low Level", 3, 10, 29.0, 3000.0, 1.5),
+        (28, "Start Production", 3, 120, 28.5, 3000.0, 1.5),
+        (30, "Product Push Water To Drain Step 1", 1, 45, 28.4, 3000.0, 1.5),
+        (32, "Product Push Water To Drain Step 2", 1, 45, 28.3, 3000.0, 1.5),
+        (34, "Product Push Water To Drain Step 3", 1, 45, 28.2, 3000.0, 1.5),
+        (36, "Product at Tank", 1, 600, 28.2, 3000.0, 1.5)
     ]
 
     curr_t = base_time
