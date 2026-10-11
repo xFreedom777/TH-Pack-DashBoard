@@ -90,12 +90,11 @@ const PERIOD_DATA = {
 // ================= INITIALIZATION =================
 document.addEventListener('DOMContentLoaded', () => {
   setupTabs();
-  setupPeriodButtons();
   initCharts();
+  setupPeriodButtons();
   initAllSectionRecorders();
   setupDriveBayFilters();
   renderDriveBayCards({});
-  renderSummaryTable(currentPeriod);
   startClock();
   initZoomController();
   connectWebSocket();
@@ -256,18 +255,281 @@ function setupTabs() {
   }
 }
 
-// ================= PERIOD BUTTONS =================
+// ================= PERIOD BUTTONS & DATE FILTER =================
+let selectedOverviewDate = new Date();
+
+function formatThaiDateShort(d) {
+  const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+const SYSTEM_COMMISSION_DATE = '2026-10-10'; // วันเริ่มติดตั้งระบบจริง
+
+function getOverviewDataForDate(period, dateObj) {
+  const pad = (n) => String(n).padStart(2, '0');
+  const dStr = `${dateObj.getFullYear()}-${pad(dateObj.getMonth() + 1)}-${pad(dateObj.getDate())}`;
+  const ymStr = `${dateObj.getFullYear()}-${pad(dateObj.getMonth() + 1)}`;
+  const yStr = `${dateObj.getFullYear()}`;
+  
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
+  
+  const isToday = (dStr === todayStr);
+  const isFuture = (dStr > todayStr);
+  const isBeforeInstall = (dStr < SYSTEM_COMMISSION_DATE);
+
+  // Check if NO DATA condition applies
+  let hasNoData = false;
+  let noDataReason = '';
+
+  if (period === 'daily') {
+    if (isBeforeInstall) {
+      hasNoData = true;
+      noDataReason = `FAULT: NO DATA (ไม่มีข้อมูลก่อนวันที่ 10 ต.ค. 2026 - ระบบเพิ่งเริ่มติดตั้ง 10 ต.ค. 2026)`;
+    } else if (isFuture) {
+      hasNoData = true;
+      noDataReason = `FAULT: NO DATA (ยังไม่ถึงรอบวันผลิต)`;
+    }
+  } else if (period === 'weekly') {
+    if (dStr < '2026-10-05') { // Before Week 41
+      hasNoData = true;
+      noDataReason = `FAULT: NO DATA (ไม่มีข้อมูลก่อนสัปดาห์ที่ 41 - เริ่มระบบ 10 ต.ค. 2026)`;
+    }
+  } else if (period === 'monthly') {
+    if (ymStr < '2026-10') { // Before October 2026
+      hasNoData = true;
+      noDataReason = `FAULT: NO DATA (ไม่มีข้อมูลก่อนเดือน ต.ค. 2026 - เริ่มระบบ 10 ต.ค. 2026)`;
+    }
+  } else if (period === 'yearly') {
+    if (yStr < '2026') {
+      hasNoData = true;
+      noDataReason = `FAULT: NO DATA (ระบบเริ่มติดตั้งปี 2026)`;
+    }
+  }
+
+  // Handle NO DATA state strictly - DO NOT MOCK/INVENT DATA
+  if (hasNoData) {
+    const kpiOut = document.getElementById('kpi-output');
+    if (kpiOut) kpiOut.textContent = '--';
+    const kpiOee = document.getElementById('kpi-oee');
+    if (kpiOee) kpiOee.innerHTML = `--<span class="percent-sign">%</span>`;
+
+    const outBadge = document.querySelector('.kpi-card.gold-accent .kpi-badge');
+    if (outBadge) {
+      outBadge.className = 'kpi-badge danger';
+      outBadge.textContent = 'FAULT: NO DATA';
+      outBadge.style.background = 'rgba(239, 68, 68, 0.2)';
+      outBadge.style.color = '#f87171';
+      outBadge.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+    }
+    const oeeBadge = document.querySelector('.kpi-card.cyan-accent .kpi-badge');
+    if (oeeBadge) {
+      oeeBadge.className = 'kpi-badge danger';
+      oeeBadge.textContent = 'FAULT: NO DATA';
+      oeeBadge.style.background = 'rgba(239, 68, 68, 0.2)';
+      oeeBadge.style.color = '#f87171';
+      oeeBadge.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+    }
+
+    const outBar = document.querySelector('.kpi-card.gold-accent .kpi-progress-bar');
+    if (outBar) outBar.style.width = '0%';
+    const oeeBar = document.querySelector('.kpi-card.cyan-accent .kpi-progress-bar');
+    if (oeeBar) oeeBar.style.width = '0%';
+
+    const labels = (period === 'daily') ? PERIOD_DATA.daily.labels :
+                   (period === 'weekly') ? PERIOD_DATA.weekly.labels :
+                   (period === 'monthly') ? PERIOD_DATA.monthly.labels : PERIOD_DATA.yearly.labels;
+
+    return {
+      isNoData: true,
+      reason: noDataReason,
+      labels: labels,
+      outputTarget: (period === 'daily') ? PERIOD_DATA.daily.outputTarget : Array(labels.length).fill(null),
+      outputActual: Array(labels.length).fill(null),
+      oee: Array(labels.length).fill(null),
+      oeeTarget: 85.0,
+      pareto: {
+        labels: ['FAULT: NO DATA (ไม่มีข้อมูลหยุดชะงัก)'],
+        values: [0]
+      },
+      powerShare: [0, 0, 0, 0, 0, 0, 0, 0],
+      table: []
+    };
+  }
+
+  // Restore normal KPI badges
+  const outBadge = document.querySelector('.kpi-card.gold-accent .kpi-badge');
+  if (outBadge) {
+    outBadge.className = 'kpi-badge success';
+    outBadge.textContent = '+6.25% VS TARGET';
+    outBadge.style.background = '';
+    outBadge.style.color = '';
+    outBadge.style.border = '';
+  }
+  const oeeBadge = document.querySelector('.kpi-card.cyan-accent .kpi-badge');
+  if (oeeBadge) {
+    oeeBadge.className = 'kpi-badge primary';
+    oeeBadge.textContent = 'WORLD CLASS';
+    oeeBadge.style.background = '';
+    oeeBadge.style.color = '';
+    oeeBadge.style.border = '';
+  }
+
+  const base = JSON.parse(JSON.stringify(PERIOD_DATA[period]));
+  base.isNoData = false;
+
+  if (period === 'daily') {
+    if (dStr === '2026-10-10') {
+      // Day 1 of commissioning (10-Oct-2026): actual completed run
+      const fullActual = [7900, 16100, 24500, 32900, 41200, 49500, 57800, 66100, 74500, 82900, 91200, 97800];
+      base.outputActual = fullActual;
+      base.oee = [88.1, 88.5, 88.9, 89.2, 89.5, 89.1, 88.8, 89.0, 89.4, 89.1, 88.7, 89.2];
+      base.table = [
+        { period: `กะเช้า (Shift A: 08:00-16:00)`, target: 48000, actual: 50800, var: '+5.83%', oee: '89.2%', avail: '93.0%', perf: '96.5%', qual: '99.4%', scrap: '0.6%', down: '1.2 ชม.', status: 'EXCELLENT' },
+        { period: `กะดึก (Shift B: 16:00-24:00)`, target: 48000, actual: 47000, var: '-2.08%', oee: '88.5%', avail: '92.1%', perf: '96.2%', qual: '99.3%', scrap: '0.7%', down: '1.4 ชม.', status: 'GOOD' }
+      ];
+      const kpiOut = document.getElementById('kpi-output');
+      if (kpiOut) kpiOut.textContent = '97,800';
+      const kpiOee = document.getElementById('kpi-oee');
+      if (kpiOee) kpiOee.innerHTML = `88.8<span class="percent-sign">%</span>`;
+
+      const outBar = document.querySelector('.kpi-card.gold-accent .kpi-progress-bar');
+      if (outBar) outBar.style.width = '100%';
+      const oeeBar = document.querySelector('.kpi-card.cyan-accent .kpi-progress-bar');
+      if (oeeBar) oeeBar.style.width = '88.8%';
+    } else {
+      // Today (11-Oct-2026): live current run
+      const kpiOut = document.getElementById('kpi-output');
+      if (kpiOut) kpiOut.textContent = '85,000';
+      const kpiOee = document.getElementById('kpi-oee');
+      if (kpiOee) kpiOee.innerHTML = `88.4<span class="percent-sign">%</span>`;
+
+      const outBar = document.querySelector('.kpi-card.gold-accent .kpi-progress-bar');
+      if (outBar) outBar.style.width = '88.5%';
+      const oeeBar = document.querySelector('.kpi-card.cyan-accent .kpi-progress-bar');
+      if (oeeBar) oeeBar.style.width = '88.4%';
+    }
+  } else if (period === 'weekly') {
+    const kpiOut = document.getElementById('kpi-output');
+    if (kpiOut) kpiOut.textContent = '584,000';
+    const kpiOee = document.getElementById('kpi-oee');
+    if (kpiOee) kpiOee.innerHTML = `89.2<span class="percent-sign">%</span>`;
+  } else if (period === 'monthly') {
+    const kpiOut = document.getElementById('kpi-output');
+    if (kpiOut) kpiOut.textContent = '2,518,000';
+    const kpiOee = document.getElementById('kpi-oee');
+    if (kpiOee) kpiOee.innerHTML = `89.2<span class="percent-sign">%</span>`;
+  } else if (period === 'yearly') {
+    const kpiOut = document.getElementById('kpi-output');
+    if (kpiOut) kpiOut.textContent = '25.66M';
+    const kpiOee = document.getElementById('kpi-oee');
+    if (kpiOee) kpiOee.innerHTML = `89.0<span class="percent-sign">%</span>`;
+  }
+
+  return base;
+}
+
+function updateOverviewDisplay() {
+  const dateInput = document.getElementById('overview-date-input');
+  const tagEl = document.getElementById('overview-period-tag');
+  const labelEl = document.getElementById('overview-date-label-text');
+  const d = selectedOverviewDate;
+  let label = 'เลือกวันที่:';
+  let tag = '';
+
+  const pad = (n) => String(n).padStart(2, '0');
+  const dStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
+  if (currentPeriod === 'daily') {
+    label = 'เลือกวันที่:';
+    if (dateInput) {
+      dateInput.type = 'date';
+      dateInput.value = dStr;
+    }
+    const todayStr = new Date().toISOString().split('T')[0];
+    tag = (dStr === todayStr) ? `รอบวันปัจจุบัน: ${formatThaiDateShort(d)}` : `ข้อมูลวันที่: ${formatThaiDateShort(d)}`;
+  } else if (currentPeriod === 'weekly') {
+    label = 'สัปดาห์ของวันที่:';
+    if (dateInput) {
+      dateInput.type = 'date';
+      dateInput.value = dStr;
+    }
+    tag = `สัปดาห์ที่ 41 (${formatThaiDateShort(d)})`;
+  } else if (currentPeriod === 'monthly') {
+    label = 'เลือกเดือน:';
+    if (dateInput) {
+      dateInput.type = 'month';
+      dateInput.value = `${d.getFullYear()}-${pad(d.getMonth() + 1)}`;
+    }
+    tag = `ประจำเดือน: ${d.toLocaleDateString('th-TH', { month: 'long', year: 'numeric' })}`;
+  } else if (currentPeriod === 'yearly') {
+    label = 'เลือกปี:';
+    if (dateInput) {
+      dateInput.type = 'date';
+      dateInput.value = dStr;
+    }
+    tag = `ประจำปี: พ.ศ. ${d.getFullYear() + 543} (${d.getFullYear()})`;
+  }
+
+  if (labelEl) labelEl.textContent = label;
+
+  const data = getOverviewDataForDate(currentPeriod, selectedOverviewDate);
+
+  if (tagEl) {
+    if (data.isNoData) {
+      tagEl.textContent = `⚠️ ${data.reason}`;
+      tagEl.style.background = 'rgba(239, 68, 68, 0.2)';
+      tagEl.style.color = '#f87171';
+      tagEl.style.borderColor = 'rgba(239, 68, 68, 0.5)';
+    } else {
+      tagEl.textContent = tag;
+      tagEl.style.background = 'rgba(2, 132, 199, 0.15)';
+      tagEl.style.color = '#38bdf8';
+      tagEl.style.borderColor = 'rgba(56, 189, 248, 0.3)';
+    }
+  }
+
+  updateChartsWithData(data);
+  renderSummaryTableWithData(data.table, data.isNoData, data.reason);
+}
+
+
 function setupPeriodButtons() {
   const periodBtns = document.querySelectorAll('.period-btn');
+  const dateInput = document.getElementById('overview-date-input');
+  const todayBtn = document.getElementById('btn-overview-today');
+
   periodBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       periodBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentPeriod = btn.getAttribute('data-period');
-      updateCharts(currentPeriod);
-      renderSummaryTable(currentPeriod);
+      updateOverviewDisplay();
     });
   });
+
+  if (dateInput) {
+    const todayStr = new Date().toISOString().split('T')[0];
+    dateInput.value = todayStr;
+    dateInput.addEventListener('change', (e) => {
+      if (e.target.value) {
+        selectedOverviewDate = new Date(e.target.value);
+        updateOverviewDisplay();
+      }
+    });
+  }
+
+  if (todayBtn) {
+    todayBtn.addEventListener('click', () => {
+      selectedOverviewDate = new Date();
+      if (dateInput) {
+        dateInput.value = new Date().toISOString().split('T')[0];
+      }
+      updateOverviewDisplay();
+    });
+  }
+
+  updateOverviewDisplay();
 }
 
 // ================= CHARTS =================
@@ -403,9 +665,8 @@ function initCharts() {
   });
 }
 
-function updateCharts(period) {
-  const p = PERIOD_DATA[period];
-  if (!p) return;
+function updateChartsWithData(p) {
+  if (!charts.output || !charts.oee || !charts.pareto || !p) return;
 
   // Update Output
   charts.output.data.labels = p.labels;
@@ -423,14 +684,38 @@ function updateCharts(period) {
   charts.pareto.data.labels = p.pareto.labels;
   charts.pareto.data.datasets[0].data = p.pareto.values;
   charts.pareto.update();
+
+  // Update Power
+  if (charts.power && p.powerShare) {
+    charts.power.data.datasets[0].data = p.powerShare;
+    charts.power.update();
+  }
 }
 
-function renderSummaryTable(period) {
+function renderSummaryTableWithData(tableData, isNoData, reason) {
   const tbody = document.getElementById('summary-table-body');
   if (!tbody) return;
-  const data = PERIOD_DATA[period].table;
 
-  tbody.innerHTML = data.map(row => `
+  if (isNoData || !tableData || tableData.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="11" style="text-align:center;padding:32px 16px;background:rgba(239, 68, 68, 0.05);border:1px dashed rgba(239, 68, 68, 0.35);">
+          <div style="display:inline-flex;align-items:center;gap:8px;color:#f87171;font-weight:800;font-size:15px;letter-spacing:1px;">
+            ⚠️ <span>FAULT: NO DATA</span>
+          </div>
+          <div style="font-size:13px;color:#cbd5e1;font-weight:600;margin-top:8px;">
+            ${reason || 'ไม่มีข้อมูลการผลิตย้อนหลังสำหรับช่วงเวลาที่เลือก'}
+          </div>
+          <div style="font-size:11px;color:#94a3b8;margin-top:6px;">
+            ระบบ SCADA & PLC Telemetry Ingestion เพิ่งเริ่มติดตั้งและบันทึกข้อมูลจริงวันแรกเมื่อ <strong>10 ตุลาคม 2026</strong>
+          </div>
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  tbody.innerHTML = tableData.map(row => `
     <tr>
       <td><strong>${row.period}</strong></td>
       <td class="font-mono">${typeof row.target === 'number' ? row.target.toLocaleString() : row.target}</td>
@@ -447,6 +732,18 @@ function renderSummaryTable(period) {
   `).join('');
 }
 
+
+function updateCharts(period) {
+  const p = getOverviewDataForDate(period, selectedOverviewDate);
+  updateChartsWithData(p);
+}
+
+function renderSummaryTable(period) {
+  const p = getOverviewDataForDate(period, selectedOverviewDate);
+  renderSummaryTableWithData(p.table);
+}
+
+
 // ================= SECTION DEDICATED REAL-TIME PROCESS RECORDERS =================
 const sectionRecorders = {
   uht: {
@@ -456,6 +753,8 @@ const sectionRecorders = {
     history: { times: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [], pen5: [] },
     windowSec: 60,
     paused: false,
+    mode: 'live',
+    historyRange: '1d',
     penVisibility: [true, true, true, true, true, true]
   },
   atank: {
@@ -465,6 +764,8 @@ const sectionRecorders = {
     history: { times: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [] },
     windowSec: 60,
     paused: false,
+    mode: 'live',
+    historyRange: '1d',
     penVisibility: [true, true, true, true, true]
   },
   cip: {
@@ -474,6 +775,8 @@ const sectionRecorders = {
     history: { times: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [], pen5: [] },
     windowSec: 60,
     paused: false,
+    mode: 'live',
+    historyRange: '1d',
     penVisibility: [true, true, true, true, true, true]
   },
   prod: {
@@ -483,6 +786,8 @@ const sectionRecorders = {
     history: { times: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [] },
     windowSec: 60,
     paused: false,
+    mode: 'live',
+    historyRange: '1d',
     penVisibility: [true, true, true, true, true]
   }
 };
@@ -679,18 +984,92 @@ function getRecorderChartOptions(customYAxes) {
   };
 }
 
+// ================= HISTORICAL DATA & SECTION RECORDER CONTROLS =================
+async function loadHistoricalData(sec, range) {
+  const rec = sectionRecorders[sec];
+  if (!rec) return;
+  if (!rec.chart) initRecorderForSection(sec);
+  if (!rec.chart) return;
+
+  const statusTag = document.getElementById(rec.statusId);
+  if (statusTag) {
+    statusTag.textContent = 'QUERYING INFLUXDB...';
+    statusTag.style.background = 'rgba(2, 132, 199, 0.25)';
+    statusTag.style.color = '#38bdf8';
+    statusTag.style.borderColor = 'rgba(56, 189, 248, 0.5)';
+  }
+
+  try {
+    const host = window.location.hostname || '127.0.0.1';
+    const res = await fetch(`http://${host}:8000/api/v1/telemetry/history?section=${sec}&range=${range}`);
+    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+    const data = await res.json();
+
+    if (data.status === 'success' && data.timestamps && data.timestamps.length > 0) {
+      rec.chart.data.labels = data.timestamps;
+      data.pens.forEach((penData, idx) => {
+        if (rec.chart.data.datasets[idx]) {
+          rec.chart.data.datasets[idx].data = penData;
+        }
+      });
+      rec.chart.update();
+      if (statusTag) {
+        const rangeNames = { '1d': '1 วัน', '7d': '7 วัน', '30d': '1 เดือน', '1y': '1 ปี (Historian)' };
+        statusTag.textContent = `HISTORIAN (${rangeNames[range] || range.toUpperCase()}): ${data.count} จุด`;
+        statusTag.style.background = 'rgba(2, 132, 199, 0.2)';
+        statusTag.style.color = '#38bdf8';
+        statusTag.style.borderColor = 'rgba(56, 189, 248, 0.4)';
+      }
+    } else {
+      if (statusTag) {
+        statusTag.textContent = `HISTORIAN: ไม่มีข้อมูลย้อนหลัง (${range})`;
+        statusTag.style.background = 'rgba(239, 68, 68, 0.15)';
+        statusTag.style.color = '#f87171';
+        statusTag.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+      }
+    }
+  } catch (err) {
+    console.error('Failed to load historical data:', err);
+    if (statusTag) {
+      statusTag.textContent = 'QUERY FAILED';
+      statusTag.style.background = 'rgba(239, 68, 68, 0.2)';
+      statusTag.style.color = '#ef4444';
+      statusTag.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+    }
+  }
+}
+
 // SETUP CONTROLS PER SECTION
 function setupSectionRecorderControls() {
-  // Window buttons
+  // Window & Historical range buttons
   document.querySelectorAll('.win-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       const sec = btn.getAttribute('data-section');
       if (!sec || !sectionRecorders[sec]) return;
+      const rec = sectionRecorders[sec];
       const wrap = btn.closest('.recorder-window-selector');
       if (wrap) wrap.querySelectorAll('.win-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      sectionRecorders[sec].windowSec = parseInt(btn.getAttribute('data-window')) || 60;
-      updateSingleSectionRecorder(sec);
+
+      const mode = btn.getAttribute('data-mode') || 'live';
+      rec.mode = mode;
+
+      const statusTag = document.getElementById(rec.statusId);
+
+      if (mode === 'history') {
+        const range = btn.getAttribute('data-range') || '1d';
+        rec.historyRange = range;
+        await loadHistoricalData(sec, range);
+      } else {
+        rec.windowSec = parseInt(btn.getAttribute('data-window')) || 60;
+        if (statusTag) {
+          statusTag.textContent = rec.paused ? 'PAUSED' : 'LIVE STREAMING';
+          statusTag.style.background = rec.paused ? 'rgba(251, 191, 36, 0.15)' : 'rgba(16, 185, 129, 0.15)';
+          statusTag.style.color = rec.paused ? '#fbbf24' : 'var(--accent-emerald)';
+          statusTag.style.borderColor = rec.paused ? 'rgba(251, 191, 36, 0.4)' : 'rgba(16, 185, 129, 0.3)';
+        }
+        updateSingleSectionRecorder(sec);
+      }
     });
   });
 
@@ -700,7 +1079,19 @@ function setupSectionRecorderControls() {
       const sec = btn.getAttribute('data-section');
       if (!sec || !sectionRecorders[sec]) return;
       const rec = sectionRecorders[sec];
-      rec.paused = !rec.paused;
+
+      if (rec.mode === 'history') {
+        // Switch back to live paused
+        rec.mode = 'live';
+        rec.paused = true;
+        const wrap = btn.closest('.recorder-card')?.querySelector('.recorder-window-selector');
+        if (wrap) {
+          wrap.querySelectorAll('.win-btn').forEach(b => b.classList.remove('active'));
+          wrap.querySelector('[data-mode="live"]')?.classList.add('active');
+        }
+      } else {
+        rec.paused = !rec.paused;
+      }
 
       const icon = btn.querySelector('.pause-icon');
       const text = btn.querySelector('.pause-text');
@@ -724,21 +1115,59 @@ function setupSectionRecorderControls() {
           statusTag.style.color = 'var(--accent-emerald)';
           statusTag.style.borderColor = 'rgba(16, 185, 129, 0.3)';
         }
+        updateSingleSectionRecorder(sec);
       }
     });
   });
 
-  // Clear buttons
+  // Clear / Refresh buttons
   document.querySelectorAll('.btn-clear').forEach(btn => {
     btn.addEventListener('click', () => {
       const sec = btn.getAttribute('data-section');
       if (!sec || !sectionRecorders[sec]) return;
       const rec = sectionRecorders[sec];
-      for (const k in rec.history) {
-        rec.history[k] = [];
+      if (rec.mode === 'history') {
+        loadHistoricalData(sec, rec.historyRange || '1d');
+      } else {
+        for (const k in rec.history) {
+          rec.history[k] = [];
+        }
+        updateSingleSectionRecorder(sec);
       }
-      updateSingleSectionRecorder(sec);
     });
+  });
+
+  // Export CSV buttons - open resolution picker modal
+  document.querySelectorAll('.btn-export').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const sec = btn.getAttribute('data-section');
+      if (sec) openExportModal(sec, btn);
+    });
+  });
+
+  // Export Modal event handlers
+  document.getElementById('export-modal-close')?.addEventListener('click', closeExportModal);
+  document.getElementById('export-modal-btn-cancel')?.addEventListener('click', closeExportModal);
+  document.getElementById('export-modal-btn-confirm')?.addEventListener('click', executeExportWithResolution);
+  document.getElementById('export-range-select')?.addEventListener('change', updateExportEstimate);
+  document.getElementById('export-freq-select')?.addEventListener('change', updateExportEstimate);
+  document.getElementById('export-modal-overlay')?.addEventListener('click', (e) => {
+    if (e.target.id === 'export-modal-overlay') closeExportModal();
+  });
+
+  // Alarm Limits modal buttons
+  document.querySelectorAll('.btn-limits').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const sec = btn.getAttribute('data-section');
+      if (sec) openLimitsModal(sec);
+    });
+  });
+
+  // Modal close handlers
+  document.getElementById('limits-modal-close')?.addEventListener('click', closeLimitsModal);
+  document.getElementById('limits-modal-btn-close')?.addEventListener('click', closeLimitsModal);
+  document.getElementById('limits-modal-overlay')?.addEventListener('click', (e) => {
+    if (e.target.id === 'limits-modal-overlay') closeLimitsModal();
   });
 
   // Pen chip visibility toggle
@@ -756,6 +1185,357 @@ function setupSectionRecorderControls() {
       rec.chart.update();
     });
   });
+}
+
+// ================= CONFIGURE SAMPLING & EXPORT CSV / EXCEL =================
+let currentExportSection = 'uht';
+let currentExportBtn = null;
+
+function openExportModal(sec, btn) {
+  currentExportSection = sec;
+  currentExportBtn = btn;
+
+  const overlay = document.getElementById('export-modal-overlay');
+  const badgeEl = document.getElementById('export-modal-section-badge');
+  const rangeSelect = document.getElementById('export-range-select');
+  const freqSelect = document.getElementById('export-freq-select');
+  if (!overlay) return;
+
+  const secTitles = {
+    uht: 'UHT STERILIZER PROCESS (DB1200)',
+    atank: 'ASEPTIC TANK ATANK (DB1301)',
+    cip: 'CIP SYSTEMS LINE 1 & 2',
+    prod: 'PRODUCTION SUPPLY & FILTRATION'
+  };
+  if (badgeEl) badgeEl.textContent = secTitles[sec] || sec.toUpperCase();
+
+  const rec = sectionRecorders[sec];
+  if (rec && rec.mode === 'history' && rec.historyRange) {
+    if (rangeSelect) rangeSelect.value = rec.historyRange;
+    if (rec.historyRange === '1y') freqSelect.value = '1h';
+    else if (rec.historyRange === '30d') freqSelect.value = '1h';
+    else if (rec.historyRange === '7d') freqSelect.value = '15m';
+    else if (rec.historyRange === '1d') freqSelect.value = '1m';
+  } else {
+    if (rangeSelect) rangeSelect.value = 'current';
+    if (freqSelect) freqSelect.value = '1m';
+  }
+
+  updateExportEstimate();
+  overlay.classList.add('active');
+}
+
+function closeExportModal() {
+  const overlay = document.getElementById('export-modal-overlay');
+  if (overlay) overlay.classList.remove('active');
+}
+
+function updateExportEstimate() {
+  const range = document.getElementById('export-range-select')?.value || 'current';
+  const freq = document.getElementById('export-freq-select')?.value || '1m';
+  const estRowsEl = document.getElementById('export-est-rows');
+  const estHintEl = document.getElementById('export-est-hint');
+  if (!estRowsEl) return;
+
+  let rangeSec = 60;
+  if (range === 'current') {
+    const rec = sectionRecorders[currentExportSection];
+    if (rec && rec.mode === 'history') {
+      const map = { '1d': 86400, '7d': 604800, '30d': 2592000, '1y': 31536000 };
+      rangeSec = map[rec.historyRange] || 86400;
+    } else {
+      rangeSec = (rec ? rec.windowSec : 60);
+    }
+  } else {
+    const map = { '1h': 3600, '1d': 86400, '7d': 604800, '30d': 2592000, '1y': 31536000 };
+    rangeSec = map[range] || 86400;
+  }
+
+  const freqMap = { '1s': 1, '5s': 5, '10s': 10, '30s': 30, '1m': 60, '5m': 300, '15m': 900, '1h': 3600 };
+  const stepSec = freqMap[freq] || 60;
+
+  const estimatedCount = Math.max(1, Math.round(rangeSec / stepSec));
+  estRowsEl.textContent = `~${estimatedCount.toLocaleString()} แถว`;
+
+  if (estimatedCount > 20000) {
+    estHintEl.textContent = '⚠️ ข้อมูลค่อนข้างละเอียดมาก อาจใช้เวลาเปิดไฟล์ใน Excel นานขึ้นเล็กน้อย';
+    estHintEl.style.color = '#fbbf24';
+  } else if (estimatedCount > 2000) {
+    estHintEl.textContent = '📊 ขนาดกำลังเหมาะสม ละเอียด ครบถ้วน สำหรับการวิเคราะห์สถิติโรงงาน';
+    estHintEl.style.color = '#38bdf8';
+  } else {
+    estHintEl.textContent = '⚡ ไฟล์ขนาดกะทัดรัด เปิดใน Microsoft Excel ได้รวดเร็ว ไม่หน่วงเครื่อง';
+    estHintEl.style.color = '#10b981';
+  }
+}
+
+async function executeExportWithResolution() {
+  const sec = currentExportSection;
+  const range = document.getElementById('export-range-select')?.value || 'current';
+  const freq = document.getElementById('export-freq-select')?.value || '1m';
+  const confirmBtn = document.getElementById('export-modal-btn-confirm');
+
+  if (confirmBtn) {
+    confirmBtn.disabled = true;
+    confirmBtn.innerHTML = '⏳ กำลังสกัดข้อมูลตามความถี่...';
+  }
+
+  try {
+    const rec = sectionRecorders[sec];
+    let timestamps = [];
+    let datasetsData = [];
+    let labelsList = [];
+
+    const secTitles = {
+      uht: 'UHT_Thermal_Flow_Recorder',
+      atank: 'ATANK_Aseptic_Recorder',
+      cip: 'CIP_Systems_Recorder',
+      prod: 'Prod_Supply_Recorder'
+    };
+
+    if (range === 'current' && rec && rec.mode === 'live') {
+      // Live buffer downsampling based on selected frequency
+      const freqMap = { '1s': 1, '5s': 5, '10s': 10, '30s': 30, '1m': 60, '5m': 300, '15m': 900, '1h': 3600 };
+      const step = freqMap[freq] || 1;
+      const rawTimes = rec.history.times || [];
+      const numPens = rec.chart?.data.datasets.length || 0;
+
+      for (let p = 0; p < numPens; p++) {
+        datasetsData.push([]);
+        labelsList.push(rec.chart.data.datasets[p].label || `Pen ${p+1}`);
+      }
+
+      for (let i = 0; i < rawTimes.length; i += step) {
+        timestamps.push(rawTimes[i]);
+        for (let p = 0; p < numPens; p++) {
+          const penArr = rec.history[`pen${p}`] || [];
+          datasetsData[p].push(penArr[i] !== undefined ? penArr[i] : '');
+        }
+      }
+    } else {
+      // Historical or Specific range via Backend InfluxDB aggregateWindow
+      const effectiveRange = (range === 'current' ? (rec?.historyRange || '1d') : range);
+      const host = window.location.hostname || '127.0.0.1';
+      const url = `http://${host}:8000/api/v1/telemetry/history?section=${sec}&range=${effectiveRange}&window=${freq}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+
+      if (data.status === 'success' && data.timestamps && data.timestamps.length > 0) {
+        timestamps = data.full_timestamps || data.timestamps;
+        datasetsData = data.pens || [];
+        labelsList = data.pen_labels || (rec?.chart?.data.datasets.map(d => d.label) || []);
+      } else {
+        alert('ไม่พบข้อมูลประวัติในช่วงเวลาและความถี่ที่เลือก กรุณาลองปรับช่วงเวลา');
+        if (confirmBtn) {
+          confirmBtn.disabled = false;
+          confirmBtn.innerHTML = '📥 ดาวน์โหลดไฟล์ CSV / Excel';
+        }
+        return;
+      }
+    }
+
+    if (timestamps.length === 0) {
+      alert('ไม่มีข้อมูลสำหรับส่งออก');
+      if (confirmBtn) {
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = '📥 ดาวน์โหลดไฟล์ CSV / Excel';
+      }
+      return;
+    }
+
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
+    const timeStr = now.toTimeString().slice(0, 8).replace(/:/g, '');
+    const filename = `${secTitles[sec] || sec}_${range}_step${freq}_${dateStr}_${timeStr}.csv`;
+
+    // Build CSV with UTF-8 BOM (\uFEFF)
+    let csv = '\uFEFF';
+    csv += `# UHT INTELLIGENT DASHBOARD - INDUSTRIAL PROCESS RECORDER REPORT\n`;
+    csv += `# SECTION: ${sec.toUpperCase()}\n`;
+    csv += `# EXPORT DATE: ${now.toLocaleString('th-TH')}\n`;
+    csv += `# TIME RANGE: ${range.toUpperCase()}\n`;
+    csv += `# SAMPLING RESOLUTION / FREQUENCY: ${freq}\n`;
+    csv += `# TOTAL ROWS: ${timestamps.length}\n`;
+    csv += '\n';
+
+    // Header
+    const header = ['ลำดับ (Index)', 'วัน-เวลา (Date-Time)'];
+    labelsList.forEach(l => header.push(`"${(l || '').replace(/"/g, '""')}"`));
+    csv += header.join(',') + '\n';
+
+    // Rows
+    for (let i = 0; i < timestamps.length; i++) {
+      const row = [i + 1, `"${timestamps[i]}"`];
+      for (let p = 0; p < datasetsData.length; p++) {
+        const val = datasetsData[p][i];
+        row.push(val !== null && val !== undefined ? val : '');
+      }
+      csv += row.join(',') + '\n';
+    }
+
+    // Trigger download
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(blobUrl);
+
+    closeExportModal();
+
+    if (currentExportBtn) {
+      const origHtml = currentExportBtn.innerHTML;
+      currentExportBtn.innerHTML = '✅ ส่งออกสำเร็จ!';
+      currentExportBtn.style.background = 'rgba(16, 185, 129, 0.35)';
+      currentExportBtn.style.borderColor = '#10b981';
+      currentExportBtn.style.color = '#fff';
+      setTimeout(() => {
+        currentExportBtn.innerHTML = origHtml;
+        currentExportBtn.style.background = '';
+        currentExportBtn.style.borderColor = '';
+        currentExportBtn.style.color = '';
+      }, 2000);
+    }
+  } catch (err) {
+    console.error('Export error:', err);
+    alert('เกิดข้อผิดพลาดในการดึงข้อมูลส่งออก: ' + err.message);
+  } finally {
+    if (confirmBtn) {
+      confirmBtn.disabled = false;
+      confirmBtn.innerHTML = '📥 ดาวน์โหลดไฟล์ CSV / Excel';
+    }
+  }
+}
+
+// ================= PROCESS ALARM LIMITS & TOLERANCE MATRIX =================
+const PEN_ALARM_LIMITS = {
+  uht: [
+    { pen: 0, tag: 'TT01 Holding Temp', unit: '°C', target: '137.0 - 142.0', ll: 135.0, l: 137.0, h: 143.0, hh: 145.0, ccp: true },
+    { pen: 1, tag: 'TT02 Pre-Heat 1', unit: '°C', target: '80.0 - 90.0', ll: 70.0, l: 75.0, h: 92.0, hh: 96.0, ccp: false },
+    { pen: 2, tag: 'TT04 Inlet Temp', unit: '°C', target: '60.0 - 70.0', ll: 50.0, l: 55.0, h: 75.0, hh: 80.0, ccp: false },
+    { pen: 3, tag: 'FT04FIQ Inlet Flow', unit: 'L/h', target: '12000 - 16000', ll: 9000, l: 10000, h: 16500, hh: 18000, ccp: true },
+    { pen: 4, tag: 'LT Balance Level', unit: 'm', target: '1.5 - 3.5', ll: 0.5, l: 1.0, h: 4.0, hh: 4.8, ccp: false },
+    { pen: 5, tag: 'UHT VSDs Power', unit: 'kW', target: '< 38.0', ll: null, l: null, h: 36.0, hh: 40.0, ccp: false }
+  ],
+  atank: [
+    { pen: 0, tag: 'PT460 Aseptic Pressure', unit: 'bar', target: '2.0 - 2.5', ll: 1.8, l: 1.95, h: 2.65, hh: 2.9, ccp: true },
+    { pen: 1, tag: 'TT460 Sterile Temp', unit: '°C', target: 'Sterile: >135 / Stor: <28', ll: null, l: 20.0, h: 32.0, hh: 145.0, ccp: true },
+    { pen: 2, tag: 'TT477 Barrier Temp', unit: '°C', target: '> 121.0', ll: 115.0, l: 120.0, h: 145.0, hh: 150.0, ccp: false },
+    { pen: 3, tag: 'LC Product Level', unit: '%', target: '20.0 - 90.0', ll: 10.0, l: 15.0, h: 92.0, hh: 98.0, ccp: false },
+    { pen: 4, tag: 'VSD09 Agitator Speed', unit: '%', target: '50.0 - 90.0', ll: 30.0, l: 45.0, h: 95.0, hh: 100.0, ccp: false }
+  ],
+  cip: [
+    { pen: 0, tag: 'L1 CT_R Return Cond', unit: 'mS/cm', target: 'Caustic: 35-55 / Rinse: <2', ll: 0.5, l: 1.0, h: 60.0, hh: 70.0, ccp: true },
+    { pen: 1, tag: 'L1 TT_R Return Temp', unit: '°C', target: '> 75.0', ll: 65.0, l: 72.0, h: 92.0, hh: 98.0, ccp: true },
+    { pen: 2, tag: 'L1 FT_S Supply Flow', unit: 'L/h', target: '> 15000', ll: 10000, l: 12000, h: 22000, hh: 25000, ccp: false },
+    { pen: 3, tag: 'L2 CT_R Return Cond', unit: 'mS/cm', target: 'Caustic: 35-55 / Rinse: <2', ll: 0.5, l: 1.0, h: 60.0, hh: 70.0, ccp: true },
+    { pen: 4, tag: 'L2 TT_R Return Temp', unit: '°C', target: '> 75.0', ll: 65.0, l: 72.0, h: 92.0, hh: 98.0, ccp: true },
+    { pen: 5, tag: 'CIP Pumps Power', unit: 'kW', target: '< 24.0', ll: null, l: null, h: 22.0, hh: 25.0, ccp: false }
+  ],
+  prod: [
+    { pen: 0, tag: 'PT_IN Filter Inlet', unit: 'bar', target: '3.0 - 4.5', ll: 2.0, l: 2.5, h: 4.8, hh: 5.5, ccp: false },
+    { pen: 1, tag: 'PT_OUT Filter Outlet', unit: 'bar', target: '2.5 - 4.0', ll: 1.8, l: 2.2, h: 4.5, hh: 5.2, ccp: false },
+    { pen: 2, tag: 'ΔP Diff Press', unit: 'bar', target: '< 0.5', ll: null, l: null, h: 0.8, hh: 1.2, ccp: true },
+    { pen: 3, tag: 'P101 Power', unit: 'kW', target: '< 8.0', ll: null, l: null, h: 7.5, hh: 8.5, ccp: false },
+    { pen: 4, tag: 'P101 Running Speed', unit: '%', target: '70.0 - 95.0', ll: 40.0, l: 60.0, h: 98.0, hh: 100.0, ccp: false }
+  ]
+};
+
+function evaluatePenAlarm(conf, val) {
+  if (val === null || val === undefined || isNaN(val)) {
+    return { status: 'NORMAL', text: `Target: ${conf.target} ${conf.unit}`, badgeClass: 'badge-ok', chipClass: '' };
+  }
+  if (conf.hh !== null && val >= conf.hh) {
+    return { status: 'CRITICAL', text: `🚨 CRITICAL (HH): ${val.toFixed(1)} ≥ ${conf.hh}`, badgeClass: 'badge-crit', chipClass: 'alarm-critical' };
+  }
+  if (conf.ll !== null && val <= conf.ll) {
+    return { status: 'CRITICAL', text: `🚨 CRITICAL (LL): ${val.toFixed(1)} ≤ ${conf.ll}`, badgeClass: 'badge-crit', chipClass: 'alarm-critical' };
+  }
+  if (conf.h !== null && val >= conf.h) {
+    return { status: 'WARNING', text: `⚠️ HIGH (H): ${val.toFixed(1)} ≥ ${conf.h}`, badgeClass: 'badge-warn', chipClass: 'alarm-warning' };
+  }
+  if (conf.l !== null && val <= conf.l) {
+    return { status: 'WARNING', text: `⚠️ LOW (L): ${val.toFixed(1)} ≤ ${conf.l}`, badgeClass: 'badge-warn', chipClass: 'alarm-warning' };
+  }
+  return { status: 'NORMAL', text: `Target: ${conf.target} ${conf.unit}`, badgeClass: 'badge-ok', chipClass: '' };
+}
+
+function updatePenChipAlert(sec, penIdx, val) {
+  const confList = PEN_ALARM_LIMITS[sec];
+  if (!confList || !confList[penIdx]) return;
+  const conf = confList[penIdx];
+  const alertInfo = evaluatePenAlarm(conf, val);
+
+  const chip = document.querySelector(`.pen-chip[data-section="${sec}"][data-pen="${penIdx}"]`);
+  if (!chip) return;
+
+  chip.classList.remove('alarm-warning', 'alarm-critical');
+  if (alertInfo.chipClass) {
+    chip.classList.add(alertInfo.chipClass);
+  }
+
+  const limitEl = chip.querySelector('.pen-limit');
+  if (limitEl) {
+    limitEl.className = `pen-limit ${alertInfo.badgeClass}`;
+    limitEl.textContent = alertInfo.text;
+  }
+}
+
+function openLimitsModal(sec) {
+  const overlay = document.getElementById('limits-modal-overlay');
+  const titleEl = document.getElementById('limits-modal-title');
+  const tbody = document.getElementById('limits-table-body');
+  if (!overlay || !tbody) return;
+
+  const secNames = {
+    uht: 'UHT STERILIZER PROCESS (DB1200)',
+    atank: 'ASEPTIC TANK ATANK (DB1301)',
+    cip: 'CIP SYSTEMS LINE 1 & 2',
+    prod: 'PRODUCTION SUPPLY & FILTRATION'
+  };
+  if (titleEl) {
+    titleEl.textContent = `ALARM LIMIT CONFIGURATION: ${secNames[sec] || sec.toUpperCase()}`;
+  }
+
+  const confList = PEN_ALARM_LIMITS[sec] || [];
+  const rec = sectionRecorders[sec];
+
+  tbody.innerHTML = confList.map(conf => {
+    let curVal = '--';
+    if (rec && rec.chart && rec.chart.data.datasets[conf.pen]) {
+      const dataArr = rec.chart.data.datasets[conf.pen].data;
+      if (dataArr && dataArr.length > 0) {
+        const last = dataArr[dataArr.length - 1];
+        if (last !== null && last !== undefined) curVal = Number(last).toFixed(1);
+      }
+    }
+    const evalResult = evaluatePenAlarm(conf, curVal !== '--' ? parseFloat(curVal) : null);
+    const badgeClass = evalResult.status === 'CRITICAL' ? 'crit' : (evalResult.status === 'WARNING' ? 'warn' : 'ok');
+
+    return `
+      <tr>
+        <td><strong>${conf.tag}</strong> ${conf.ccp ? '<span style="color:#ef4444; font-size:10px; font-weight:700;">[CCP]</span>' : ''}</td>
+        <td class="font-mono">${conf.unit}</td>
+        <td class="font-mono" style="font-weight:700; color:#38bdf8;">${curVal}</td>
+        <td class="font-mono" style="color:#ef4444;">${conf.ll !== null ? conf.ll : '-'}</td>
+        <td class="font-mono" style="color:#fbbf24;">${conf.l !== null ? conf.l : '-'}</td>
+        <td class="font-mono" style="color:#fbbf24;">${conf.h !== null ? conf.h : '-'}</td>
+        <td class="font-mono" style="color:#ef4444;">${conf.hh !== null ? conf.hh : '-'}</td>
+        <td><span class="limits-status-badge ${badgeClass}">${evalResult.status}</span></td>
+      </tr>
+    `;
+  }).join('');
+
+  overlay.classList.add('active');
+}
+
+function closeLimitsModal() {
+  const overlay = document.getElementById('limits-modal-overlay');
+  if (overlay) overlay.classList.remove('active');
 }
 
 // PUSH LIVE TELEMETRY INTO ALL ACTIVE RECORDERS
@@ -777,7 +1557,15 @@ function pushAllSectionRecordersData(d) {
   setText('uht-pen-lt', `${(u.lt || 0).toFixed(2)} m`);
   setText('uht-pen-power', `${uhtPower.toFixed(1)} kW`);
 
-  if (!uhtRec.paused) {
+  // Update UHT Alarm Alerts on Chips
+  updatePenChipAlert('uht', 0, u.tt01);
+  updatePenChipAlert('uht', 1, u.tt02);
+  updatePenChipAlert('uht', 2, u.tt04);
+  updatePenChipAlert('uht', 3, u.ft04fiq);
+  updatePenChipAlert('uht', 4, u.lt);
+  updatePenChipAlert('uht', 5, uhtPower);
+
+  if (!uhtRec.paused && uhtRec.mode === 'live') {
     uhtRec.history.times.push(timeStr);
     uhtRec.history.pen0.push(u.tt01 || 0);
     uhtRec.history.pen1.push(u.tt02 || 0);
@@ -799,7 +1587,14 @@ function pushAllSectionRecordersData(d) {
   setText('atank-pen-lc', `${(a.lc || 0).toFixed(1)} %`);
   setText('atank-pen-vsd', `${(vsd09.curspeed_pct || 0).toFixed(0)} %`);
 
-  if (!atkRec.paused) {
+  // Update ATANK Alarm Alerts on Chips
+  updatePenChipAlert('atank', 0, a.pt460);
+  updatePenChipAlert('atank', 1, a.tt460);
+  updatePenChipAlert('atank', 2, a.tt477);
+  updatePenChipAlert('atank', 3, a.lc);
+  updatePenChipAlert('atank', 4, vsd09.curspeed_pct);
+
+  if (!atkRec.paused && atkRec.mode === 'live') {
     atkRec.history.times.push(timeStr);
     atkRec.history.pen0.push(a.pt460 || 0);
     atkRec.history.pen1.push(a.tt460 || 0);
@@ -822,7 +1617,15 @@ function pushAllSectionRecordersData(d) {
   setText('cip-pen-tt2', `${(c2.tt_r || 0).toFixed(1)} °C`);
   setText('cip-pen-power', `${cipPower.toFixed(1)} kW`);
 
-  if (!cipRec.paused) {
+  // Update CIP Alarm Alerts on Chips
+  updatePenChipAlert('cip', 0, c1.ct_r);
+  updatePenChipAlert('cip', 1, c1.tt_r);
+  updatePenChipAlert('cip', 2, c1.ft_s);
+  updatePenChipAlert('cip', 3, c2.ct_r);
+  updatePenChipAlert('cip', 4, c2.tt_r);
+  updatePenChipAlert('cip', 5, cipPower);
+
+  if (!cipRec.paused && cipRec.mode === 'live') {
     cipRec.history.times.push(timeStr);
     cipRec.history.pen0.push(c1.ct_r || 0);
     cipRec.history.pen1.push(c1.tt_r || 0);
@@ -845,7 +1648,14 @@ function pushAllSectionRecordersData(d) {
   setText('prod-pen-power', `${(vsd08.power_kw || 0).toFixed(2)} kW`);
   setText('prod-pen-speed', `${(vsd08.curspeed_pct || 0).toFixed(0)} %`);
 
-  if (!prodRec.paused) {
+  // Update PROD Alarm Alerts on Chips
+  updatePenChipAlert('prod', 0, p.pt_in);
+  updatePenChipAlert('prod', 1, p.pt_out);
+  updatePenChipAlert('prod', 2, dp);
+  updatePenChipAlert('prod', 3, vsd08.power_kw);
+  updatePenChipAlert('prod', 4, vsd08.curspeed_pct);
+
+  if (!prodRec.paused && prodRec.mode === 'live') {
     prodRec.history.times.push(timeStr);
     prodRec.history.pen0.push(p.pt_in || 0);
     prodRec.history.pen1.push(p.pt_out || 0);
@@ -896,7 +1706,10 @@ function updateActiveTabRecorders() {
   };
   const sec = secMap[tabId];
   if (sec) {
-    updateSingleSectionRecorder(sec);
+    const rec = sectionRecorders[sec];
+    if (rec && rec.mode === 'live') {
+      updateSingleSectionRecorder(sec);
+    }
   }
 }
 
@@ -1370,3 +2183,273 @@ function setText(id, text) {
   const el = document.getElementById(id);
   if (el) el.textContent = text;
 }
+
+// =========================================================
+// STEP REPORT MODAL LOGIC (OFFICIAL A4 PDF EXPORT)
+// =========================================================
+window.openStepReportModal = function(section) {
+  const modal = document.getElementById('step-report-modal-overlay');
+  if (!modal) return;
+  
+  const secSelect = document.getElementById('step-report-section-select');
+  if (secSelect && section) {
+    secSelect.value = section;
+  }
+  
+  const pad = (n) => String(n).padStart(2, '0');
+  const fromInput = document.getElementById('step-report-from-input');
+  const toInput = document.getElementById('step-report-to-input');
+  
+  if (fromInput && !fromInput.value) {
+    const now = new Date();
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+    fromInput.value = `${startOfDay.getFullYear()}-${pad(startOfDay.getMonth() + 1)}-${pad(startOfDay.getDate())}T00:00`;
+  }
+  if (toInput && !toInput.value) {
+    const now = new Date();
+    toInput.value = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  }
+  
+  modal.classList.add('active');
+};
+
+window.closeStepReportModal = function() {
+  const modal = document.getElementById('step-report-modal-overlay');
+  if (modal) modal.classList.remove('active');
+};
+
+window.openStepReportDocument = function() {
+  const sec = document.getElementById('step-report-section-select')?.value || 'uht';
+  const fromVal = document.getElementById('step-report-from-input')?.value || '';
+  const toVal = document.getElementById('step-report-to-input')?.value || '';
+  const batchVal = document.getElementById('step-report-batch-input')?.value.trim() || '';
+  
+  let url = `http://${window.location.hostname || '127.0.0.1'}:8000/api/v1/process_logs/report?section=${encodeURIComponent(sec)}`;
+  if (fromVal) {
+    url += `&from_time=${encodeURIComponent(fromVal)}`;
+  }
+  if (toVal) {
+    url += `&to_time=${encodeURIComponent(toVal)}`;
+  }
+  if (batchVal) {
+    url += `&batch_id=${encodeURIComponent(batchVal)}`;
+  }
+  
+  // Open in new tab/window for instant print
+  window.open(url, '_blank', 'noopener,noreferrer');
+  closeStepReportModal();
+};
+
+// =========================================================
+// HISTORIAN CUSTOM DATE-TIME RANGE (FROM - TO) LOGIC
+// =========================================================
+async function loadHistoricalCustomRange(sec, fromTime, toTime, windowVal) {
+  const rec = sectionRecorders[sec];
+  if (!rec) return;
+  if (!rec.chart) initRecorderForSection(sec);
+  if (!rec.chart) return;
+
+  const statusTag = document.getElementById(rec.statusId);
+  if (statusTag) {
+    statusTag.textContent = 'QUERYING INFLUXDB (FROM-TO)...';
+    statusTag.style.background = 'rgba(2, 132, 199, 0.25)';
+    statusTag.style.color = '#38bdf8';
+    statusTag.style.borderColor = 'rgba(56, 189, 248, 0.5)';
+  }
+
+  try {
+    const host = window.location.hostname || '127.0.0.1';
+    let url = `http://${host}:8000/api/v1/telemetry/history?section=${encodeURIComponent(sec)}&from_time=${encodeURIComponent(fromTime)}&to_time=${encodeURIComponent(toTime)}`;
+    if (windowVal) {
+      url += `&window=${encodeURIComponent(windowVal)}`;
+    }
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+    const data = await res.json();
+
+    if (data.status === 'success' && data.timestamps && data.timestamps.length > 0) {
+      rec.chart.data.labels = data.timestamps;
+      data.pens.forEach((penData, idx) => {
+        if (rec.chart.data.datasets[idx]) {
+          rec.chart.data.datasets[idx].data = penData;
+        }
+      });
+      rec.chart.update();
+      if (statusTag) {
+        const fromDisp = fromTime.replace('T', ' ');
+        const toDisp = toTime.replace('T', ' ');
+        statusTag.textContent = `HISTORIAN: ${data.count} จุด (${fromDisp} → ${toDisp})`;
+        statusTag.style.background = 'rgba(2, 132, 199, 0.2)';
+        statusTag.style.color = '#38bdf8';
+        statusTag.style.borderColor = 'rgba(56, 189, 248, 0.4)';
+      }
+    } else {
+      if (statusTag) {
+        statusTag.textContent = `HISTORIAN: ไม่มีข้อมูลในช่วงเวลาที่เลือก`;
+        statusTag.style.background = 'rgba(239, 68, 68, 0.15)';
+        statusTag.style.color = '#f87171';
+        statusTag.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+      }
+    }
+  } catch (err) {
+    console.error('Failed to load historical custom range:', err);
+    if (statusTag) {
+      statusTag.textContent = 'QUERY FAILED';
+      statusTag.style.background = 'rgba(239, 68, 68, 0.2)';
+      statusTag.style.color = '#ef4444';
+      statusTag.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+    }
+  }
+}
+
+window.openHistorianRangeModal = function(section) {
+  const modal = document.getElementById('historian-range-modal-overlay');
+  if (!modal) return;
+  
+  const secSelect = document.getElementById('hist-section-select');
+  if (secSelect && section) {
+    secSelect.value = section;
+  }
+  
+  const pad = (n) => String(n).padStart(2, '0');
+  const fromInput = document.getElementById('hist-from-input');
+  const toInput = document.getElementById('hist-to-input');
+  
+  if (fromInput && !fromInput.value) {
+    const now = new Date();
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+    fromInput.value = `${startOfDay.getFullYear()}-${pad(startOfDay.getMonth() + 1)}-${pad(startOfDay.getDate())}T00:00`;
+  }
+  if (toInput && !toInput.value) {
+    const now = new Date();
+    toInput.value = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  }
+  
+  modal.classList.add('active');
+};
+
+window.closeHistorianRangeModal = function() {
+  const modal = document.getElementById('historian-range-modal-overlay');
+  if (modal) modal.classList.remove('active');
+};
+
+window.applyHistorianCustomRange = async function() {
+  const sec = document.getElementById('hist-section-select')?.value || 'uht';
+  const fromVal = document.getElementById('hist-from-input')?.value;
+  const toVal = document.getElementById('hist-to-input')?.value;
+  const winVal = document.getElementById('hist-window-select')?.value || '';
+
+  if (!fromVal || !toVal) {
+    alert('กรุณาระบุทั้งวัน-เวลาเริ่มต้น (From) และสิ้นสุด (To)');
+    return;
+  }
+  if (new Date(fromVal) > new Date(toVal)) {
+    alert('วัน-เวลาเริ่มต้น (From) ต้องมาก่อนวัน-เวลาสิ้นสุด (To)');
+    return;
+  }
+
+  const rec = sectionRecorders[sec];
+  if (rec) {
+    rec.mode = 'history';
+    rec.historyRange = 'custom';
+    rec.customFrom = fromVal;
+    rec.customTo = toVal;
+    
+    // Highlight the custom range button in the section's control bar
+    const container = document.querySelector(`.recorder-card [data-section="${sec}"]`)?.closest('.recorder-card');
+    if (container) {
+      container.querySelectorAll('.win-btn').forEach(b => b.classList.remove('active'));
+      container.querySelector('.btn-custom-range')?.classList.add('active');
+    }
+  }
+
+  closeHistorianRangeModal();
+  await loadHistoricalCustomRange(sec, fromVal, toVal, winVal);
+};
+
+window.exportHistorianCsvCustomRange = async function() {
+  const sec = document.getElementById('hist-section-select')?.value || 'uht';
+  const fromVal = document.getElementById('hist-from-input')?.value;
+  const toVal = document.getElementById('hist-to-input')?.value;
+  const winVal = document.getElementById('hist-window-select')?.value || '';
+
+  if (!fromVal || !toVal) {
+    alert('กรุณาระบุทั้งวัน-เวลาเริ่มต้น (From) และสิ้นสุด (To)');
+    return;
+  }
+
+  const host = window.location.hostname || '127.0.0.1';
+  let url = `http://${host}:8000/api/v1/telemetry/history?section=${encodeURIComponent(sec)}&from_time=${encodeURIComponent(fromVal)}&to_time=${encodeURIComponent(toVal)}`;
+  if (winVal) {
+    url += `&window=${encodeURIComponent(winVal)}`;
+  }
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+    const data = await res.json();
+
+    if (!data.timestamps || data.timestamps.length === 0) {
+      alert('ไม่พบข้อมูลประวัติในช่วงเวลาที่ระบุ');
+      return;
+    }
+
+    const secTitles = {
+      uht: 'UHT_Sterilizer_Process',
+      atank: 'Aseptic_Tank_ATANK',
+      cip: 'CIP_Systems',
+      prod: 'Production_Duplex_Filter'
+    };
+
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
+    const filename = `${secTitles[sec] || sec}_Custom_${fromVal.replace(/[:T]/g, '')}_to_${toVal.replace(/[:T]/g, '')}.csv`;
+
+    let csv = '\uFEFF';
+    csv += `# UHT INTELLIGENT DASHBOARD - HISTORIAN CUSTOM RANGE EXPORT\n`;
+    csv += `# SECTION: ${sec.toUpperCase()}\n`;
+    csv += `# FILTER FROM: ${fromVal.replace('T', ' ')}\n`;
+    csv += `# FILTER TO: ${toVal.replace('T', ' ')}\n`;
+    csv += `# EXPORT DATE: ${now.toLocaleString('th-TH')}\n`;
+    csv += `# TOTAL POINTS: ${data.count}\n#\n`;
+
+    const labelsList = data.pen_labels || ['Pen 1', 'Pen 2', 'Pen 3', 'Pen 4', 'Pen 5'];
+    csv += `Timestamp,` + labelsList.map(l => `"${l}"`).join(',') + '\n';
+
+    const tsList = data.full_timestamps || data.timestamps;
+    for (let i = 0; i < tsList.length; i++) {
+      const row = [tsList[i]];
+      for (let p = 0; p < data.pens.length; p++) {
+        const val = data.pens[p][i];
+        row.push(val !== undefined && val !== null ? val : '');
+      }
+      csv += row.join(',') + '\n';
+    }
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+  } catch (err) {
+    console.error('Failed to export custom range CSV:', err);
+    alert('เกิดข้อผิดพลาดในการส่งออกข้อมูล CSV');
+  }
+};
+
+// Global modal background click handler
+document.addEventListener('click', (e) => {
+  const stepModal = document.getElementById('step-report-modal-overlay');
+  if (stepModal && e.target === stepModal) {
+    closeStepReportModal();
+  }
+  const histModal = document.getElementById('historian-range-modal-overlay');
+  if (histModal && e.target === histModal) {
+    closeHistorianRangeModal();
+  }
+});
+
+

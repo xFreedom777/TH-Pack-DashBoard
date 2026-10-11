@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TH-PACK | Executive Plant Operations & Analytics</title>
+  <title>UHT INTELLIGENT DASHBOARD | Executive Plant Operations & Analytics</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -17,8 +17,8 @@
       <div class="header-brand">
         <img src="logo.jpg" alt="Logo" class="brand-logo" onerror="this.style.display='none'">
         <div class="brand-text">
-          <div class="brand-title">TH-PACK <span>INTELLIGENT SCADA</span></div>
-          <div class="brand-sub">EXECUTIVE OPERATIONS & INVENTORY COMMAND CENTER • SIEMENS S7-1500</div>
+          <div class="brand-title">RUNGSAPPATTANA <span>(THAILAND)</span></div>
+          <div class="brand-sub">UHT SCADA OPERATIONS & INVENTORY COMMAND CENTER • BY TH-PACK INDUSTRIAL</div>
         </div>
       </div>
 
@@ -95,6 +95,9 @@
         </button>
         <button class="action-btn primary" onclick="window.print()">
           🖨️ พิมพ์รายงานผู้บริหาร
+        </button>
+        <button class="action-btn step-report-btn" id="btn-top-step-report" onclick="openStepReportModal('uht')">
+          📑 ออกรายงาน Step Log (PDF)
         </button>
       </div>
     </header>
@@ -196,16 +199,26 @@
 
       <!-- TAB 1: EXECUTIVE ANALYTICS OVERVIEW -->
       <section class="tab-content active" id="tab-overview">
-        <!-- PERIOD CONTROLS -->
+        <!-- PERIOD CONTROLS & DATE FILTER -->
         <div class="period-control-bar">
           <div class="period-title">
             <span class="dot-indicator"></span> เลือกระยะเวลาการวิเคราะห์ (Analytics Horizon):
+            <span class="overview-selected-tag" id="overview-period-tag">รอบวันปัจจุบัน: 11 ต.ค. 2026</span>
           </div>
-          <div class="period-button-group">
-            <button class="period-btn active" data-period="daily">รายวัน (Daily)</button>
-            <button class="period-btn" data-period="weekly">รายสัปดาห์ (Weekly)</button>
-            <button class="period-btn" data-period="monthly">รายเดือน (Monthly)</button>
-            <button class="period-btn" data-period="yearly">รายปี (Yearly)</button>
+          <div class="overview-filter-group">
+            <div class="period-button-group">
+              <button class="period-btn active" data-period="daily">รายวัน (Daily)</button>
+              <button class="period-btn" data-period="weekly">รายสัปดาห์ (Weekly)</button>
+              <button class="period-btn" data-period="monthly">รายเดือน (Monthly)</button>
+              <button class="period-btn" data-period="yearly">รายปี (Yearly)</button>
+            </div>
+            <div class="overview-date-filter-box" id="overview-date-filter-box">
+              <span class="overview-date-label">
+                📅 <span id="overview-date-label-text">เลือกวันที่:</span>
+              </span>
+              <input type="date" id="overview-date-input" class="overview-date-input" title="เลือกวันที่ต้องการดูข้อมูล">
+              <button class="btn-overview-quick" id="btn-overview-today" title="กลับไปดูวันนี้">วันนี้</button>
+            </div>
           </div>
         </div>
 
@@ -360,13 +373,28 @@
             
             <div class="recorder-controls">
               <div class="recorder-window-selector">
-                <span class="ctrl-label">ช่วงเวลา:</span>
-                <button class="win-btn active" data-section="uht" data-window="60">60s</button>
-                <button class="win-btn" data-section="uht" data-window="120">2 นาที</button>
-                <button class="win-btn" data-section="uht" data-window="300">5 นาที</button>
+                <span class="ctrl-label">โหมด:</span>
+                <button class="win-btn active" data-section="uht" data-window="60" data-mode="live">Live 60s</button>
+                <button class="win-btn" data-section="uht" data-window="300" data-mode="live">5 นาที</button>
+                <span class="ctrl-sep">|</span>
+                <span class="ctrl-label">ย้อนหลัง:</span>
+                <button class="win-btn btn-hist" data-section="uht" data-range="1d" data-mode="history">1 วัน</button>
+                <button class="win-btn btn-hist" data-section="uht" data-range="7d" data-mode="history">7 วัน</button>
+                <button class="win-btn btn-hist" data-section="uht" data-range="30d" data-mode="history">1 เดือน</button>
+                <button class="win-btn btn-hist" data-section="uht" data-range="1y" data-mode="history">1 ปี (Historian)</button>
+                <button class="win-btn btn-hist btn-custom-range" data-section="uht" onclick="openHistorianRangeModal('uht')" title="เลือกวันที่และเวลาเริ่มต้น-สิ้นสุด (From - To)">📅 กำหนดช่วง (From-To)</button>
               </div>
               <button class="ctrl-btn btn-pause" data-section="uht" id="btn-pause-uht" title="หยุด/เล่นต่อ">
                 <span class="pause-icon">⏸️</span> <span class="pause-text">หยุดชั่วคราว</span>
+              </button>
+              <button class="ctrl-btn btn-export" data-section="uht" id="btn-export-uht" title="ส่งออกข้อมูลเป็น CSV/Excel">
+                📥 ส่งออก CSV
+              </button>
+              <button class="ctrl-btn btn-step-report" onclick="openStepReportModal('uht')" title="ออกรายงาน Step Log พร้อมตราสัญลักษณ์">
+                📑 ออกรายงาน Step Log (PDF)
+              </button>
+              <button class="ctrl-btn btn-limits" data-section="uht" id="btn-limits-uht" title="ดู/ตั้งค่าเกณฑ์ Alarm Limit">
+                ⚙️ เกณฑ์เตือน (Limits)
               </button>
               <button class="ctrl-btn btn-clear" data-section="uht" id="btn-clear-uht" title="รีเซ็ตกราฟ">
                 🔄 รีเซ็ต
@@ -523,13 +551,28 @@
             
             <div class="recorder-controls">
               <div class="recorder-window-selector">
-                <span class="ctrl-label">ช่วงเวลา:</span>
-                <button class="win-btn active" data-section="atank" data-window="60">60s</button>
-                <button class="win-btn" data-section="atank" data-window="120">2 นาที</button>
-                <button class="win-btn" data-section="atank" data-window="300">5 นาที</button>
+                <span class="ctrl-label">โหมด:</span>
+                <button class="win-btn active" data-section="atank" data-window="60" data-mode="live">Live 60s</button>
+                <button class="win-btn" data-section="atank" data-window="300" data-mode="live">5 นาที</button>
+                <span class="ctrl-sep">|</span>
+                <span class="ctrl-label">ย้อนหลัง:</span>
+                <button class="win-btn btn-hist" data-section="atank" data-range="1d" data-mode="history">1 วัน</button>
+                <button class="win-btn btn-hist" data-section="atank" data-range="7d" data-mode="history">7 วัน</button>
+                <button class="win-btn btn-hist" data-section="atank" data-range="30d" data-mode="history">1 เดือน</button>
+                <button class="win-btn btn-hist" data-section="atank" data-range="1y" data-mode="history">1 ปี (Historian)</button>
+                <button class="win-btn btn-hist btn-custom-range" data-section="atank" onclick="openHistorianRangeModal('atank')" title="เลือกวันที่และเวลาเริ่มต้น-สิ้นสุด (From - To)">📅 กำหนดช่วง (From-To)</button>
               </div>
               <button class="ctrl-btn btn-pause" data-section="atank" id="btn-pause-atank" title="หยุด/เล่นต่อ">
                 <span class="pause-icon">⏸️</span> <span class="pause-text">หยุดชั่วคราว</span>
+              </button>
+              <button class="ctrl-btn btn-export" data-section="atank" id="btn-export-atank" title="ส่งออกข้อมูลเป็น CSV/Excel">
+                📥 ส่งออก CSV
+              </button>
+              <button class="ctrl-btn btn-step-report" onclick="openStepReportModal('atank')" title="ออกรายงาน Step Log พร้อมตราสัญลักษณ์">
+                📑 ออกรายงาน Step Log (PDF)
+              </button>
+              <button class="ctrl-btn btn-limits" data-section="atank" id="btn-limits-atank" title="ดู/ตั้งค่าเกณฑ์ Alarm Limit">
+                ⚙️ เกณฑ์เตือน (Limits)
               </button>
               <button class="ctrl-btn btn-clear" data-section="atank" id="btn-clear-atank" title="รีเซ็ตกราฟ">
                 🔄 รีเซ็ต
@@ -693,13 +736,28 @@
             
             <div class="recorder-controls">
               <div class="recorder-window-selector">
-                <span class="ctrl-label">ช่วงเวลา:</span>
-                <button class="win-btn active" data-section="cip" data-window="60">60s</button>
-                <button class="win-btn" data-section="cip" data-window="120">2 นาที</button>
-                <button class="win-btn" data-section="cip" data-window="300">5 นาที</button>
+                <span class="ctrl-label">โหมด:</span>
+                <button class="win-btn active" data-section="cip" data-window="60" data-mode="live">Live 60s</button>
+                <button class="win-btn" data-section="cip" data-window="300" data-mode="live">5 นาที</button>
+                <span class="ctrl-sep">|</span>
+                <span class="ctrl-label">ย้อนหลัง:</span>
+                <button class="win-btn btn-hist" data-section="cip" data-range="1d" data-mode="history">1 วัน</button>
+                <button class="win-btn btn-hist" data-section="cip" data-range="7d" data-mode="history">7 วัน</button>
+                <button class="win-btn btn-hist" data-section="cip" data-range="30d" data-mode="history">1 เดือน</button>
+                <button class="win-btn btn-hist" data-section="cip" data-range="1y" data-mode="history">1 ปี (Historian)</button>
+                <button class="win-btn btn-hist btn-custom-range" data-section="cip" onclick="openHistorianRangeModal('cip')" title="เลือกวันที่และเวลาเริ่มต้น-สิ้นสุด (From - To)">📅 กำหนดช่วง (From-To)</button>
               </div>
               <button class="ctrl-btn btn-pause" data-section="cip" id="btn-pause-cip" title="หยุด/เล่นต่อ">
                 <span class="pause-icon">⏸️</span> <span class="pause-text">หยุดชั่วคราว</span>
+              </button>
+              <button class="ctrl-btn btn-export" data-section="cip" id="btn-export-cip" title="ส่งออกข้อมูลเป็น CSV/Excel">
+                📥 ส่งออก CSV
+              </button>
+              <button class="ctrl-btn btn-step-report" onclick="openStepReportModal('cip_line1')" title="ออกรายงาน Step Log พร้อมตราสัญลักษณ์">
+                📑 ออกรายงาน Step Log (PDF)
+              </button>
+              <button class="ctrl-btn btn-limits" data-section="cip" id="btn-limits-cip" title="ดู/ตั้งค่าเกณฑ์ Alarm Limit">
+                ⚙️ เกณฑ์เตือน (Limits)
               </button>
               <button class="ctrl-btn btn-clear" data-section="cip" id="btn-clear-cip" title="รีเซ็ตกราฟ">
                 🔄 รีเซ็ต
@@ -837,13 +895,25 @@
             
             <div class="recorder-controls">
               <div class="recorder-window-selector">
-                <span class="ctrl-label">ช่วงเวลา:</span>
-                <button class="win-btn active" data-section="prod" data-window="60">60s</button>
-                <button class="win-btn" data-section="prod" data-window="120">2 นาที</button>
-                <button class="win-btn" data-section="prod" data-window="300">5 นาที</button>
+                <span class="ctrl-label">โหมด:</span>
+                <button class="win-btn active" data-section="prod" data-window="60" data-mode="live">Live 60s</button>
+                <button class="win-btn" data-section="prod" data-window="300" data-mode="live">5 นาที</button>
+                <span class="ctrl-sep">|</span>
+                <span class="ctrl-label">ย้อนหลัง:</span>
+                <button class="win-btn btn-hist" data-section="prod" data-range="1d" data-mode="history">1 วัน</button>
+                <button class="win-btn btn-hist" data-section="prod" data-range="7d" data-mode="history">7 วัน</button>
+                <button class="win-btn btn-hist" data-section="prod" data-range="30d" data-mode="history">1 เดือน</button>
+                <button class="win-btn btn-hist" data-section="prod" data-range="1y" data-mode="history">1 ปี (Historian)</button>
+                <button class="win-btn btn-hist btn-custom-range" data-section="prod" onclick="openHistorianRangeModal('prod')" title="เลือกวันที่และเวลาเริ่มต้น-สิ้นสุด (From - To)">📅 กำหนดช่วง (From-To)</button>
               </div>
               <button class="ctrl-btn btn-pause" data-section="prod" id="btn-pause-prod" title="หยุด/เล่นต่อ">
                 <span class="pause-icon">⏸️</span> <span class="pause-text">หยุดชั่วคราว</span>
+              </button>
+              <button class="ctrl-btn btn-export" data-section="prod" id="btn-export-prod" title="ส่งออกข้อมูลเป็น CSV/Excel">
+                📥 ส่งออก CSV
+              </button>
+              <button class="ctrl-btn btn-limits" data-section="prod" id="btn-limits-prod" title="ดู/ตั้งค่าเกณฑ์ Alarm Limit">
+                ⚙️ เกณฑ์เตือน (Limits)
               </button>
               <button class="ctrl-btn btn-clear" data-section="prod" id="btn-clear-prod" title="รีเซ็ตกราฟ">
                 🔄 รีเซ็ต
@@ -964,6 +1034,233 @@
         </div>
       </section>
     </main>
+
+    <!-- PROCESS ALARM LIMITS MODAL -->
+    <div class="scada-modal-overlay" id="limits-modal-overlay">
+      <div class="scada-modal-card">
+        <div class="scada-modal-header">
+          <div class="scada-modal-title">
+            <span style="font-size: 24px;">⚙️</span>
+            <div>
+              <h3 id="limits-modal-title">PROCESS ALARM & TOLERANCE LIMIT CONFIGURATION</h3>
+              <p id="limits-modal-sub">เกณฑ์มาตรฐานความปลอดภัยและการควบคุมกระบวนการ (Critical Process Limits)</p>
+            </div>
+          </div>
+          <button class="scada-modal-close" id="limits-modal-close">&times;</button>
+        </div>
+        <div class="scada-modal-body">
+          <div class="limits-table-wrapper">
+            <table class="limits-table">
+              <thead>
+                <tr>
+                  <th>ปากกา / พารามิเตอร์</th>
+                  <th>หน่วย</th>
+                  <th>ค่าปัจจุบัน</th>
+                  <th>Low-Low (LL)</th>
+                  <th>Low (L)</th>
+                  <th>High (H)</th>
+                  <th>High-High (HH)</th>
+                  <th>สถานะ</th>
+                </tr>
+              </thead>
+              <tbody id="limits-table-body">
+                <!-- Dynamically populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="scada-modal-footer">
+          <span class="limits-note">* เกณฑ์แจ้งเตือนตามมาตรฐาน CCP / Critical Limit การพาสเจอไรซ์และถังปลอดเชื้อ UHT</span>
+          <button class="ctrl-btn" id="limits-modal-btn-close">ปิดหน้าต่าง</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CSV / EXCEL EXPORT OPTIONS MODAL -->
+    <div class="scada-modal-overlay" id="export-modal-overlay">
+      <div class="scada-modal-card" style="max-width: 540px;">
+        <div class="scada-modal-header">
+          <div class="scada-modal-title">
+            <span style="font-size: 24px;">📥</span>
+            <div>
+              <h3 id="export-modal-title">ส่งออกรายงานข้อมูลกระบวนการ (EXPORT CSV / EXCEL)</h3>
+              <p id="export-modal-sub">กำหนดช่วงเวลาและความถี่การสุ่มข้อมูล (Sampling Resolution)</p>
+            </div>
+          </div>
+          <button class="scada-modal-close" id="export-modal-close">&times;</button>
+        </div>
+        <div class="scada-modal-body">
+          <div class="export-form-group">
+            <label class="export-label">หมวดกระบวนการ (Section):</label>
+            <div class="export-val-badge" id="export-modal-section-badge">UHT STERILIZER</div>
+          </div>
+
+          <div class="export-form-group">
+            <label class="export-label">ช่วงเวลาข้อมูล (Time Horizon):</label>
+            <select class="export-select" id="export-range-select">
+              <option value="current">ตามที่แสดงบนกราฟขณะนี้ (Current Display)</option>
+              <option value="1h">1 ชั่วโมงที่ผ่านมา (Past 1 Hour)</option>
+              <option value="1d">1 วัน / 24 ชั่วโมงที่ผ่านมา (Past 24 Hours)</option>
+              <option value="7d">7 วันที่ผ่านมา (Past 7 Days)</option>
+              <option value="30d">1 เดือน / 30 วันที่ผ่านมา (Past 30 Days)</option>
+              <option value="1y">1 ปีเต็ม (Past 1 Year - Historian)</option>
+            </select>
+          </div>
+
+          <div class="export-form-group">
+            <label class="export-label">ความถี่ของข้อมูลในรายงาน (Sampling Interval / Frequency):</label>
+            <select class="export-select" id="export-freq-select">
+              <option value="1s">⚡ ทุก 1 วินาที (1 sec - ละเอียดสูงสุด 1Hz)</option>
+              <option value="5s">⏱️ ทุก 5 วินาที (5 sec)</option>
+              <option value="10s">⏱️ ทุก 10 วินาที (10 sec)</option>
+              <option value="30s">⏱️ ทุก 30 วินาที (30 sec)</option>
+              <option value="1m" selected>🕒 ทุก 1 นาที (1 min) - [แนะนำสำหรับกะ / รายวัน]</option>
+              <option value="5m">🕒 ทุก 5 นาที (5 min)</option>
+              <option value="15m">🕒 ทุก 15 นาที (15 min)</option>
+              <option value="1h">📅 ทุก 1 ชั่วโมง (1 hour) - [แนะนำสำหรับ 1 เดือน - 1 ปี]</option>
+            </select>
+          </div>
+
+          <div class="export-estimate-box">
+            <div class="est-row">
+              <span>ประมาณการขนาดข้อมูล (Estimated Rows):</span>
+              <strong id="export-est-rows" style="color: #38bdf8;">~60 - 1,440 แถว</strong>
+            </div>
+            <div class="est-hint" id="export-est-hint">ไฟล์ขนาดกะทัดรัด เปิดใน Microsoft Excel ได้ทันที ภาษาไทยไม่เพี้ยน</div>
+          </div>
+        </div>
+        <div class="scada-modal-footer">
+          <button class="ctrl-btn" id="export-modal-btn-cancel">ยกเลิก</button>
+          <button class="ctrl-btn btn-export" id="export-modal-btn-confirm" style="font-weight:700;">
+            📥 ดาวน์โหลดไฟล์ CSV / Excel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROCESS STEP REPORT (PDF / PRINT) MODAL -->
+    <div class="scada-modal-overlay" id="step-report-modal-overlay">
+      <div class="scada-modal-card" style="max-width: 600px;">
+        <div class="scada-modal-header">
+          <div class="scada-modal-title">
+            <span style="font-size: 24px;">📑</span>
+            <div>
+              <h3 id="step-modal-title">รายงานประวัติขั้นตอนการผลิต (PROCESS STEP LOG REPORT)</h3>
+              <p>สร้างเอกสารรายงานทางการ (Official A4 BMR Log) พร้อมตราสัญลักษณ์ และประทับเวลา Start-Stop</p>
+            </div>
+          </div>
+          <button class="scada-modal-close" id="step-modal-close" onclick="closeStepReportModal()">&times;</button>
+        </div>
+        <div class="scada-modal-body">
+          <div class="export-form-group">
+            <label class="export-label">หมวดกระบวนการ (Process Section):</label>
+            <select class="export-select" id="step-report-section-select">
+              <option value="uht">🔥 UHT Sterilizer [DB1200] (อุณหภูมิฆ่าเชื้อ TT01, อัตราไหล FT04, ระดับถัง LT)</option>
+              <option value="atank">🛡️ Aseptic Tank ATANK [DB1301] (แรงดันลมปลอดเชื้อ PT460, อุณหภูมิ TT460/TT477)</option>
+              <option value="cip_line1">🧼 CIP System Line 1 [DB1400] (Conductivity ล้างกรด-ด่าง CT_R, อุณหภูมิ)</option>
+              <option value="cip_line2">🧼 CIP System Line 2 [DB1500] (Conductivity ล้างกรด-ด่าง CT_R, อุณหภูมิ)</option>
+            </select>
+          </div>
+
+          <div class="export-form-group" style="display:flex;gap:12px;">
+            <div style="flex:1;">
+              <label class="export-label">ตั้งแต่ (From Date & Time):</label>
+              <input type="datetime-local" class="export-select" id="step-report-from-input" style="font-family: inherit;">
+            </div>
+            <div style="flex:1;">
+              <label class="export-label">ถึง (To Date & Time):</label>
+              <input type="datetime-local" class="export-select" id="step-report-to-input" style="font-family: inherit;">
+            </div>
+          </div>
+
+          <div class="export-form-group">
+            <label class="export-label">รหัส Batch Reference (ถ้ามี):</label>
+            <input type="text" class="export-select" id="step-report-batch-input" placeholder="เช่น P261011-UHT-01 (เว้นว่างเพื่อดึงรายการล่าสุด)" style="font-family: inherit;">
+          </div>
+
+          <div class="export-estimate-box">
+            <div class="est-row">
+              <span>มาตรฐานเอกสาร (Report Format):</span>
+              <strong style="color: #38bdf8;">A4 Portrait • มาตรฐาน GMP/BMR</strong>
+            </div>
+            <div class="est-hint">บันทึกเวลา Start, Stop, Duration (HH:MM:SS), ค่าเซนเซอร์เฉลี่ย และช่องลงนาม 3 ฝ่าย (Operator, QC, ผจก.ผลิต)</div>
+          </div>
+        </div>
+        <div class="scada-modal-footer">
+          <button class="ctrl-btn" onclick="closeStepReportModal()">ยกเลิก</button>
+          <button class="ctrl-btn btn-step-report" id="step-report-btn-preview" onclick="openStepReportDocument()" style="font-weight:700;">
+            🖨️ เปิดรายงาน & สั่งพิมพ์ PDF (A4)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORIAN CUSTOM DATE-TIME RANGE MODAL -->
+    <div class="scada-modal-overlay" id="historian-range-modal-overlay">
+      <div class="scada-modal-card" style="max-width: 580px;">
+        <div class="scada-modal-header">
+          <div class="scada-modal-title">
+            <span style="font-size: 24px;">📅</span>
+            <div>
+              <h3 id="hist-modal-title">กำหนดช่วงเวลาประวัติย้อนหลัง (HISTORIAN FROM - TO)</h3>
+              <p>เลือกวันที่และเวลาเริ่มต้น (From) และสิ้นสุด (To) เพื่อดูแนวโน้มกราฟ Historian ย้อนหลัง</p>
+            </div>
+          </div>
+          <button class="scada-modal-close" onclick="closeHistorianRangeModal()">&times;</button>
+        </div>
+        <div class="scada-modal-body">
+          <div class="export-form-group">
+            <label class="export-label">หมวดกระบวนการ (Process Section):</label>
+            <select class="export-select" id="hist-section-select">
+              <option value="uht">🔥 UHT Sterilizer [DB1200]</option>
+              <option value="atank">🛡️ Aseptic Tank ATANK [DB1301]</option>
+              <option value="cip">🧼 CIP Systems [Line 1 & 2]</option>
+              <option value="prod">🚚 Production Supply & Filter [DB1100]</option>
+            </select>
+          </div>
+
+          <div class="export-form-group" style="display:flex;gap:12px;">
+            <div style="flex:1;">
+              <label class="export-label">ตั้งแต่ (From Date & Time):</label>
+              <input type="datetime-local" class="export-select" id="hist-from-input" style="font-family: inherit;">
+            </div>
+            <div style="flex:1;">
+              <label class="export-label">ถึง (To Date & Time):</label>
+              <input type="datetime-local" class="export-select" id="hist-to-input" style="font-family: inherit;">
+            </div>
+          </div>
+
+          <div class="export-form-group">
+            <label class="export-label">ความละเอียดการสุ่มข้อมูล (Sampling Resolution):</label>
+            <select class="export-select" id="hist-window-select">
+              <option value="">⚡ อัตโนมัติ (Auto - แนะนำ ปรับตามช่วงเวลา)</option>
+              <option value="10s">10 วินาที (10s - ละเอียดสูงสุด)</option>
+              <option value="1m">1 นาที (1m - ละเอียดปานกลาง)</option>
+              <option value="5m">5 นาที (5m)</option>
+              <option value="15m">15 นาที (15m)</option>
+              <option value="1h">1 ชั่วโมง (1h - ประหยัดทรัพยากร)</option>
+            </select>
+          </div>
+
+          <div class="export-estimate-box">
+            <div class="est-row">
+              <span>แหล่งข้อมูล (Historian Backend):</span>
+              <strong style="color: #38bdf8;">InfluxDB 2.7 • S7comm Telemetry Ingestion</strong>
+            </div>
+            <div class="est-hint">รองรับการดึงข้อมูลย้อนหลังไม่จำกัดช่วงเวลา พร้อมจัดกลุ่มคำนวณค่าเฉลี่ยอัตโนมัติ กราฟไม่หน่วง</div>
+          </div>
+        </div>
+        <div class="scada-modal-footer">
+          <button class="ctrl-btn" onclick="closeHistorianRangeModal()">ยกเลิก</button>
+          <button class="ctrl-btn btn-export" onclick="exportHistorianCsvCustomRange()" style="font-weight:600;">
+            📥 ส่งออก CSV
+          </button>
+          <button class="ctrl-btn btn-limits" onclick="applyHistorianCustomRange()" style="font-weight:700;background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%);color:#fff;">
+            🔍 โหลดกราฟ Historian
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- FOOTER -->
     <footer class="app-footer">
