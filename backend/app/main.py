@@ -25,59 +25,208 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+import os
+import sys
+import json
+import subprocess
+
+HEARTBEAT_FILE = "/tmp/scada_heartbeat.json"
+CACHE_FILE = "/tmp/scada_live_cache.json"
+
 connected_websockets = set()
 cached_telemetry = {}
+worker_proc: Optional[subprocess.Popen] = None
+
+def spawn_worker():
+    global worker_proc
+    worker_paths = [
+        "/app/telemetry_worker.py",
+        "/app/app/telemetry_worker.py",
+        os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "telemetry_worker.py"),
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "telemetry_worker.py")
+    ]
+    target_path = None
+    for p in worker_paths:
+        if os.path.exists(p):
+            target_path = p
+            break
+
+    if not target_path:
+        print(f"[WATCHDOG-ALARM] Telemetry Worker script not found in {worker_paths}")
+        return False
+
+    # Check if a live worker is already beating
+    if os.path.exists(HEARTBEAT_FILE):
+        try:
+            with open(HEARTBEAT_FILE, "r") as f:
+                hb = json.load(f)
+                hb_time = hb.get("timestamp", 0)
+                pid = hb.get("pid")
+                if (time.time() - hb_time) < 8.0 and pid:
+                    try:
+                        os.kill(pid, 0)
+                        print(f"[WATCHDOG] Worker PID {pid} is already active and healthy.")
+                        return True
+                    except OSError:
+                        pass
+        except Exception:
+            pass
+
+    try:
+        log_f = open("/tmp/scada_worker.log", "a")
+        cwd = "/app" if os.path.exists("/app") else os.path.dirname(target_path)
+        worker_proc = subprocess.Popen(
+            [sys.executable, target_path],
+            stdout=log_f,
+            stderr=log_f,
+            cwd=cwd
+        )
+        print(f"[WATCHDOG] Telemetry Worker successfully spawned with PID {worker_proc.pid}")
+        return True
+    except Exception as e:
+        print(f"[WATCHDOG-ERROR] Failed to spawn worker: {e}")
+        return False
 
 @app.on_event("startup")
 async def startup_event():
-    print("Starting TH-Pack Industrial SCADA Master Reader, Historian & Step Tracker Service...")
-    master_reader.connect()
-    asyncio.create_task(background_plc_poll_loop())
+    print("==================================================================")
+    print("TH-PACK INDUSTRIAL SCADA API GATEWAY & SUPERVISOR INITIALIZING...")
+    print("Target Node: Siemens S7-1500 PLC (192.168.1.11:102)")
+    print("==================================================================")
+    # 1. Spawn / Verify Telemetry Ingestion Worker
+    spawn_worker()
+    # 2. Start Supervisor Watchdog Task
+    asyncio.create_task(watchdog_supervisor())
+    # 3. Start Cache Broadcast Task
+    asyncio.create_task(background_telemetry_broadcast_loop())
 
-async def background_plc_poll_loop():
+async def watchdog_supervisor():
+    """
+    Industrial Watchdog Supervisor Task:
+    Monitors Telemetry Worker Heartbeat every 5 seconds.
+    Auto-recovers and respawns worker if heartbeat > 10 seconds or process dies.
+    """
+    await asyncio.sleep(2.0)
+    while True:
+        try:
+            now = time.time()
+            stale = True
+            if os.path.exists(HEARTBEAT_FILE):
+                try:
+                    with open(HEARTBEAT_FILE, "r") as f:
+                        hb = json.load(f)
+                        hb_time = hb.get("timestamp", 0)
+                        pid = hb.get("pid")
+                        if (now - hb_time) < 10.0:
+                            stale = False
+                            if pid:
+                                try:
+                                    os.kill(pid, 0)
+                                except OSError:
+                                    stale = True
+                except Exception:
+                    stale = True
+
+            if stale:
+                print("[WATCHDOG-ALARM] Telemetry worker heartbeat missing or dead! Triggering Auto-Recovery...")
+                spawn_worker()
+        except Exception as e:
+            print(f"[WATCHDOG] Supervisor loop error: {e}")
+
+        await asyncio.sleep(5.0)
+
+async def background_telemetry_broadcast_loop():
+    """
+    High-Performance Consumer & WebSocket Broadcast Loop:
+    Reads atomic cache file /tmp/scada_live_cache.json at 1 Hz.
+    Decoupled from S7comm socket & InfluxDB writes.
+    """
     global cached_telemetry
     while True:
         try:
-            telemetry = master_reader.read_all_telemetry()
-            cached_telemetry = telemetry
-            
-            if telemetry:
-                # 1. Persist to InfluxDB Time-Series Historian (1Hz)
-                await asyncio.to_thread(influx_writer.write_master_telemetry, telemetry)
-                
-                # 2. Watch for Step Transitions & Record Start/Stop Timestamps
-                await asyncio.to_thread(step_tracker.process_telemetry_tick, telemetry)
+            if os.path.exists(CACHE_FILE):
+                try:
+                    with open(CACHE_FILE, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                        if data:
+                            cached_telemetry = data
+                except Exception:
+                    pass
 
-            # 3. Broadcast live state to active WebSockets for UI
-            if connected_websockets:
-                payload = {"type": "plant_telemetry", "data": telemetry}
+            # Fallback if worker cache not yet ready
+            if not cached_telemetry:
+                try:
+                    cached_telemetry = await asyncio.to_thread(master_reader.read_all_telemetry)
+                except Exception:
+                    pass
+
+            # Broadcast to UI clients
+            if connected_websockets and cached_telemetry:
+                payload = {"type": "plant_telemetry", "data": cached_telemetry}
                 for ws in list(connected_websockets):
                     try:
                         await ws.send_json(payload)
                     except Exception:
                         connected_websockets.discard(ws)
         except Exception as e:
-            print(f"Background poll error: {e}")
-        
+            print(f"Broadcast loop error: {e}")
+
         await asyncio.sleep(1.0)
 
 @app.get("/")
 def root():
+    hb = {}
+    if os.path.exists(HEARTBEAT_FILE):
+        try:
+            with open(HEARTBEAT_FILE, "r") as f:
+                hb = json.load(f)
+        except Exception:
+            pass
     return {
-        "service": "TH-Pack Master SCADA Operations Intelligence API",
+        "service": "TH-Pack Master SCADA Operations Intelligence API Gateway",
+        "plant": "RUNGSAPPATTANA (THAILAND) CO., LTD.",
         "plc_host": "192.168.1.11:102",
         "status": "ONLINE",
-        "historian_status": "ONLINE",
-        "step_tracker_status": "ONLINE",
-        "plc_connected": master_reader.is_connected,
+        "worker_status": hb.get("status", "INITIALIZING"),
+        "worker_pid": hb.get("pid"),
+        "plc_connected": hb.get("plc_connected", False),
+        "uptime_sec": hb.get("uptime_sec", 0),
+        "poll_count": hb.get("poll_count", 0),
         "active_websockets": len(connected_websockets)
     }
 
 @app.get("/api/v1/health")
 def health_check():
+    worker_info = {
+        "status": "UNKNOWN",
+        "pid": None,
+        "uptime_sec": 0,
+        "poll_count": 0,
+        "last_heartbeat_ago_sec": None,
+        "plc_connected": False,
+        "last_duration_ms": 0,
+        "last_error": ""
+    }
+    if os.path.exists(HEARTBEAT_FILE):
+        try:
+            with open(HEARTBEAT_FILE, "r") as f:
+                hb = json.load(f)
+                worker_info = hb
+                worker_info["last_heartbeat_ago_sec"] = round(time.time() - hb.get("timestamp", 0), 2)
+        except Exception:
+            pass
+
+    overall_status = "HEALTHY"
+    if worker_info.get("last_heartbeat_ago_sec") is None or worker_info.get("last_heartbeat_ago_sec") > 10:
+        overall_status = "WARNING_WORKER_HEARTBEAT_TIMEOUT"
+    elif not worker_info.get("plc_connected", False):
+        overall_status = "WARNING_PLC_DISCONNECTED"
+
     return {
-        "status": "HEALTHY",
-        "plc_connected": master_reader.is_connected,
+        "status": overall_status,
+        "system": "TH-PACK Industrial SCADA (RUNGSAPPATTANA Plant)",
+        "plc_host": "192.168.1.11:102",
+        "worker": worker_info,
         "active_websockets": len(connected_websockets),
         "timestamp": time.time()
     }
@@ -85,16 +234,19 @@ def health_check():
 @app.get("/api/v1/telemetry/live_full")
 def get_live_full():
     global cached_telemetry
+    if not cached_telemetry and os.path.exists(CACHE_FILE):
+        try:
+            with open(CACHE_FILE, "r", encoding="utf-8") as f:
+                cached_telemetry = json.load(f)
+        except Exception:
+            pass
     if not cached_telemetry:
         cached_telemetry = master_reader.read_all_telemetry()
     return cached_telemetry
 
 @app.get("/api/v1/telemetry/live")
 def get_live_compat():
-    global cached_telemetry
-    if not cached_telemetry:
-        cached_telemetry = master_reader.read_all_telemetry()
-    return cached_telemetry
+    return get_live_full()
 
 @app.get("/api/v1/telemetry/history")
 async def get_telemetry_history(

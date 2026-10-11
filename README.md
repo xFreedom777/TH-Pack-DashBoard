@@ -104,11 +104,18 @@ graph TD
   4. **Production Raw Material Supply & Filter (DB1100)**: แรงดันเข้าไส้กรอง PT_IN, แรงดันออก PT_OUT, ผลต่างแรงดัน $\Delta P$, ปั๊ม P101 (VSD08)
   5. **Sinamics G120C Drive Bay (8 เครื่อง)**: VSD01 ถึง VSD09 มอนิเตอร์ Power (kW), Speed (%), Current (A), Hz, อุณหภูมิ และ Fault Flags
 
-### 2. ระดับสื่อสารและประมวลผลหลังบ้าน (Ingestion & Backend Microservices)
-- **`thpack_backend` (FastAPI + Python-snap7)**:
-  - อ่านข้อมูล Real-time 1 Hz ผ่าน S7comm พอร์ต 102
-  - **Step Transition Engine (`step_tracker.py`)**: ตรวจจับการเปลี่ยนแปลงของค่า Step ใน PLC อัตโนมัติ ปิด Step เก่าและเปิด Step ใหม่พร้อมประทับเวลา Start/Stop, คำนวณ Duration (HH:MM:SS), คำนวณค่า Min/Max/Avg ของเซนเซอร์ และบันทึกลง MySQL
-  - **Timezone Normalization**: แปลงเวลาท้องถิ่น Asia/Bangkok (UTC+7) เป็น ISO UTC เพื่อดึงข้อมูล InfluxDB ได้แม่นยำ
+### 2. ระดับสื่อสารและประมวลผลหลังบ้าน (Decoupled Industrial Ingestion & Watchdog Microservices)
+- **Standalone Telemetry Worker (`telemetry_worker.py`)**:
+  - โพรเซสดูดข้อมูลแยกอิสระ (Dedicated Daemon) ทำงานที่ความถี่ 1 Hz ผ่าน S7comm พอร์ต 102
+  - **Zero-Block Decoupling**: ไม่ถูกบล็อกหรือหน่วงเวลาโดย HTTP Request, SQL Query หนักๆ หรือการเชื่อมต่อ WebSocket ของผู้ใช้งานบนหน้าเว็บ
+  - บันทึกข้อมูลลง **InfluxDB 2.7 Historian** และประมวลผล **Step Transition Engine (`step_tracker.py`)** ลง MySQL
+  - เขียนหน่วยความจำแคชแบบ Atomic File (`/tmp/scada_live_cache.json`) เพื่อส่งต่อให้ Web API ใช้ทรัพยากรต่ำสุด
+  - ส่งสัญญาณชีพจรระบบ (Industrial Heartbeat) ไปยัง `/tmp/scada_heartbeat.json` ทุกรอบการทำงาน
+  - **Socket Watchdog Guard**: มีระบบตรวจจับข้อผิดพลาด S7comm หากสัญญาณขาดติดต่อเกิน 3 ครั้ง จะทำการ Re-handshake กับ S7-1500 อัตโนมัติทันที
+- **FastAPI API Gateway & Industrial Watchdog Supervisor (`app/main.py`)**:
+  - **Watchdog Supervisor Loop**: ตรวจสอบ Heartbeat ของ Worker ทุก 5 วินาที หาก Worker ค้างหรือตาย (Heartbeat > 10 วินาที) ระบบจะ **Auto-Recover (เกิดใหม่ทันที)** ไร้การหยุดชะงัก
+  - **WebSocket High-Performance Broadcaster**: อ่านข้อมูลจากแคชส่งต่อให้เบราว์เซอร์ HMI โดยตรง
+  - **Comprehensive Health Diagnostics (`GET /api/v1/health`)**: ส่งออกข้อมูลสถานะสุขภาพระบบอย่างละเอียด (Worker PID, Uptime, Poll Count, Latency ms, PLC Connection Status)
   - **REST API Endpoints**:
     - `GET /api/v1/telemetry/history`: รองรับตัวกรอง `from_time`, `to_time`, `window` (Sampling resolution)
     - `GET /api/v1/process_logs`: เรียกดูประวัติ Step Logs พร้อมตัวกรอง From-To
@@ -140,6 +147,7 @@ graph TD
 | **5** | **RUNGSAPPATTANA (THAILAND) Branding** | ✅ เสร็จสมบูรณ์ | ปรับเปลี่ยนชื่อโรงงานหน้างานจริงเป็น **บริษัท รุ่งทรัพย์พัฒนา (ประเทศไทย) จำกัด (RUNGSAPPATTANA (THAILAND) CO., LTD.)** ทั้งในหัวเอกสารและแถบหลักแดชบอร์ด |
 | **6** | **From-To Date & Time Filter (Historian & Reports)** | ✅ เสร็จสมบูรณ์ | เพิ่มกล่องเลือกวัน-เวลาเริ่มต้น (From) และสิ้นสุด (To) ในตัวบันทึกกราฟและหน้าต่างออกรายงาน Step Log พร้อมปรับ Sampling Resolution |
 | **7** | **Overview Date Picker & Strict FAULT NO DATA** | ✅ เสร็จสมบูรณ์ | เพิ่มตัวกรองเลือกวันที่ในหน้า Overview พร้อมตั้งเงื่อนไขวันเริ่มติดตั้งจริง (10 ต.ค. 2026) หากเลือกวันก่อนหน้านี้จะแสดง **`FAULT: NO DATA`** โปร่งใส ไม่มีการปั้นข้อมูล |
+| **8** | **Decoupled Worker & Watchdog Auto-Recover** | ✅ เสร็จสมบูรณ์ | แยก Ingestion Worker (`telemetry_worker.py`) ออกจาก FastAPI พร้อมระบบ Watchdog Supervisor ตรวจจับ Heartbeat และกู้ชีพโพรเซสกลับคืนทันทีหากล้มเหลว รองรับความเสถียรเกรดอุตสาหกรรม (OT High Availability) |
 
 ---
 
