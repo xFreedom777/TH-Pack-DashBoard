@@ -104,7 +104,7 @@ class StepTransitionTracker:
         cip1_data = telemetry.get("cip_line1")
         if cip1_data:
             step_int = cip1_data.get("step_int", 0)
-            step_desc = cip1_data.get("step_desc", "000::System Standby")
+            step_desc = cip1_data.get("step_desc", "System Standby")
             step_sp = cip1_data.get("step_setpoint", 0)
             sensors = {
                 "ct_r": cip1_data.get("ct_r", 0.0),
@@ -118,7 +118,7 @@ class StepTransitionTracker:
         cip2_data = telemetry.get("cip_line2")
         if cip2_data:
             step_int = cip2_data.get("step_int", 0)
-            step_desc = cip2_data.get("step_desc", "000::System Standby")
+            step_desc = cip2_data.get("step_desc", "System Standby")
             step_sp = cip2_data.get("step_setpoint", 0)
             sensors = {
                 "ct_r": cip2_data.get("ct_r", 0.0),

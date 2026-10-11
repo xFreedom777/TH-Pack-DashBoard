@@ -2025,9 +2025,11 @@ function applyLiveTelemetry(d) {
     }
   }
 
-  // 3. CIP LINE 1 & 2
+  // 3. CIP CIRCUIT 1 & 2
   if (d.cip_line1) {
     const c1 = d.cip_line1;
+    setText('cip1-route', c1.route_desc || (c1.route_int ? `Route ${c1.route_int}` : 'None'));
+    setText('cip1-prog', c1.program_desc || (c1.program_int ? `Program ${c1.program_int}` : 'Off'));
     setText('cip1-step-idx', `STEP ${c1.step_int}`);
     setText('cip1-step-title', c1.step_desc || 'System Standby');
     setText('cip1-timer', `${c1.step_timer}s`);
@@ -2043,6 +2045,8 @@ function applyLiveTelemetry(d) {
 
   if (d.cip_line2) {
     const c2 = d.cip_line2;
+    setText('cip2-route', c2.route_desc || (c2.route_int ? `Route ${c2.route_int}` : 'None'));
+    setText('cip2-prog', c2.program_desc || (c2.program_int ? `Program ${c2.program_int}` : 'Off'));
     setText('cip2-step-idx', `STEP ${c2.step_int}`);
     setText('cip2-step-title', c2.step_desc || 'System Standby');
     setText('cip2-timer', `${c2.step_timer}s`);

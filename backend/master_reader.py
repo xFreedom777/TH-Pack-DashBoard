@@ -166,6 +166,43 @@ for _i in range(129):
     if _i not in CIP_STEPS:
         CIP_STEPS[_i] = ("-", 0)
 
+# CIP Route Dictionaries (Offset 44.0)
+CIP_ROUTE_01 = {
+    0: "None",
+    1: "Prepare Chemical",
+    2: "Filler Machine",
+}
+
+CIP_ROUTE_02 = {
+    0: "None",
+    1: "Aseptic Tank",
+}
+
+# CIP Program Dictionaries (Offset 46.0 - Circuit 1 uses CIP_PROGRAM_P, Circuit 2 uses CIP_PROGRAM)
+CIP_PROGRAM = {
+    0: "Off",
+    1: "Rinse",
+    2: "Alkali+Acid",
+    3: "Alkali",
+    4: "Acid",
+    5: "Hotwater",
+    6: "Hotwater Flush",
+}
+
+CIP_PROGRAM_P = {
+    0: "Off",
+    1: "Rinse",
+    2: "Alkali+Acid",
+    3: "Alkali",
+    4: "Acid",
+    5: "Hotwater",
+    6: "Hotwater Flush",
+    90: "Prepare All",
+    91: "Prepare Hotwater",
+    92: "Prepare Alkali",
+    93: "Prepare Acid",
+}
+
 PROD_SUPPLY_STATUS = {
     100: "READY",
     800: "CIP LINE",
@@ -294,11 +331,15 @@ class MasterPlantReader:
                 "ypressure": get_bool(d1301, 18, 1)
             }
 
-            # 3. READ DB1801 (CIP LINE 1)
+            # 3. READ DB1801 (CIP CIRCUIT 1)
             d1801 = self.client.db_read(1801, 0, 52)
             d1801_step = self.client.db_read(1801, 452, 2)
             cip1_step_int = get_int(d1801_step, 0)
             cip1_desc, cip1_sp = CIP_STEPS.get(cip1_step_int, (f"Step {cip1_step_int}", 0))
+            cip1_route_int = get_int(d1801, 44)
+            cip1_route_desc = CIP_ROUTE_01.get(cip1_route_int, "None" if cip1_route_int == 0 else f"Route {cip1_route_int}")
+            cip1_prog_int = get_int(d1801, 46)
+            cip1_prog_desc = CIP_PROGRAM_P.get(cip1_prog_int, "Off" if cip1_prog_int == 0 else f"Program {cip1_prog_int}")
 
             res["cip_line1"] = {
                 "ct_r": round(get_real(d1801, 4), 3),
@@ -308,17 +349,25 @@ class MasterPlantReader:
                 "tt_hw_tnk": round(get_real(d1801, 24), 2),
                 "tt_ac_tnk": round(get_real(d1801, 28), 2),
                 "tt_cas_tnk": round(get_real(d1801, 32), 2),
+                "route_int": cip1_route_int,
+                "route_desc": cip1_route_desc,
+                "program_int": cip1_prog_int,
+                "program_desc": cip1_prog_desc,
                 "step_int": cip1_step_int,
                 "step_desc": cip1_desc,
                 "step_timer": get_int(d1801, 50),
                 "step_setpoint": cip1_sp
             }
 
-            # 4. READ DB1802 (CIP LINE 2)
+            # 4. READ DB1802 (CIP CIRCUIT 2)
             d1802 = self.client.db_read(1802, 0, 52)
             d1802_step = self.client.db_read(1802, 452, 2)
             cip2_step_int = get_int(d1802_step, 0)
             cip2_desc, cip2_sp = CIP_STEPS.get(cip2_step_int, (f"Step {cip2_step_int}", 0))
+            cip2_route_int = get_int(d1802, 44)
+            cip2_route_desc = CIP_ROUTE_02.get(cip2_route_int, "None" if cip2_route_int == 0 else f"Route {cip2_route_int}")
+            cip2_prog_int = get_int(d1802, 46)
+            cip2_prog_desc = CIP_PROGRAM.get(cip2_prog_int, "Off" if cip2_prog_int == 0 else f"Program {cip2_prog_int}")
 
             res["cip_line2"] = {
                 "ct_r": round(get_real(d1802, 4), 3),
@@ -328,6 +377,10 @@ class MasterPlantReader:
                 "tt_hw_tnk": round(get_real(d1802, 24), 2),
                 "tt_ac_tnk": round(get_real(d1802, 28), 2),
                 "tt_cas_tnk": round(get_real(d1802, 32), 2),
+                "route_int": cip2_route_int,
+                "route_desc": cip2_route_desc,
+                "program_int": cip2_prog_int,
+                "program_desc": cip2_prog_desc,
                 "step_int": cip2_step_int,
                 "step_desc": cip2_desc,
                 "step_timer": get_int(d1802, 50),

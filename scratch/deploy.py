@@ -17,9 +17,12 @@ def deploy():
     files_to_sync = [
         ('backend/master_reader.py', f'{REMOTE_BASE}/backend/master_reader.py'),
         ('backend/app/main.py', f'{REMOTE_BASE}/backend/app/main.py'),
+        ('backend/app/step_tracker.py', f'{REMOTE_BASE}/backend/app/step_tracker.py'),
         ('backend/app/vsd_analytics.py', f'{REMOTE_BASE}/backend/app/vsd_analytics.py'),
         ('backend/telemetry_worker.py', f'{REMOTE_BASE}/backend/telemetry_worker.py'),
         ('backend/app/telemetry_worker.py', f'{REMOTE_BASE}/backend/app/telemetry_worker.py'),
+        ('custom_dashboard/index.html', f'{REMOTE_BASE}/custom_dashboard/index.html'),
+        ('custom_dashboard/app.js', f'{REMOTE_BASE}/custom_dashboard/app.js'),
     ]
 
     for local_rel, remote_path in files_to_sync:
@@ -29,20 +32,22 @@ def deploy():
     sftp.close()
 
     commands = [
-        # Copy telemetry_worker and master_reader to root /app inside container
+        # Copy backend files to container
         f"docker cp '{REMOTE_BASE}/backend/master_reader.py' thpack_backend:/app/master_reader.py",
         f"docker cp '{REMOTE_BASE}/backend/telemetry_worker.py' thpack_backend:/app/telemetry_worker.py",
         f"docker cp '{REMOTE_BASE}/backend/app/main.py' thpack_backend:/app/app/main.py",
+        f"docker cp '{REMOTE_BASE}/backend/app/step_tracker.py' thpack_backend:/app/app/step_tracker.py",
         f"docker cp '{REMOTE_BASE}/backend/app/vsd_analytics.py' thpack_backend:/app/app/vsd_analytics.py",
         f"docker cp '{REMOTE_BASE}/backend/app/vsd_analytics.py' thpack_backend:/app/vsd_analytics.py",
+        # Copy custom_dashboard files to container
+        f"docker cp '{REMOTE_BASE}/custom_dashboard/index.html' thpack_custom_dashboard:/usr/share/nginx/html/index.html",
+        f"docker cp '{REMOTE_BASE}/custom_dashboard/app.js' thpack_custom_dashboard:/usr/share/nginx/html/app.js",
         # Restart backend container to pick up supervisor & decoupled architecture
         "docker restart thpack_backend",
         # Wait a moment for container to start
         "sleep 3",
         # Check docker logs
-        "docker logs --tail 30 thpack_backend",
-        # Check if worker process is running inside container
-        "docker exec thpack_backend ps aux"
+        "docker logs --tail 20 thpack_backend",
     ]
 
     for cmd in commands:
