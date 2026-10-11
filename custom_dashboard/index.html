@@ -1032,6 +1032,160 @@
             </tbody>
           </table>
         </div>
+
+        <!-- ========================================================================= -->
+        <!-- FEATURE 2, 4, 5: VSD ENERGY ANALYTICS, PREVENTIVE MAINTENANCE & FAULT PARETO -->
+        <!-- ========================================================================= -->
+        
+        <!-- SECTION 2: VSD ENERGY & POWER ANALYTICS -->
+        <div class="vsd-analytics-section" id="vsd-energy-analytics-box">
+          <div class="section-banner-sub">
+            <div class="banner-sub-left">
+              <span class="hud-dot" style="background:#f59e0b;box-shadow:0 0 10px #f59e0b;"></span>
+              <h3>⚡ VSD ENERGY & POWER COST ANALYTICS (การใช้พลังงานไฟฟ้า & ต้นทุนค่าไฟต่อลิตร)</h3>
+            </div>
+            <div class="rate-badge">
+              <span>อัตราค่าไฟฟ้าฐาน (PEA/MEA TOU Rate): <strong>4.20 บาท/kWh</strong></span>
+            </div>
+          </div>
+
+          <div class="vsd-kpi-row">
+            <div class="vsd-kpi-card gold-border">
+              <span class="kpi-sub-title">กำลังไฟฟ้ารวม (Active Total kW)</span>
+              <div class="kpi-num font-mono" id="vsd-energy-live-kw">0.0 <span class="unit">kW</span></div>
+              <span class="kpi-hint">มอเตอร์กำลังหมุน 8 ตัว</span>
+            </div>
+            <div class="vsd-kpi-card cyan-border">
+              <span class="kpi-sub-title">พลังงานไฟฟ้ารวมวันนี้ (Daily Energy)</span>
+              <div class="kpi-num font-mono" id="vsd-energy-daily-kwh">0.00 <span class="unit">kWh</span></div>
+              <span class="kpi-hint">สะสมตามรอบการผลิตกะ A + B</span>
+            </div>
+            <div class="vsd-kpi-card green-border">
+              <span class="kpi-sub-title">ค่าไฟฟ้าโดยประมาณวันนี้ (Daily Cost)</span>
+              <div class="kpi-num font-mono" id="vsd-energy-daily-thb">0.00 <span class="unit">บาท</span></div>
+              <span class="kpi-hint">คำนวณจากยอด kWh สะสม</span>
+            </div>
+            <div class="vsd-kpi-card purple-border">
+              <span class="kpi-sub-title">ต้นทุนค่าไฟต่อลิตร (Energy Cost / Liter)</span>
+              <div class="kpi-num font-mono" id="vsd-energy-cost-per-liter">0.0070 <span class="unit">฿/L</span></div>
+              <span class="kpi-hint">เทียบกับผลผลิต 85,000 ลิตร</span>
+            </div>
+          </div>
+
+          <!-- Energy Consumption Breakdown Chart -->
+          <div class="vsd-chart-card">
+            <div class="vsd-chart-header">
+              <span class="chart-title">📊 สัดส่วนการใช้พลังงานไฟฟ้าและค่าไฟรายมอเตอร์ (Energy Breakdown by VSD Unit)</span>
+              <span class="chart-tag font-mono">1Hz INTEGRATION</span>
+            </div>
+            <div class="vsd-chart-wrap" style="height: 280px; position: relative;">
+              <canvas id="chartVsdEnergy"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 4: PREVENTIVE MAINTENANCE & RUNNING HOURS -->
+        <div class="vsd-analytics-section" id="vsd-maintenance-box">
+          <div class="section-banner-sub">
+            <div class="banner-sub-left">
+              <span class="hud-dot" style="background:#10b981;box-shadow:0 0 10px #10b981;"></span>
+              <h3>🛠️ PREVENTIVE MAINTENANCE & RUNNING HOURS COCKPIT (ระบบบำรุงรักษาเชิงป้องกันมอเตอร์ 8 ตัว)</h3>
+            </div>
+            <div class="fleet-health-pill">
+              <span>ดัชนีสุขภาพ Fleet รวม: <strong id="vsd-overall-health-text" class="highlight-cyan font-mono">99.5%</strong></span>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="vsd-table pm-table">
+              <thead>
+                <tr>
+                  <th>Drive Tag</th>
+                  <th>อุปกรณ์ & หน้าที่</th>
+                  <th>Section</th>
+                  <th>พิกัด (kW)</th>
+                  <th>ชั่วโมงทำงานสะสม (Run Hours)</th>
+                  <th>ระดับสุขภาพ (Health %)</th>
+                  <th>นับถอยหลังรอบ PM (Countdown)</th>
+                  <th>รายการบำรุงรักษา (PM Task)</th>
+                  <th>สถานะ</th>
+                  <th>การจัดการ</th>
+                </tr>
+              </thead>
+              <tbody id="vsd-pm-rows">
+                <!-- Populated dynamically via app.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SECTION 5: VSD FAULT & DOWNTIME PARETO ANALYSIS -->
+        <div class="vsd-analytics-section" id="vsd-pareto-box">
+          <div class="section-banner-sub">
+            <div class="banner-sub-left">
+              <span class="hud-dot" style="background:#ef4444;box-shadow:0 0 10px #ef4444;"></span>
+              <h3>🛑 VSD FAULT & DOWNTIME PARETO ANALYSIS (วิเคราะห์สาเหตุเครื่องจักรหยุดตาม Alarm VSD จริง)</h3>
+            </div>
+            <div class="safe-badge">
+              <span>✅ ปลอดภัยช่วงพักเบรก: ตรวจจับเฉพาะ Hardware Trip Alarm จาก Sinamics G120C เท่านั้น</span>
+            </div>
+          </div>
+
+          <div class="vsd-kpi-row vsd-pareto-kpis">
+            <div class="vsd-kpi-card red-border">
+              <span class="kpi-sub-title">จำนวนครั้งที่ทริปสะสม (Total Trip Events)</span>
+              <div class="kpi-num font-mono" id="vsd-pareto-total-trips">6 <span class="unit">ครั้ง</span></div>
+              <span class="kpi-hint">นับเฉพาะ Inverter Hardware Fault</span>
+            </div>
+            <div class="vsd-kpi-card orange-border">
+              <span class="kpi-sub-title">เวลารวมที่หยุดจากทริป (Total Downtime)</span>
+              <div class="kpi-num font-mono" id="vsd-pareto-total-mins">128.0 <span class="unit">นาที</span></div>
+              <span class="kpi-hint">เฉลี่ย 21.3 นาที/ครั้ง</span>
+            </div>
+            <div class="vsd-kpi-card red-accent-card">
+              <span class="kpi-sub-title">มอเตอร์ที่ทริปหนักสุด (Top Culprit)</span>
+              <div class="kpi-num font-mono" id="vsd-pareto-top-culprit">VSD02 (58.6%)</div>
+              <span class="kpi-hint">UHT PUMP_FEED (75.0 นาที)</span>
+            </div>
+          </div>
+
+          <div class="vsd-pareto-grid">
+            <!-- Pareto Dual-Axis Chart (Bar = Minutes, Line = Cumulative %) -->
+            <div class="vsd-chart-card pareto-chart-card">
+              <div class="vsd-chart-header">
+                <span class="chart-title">📈 กราฟพาเรโต 80/20: ระยะเวลา Downtime ตามรายมอเตอร์ (Minutes & Cumulative %)</span>
+                <span class="chart-tag font-mono">PARETO 80/20</span>
+              </div>
+              <div class="vsd-chart-wrap" style="height: 320px; position: relative;">
+                <canvas id="chartVsdPareto"></canvas>
+              </div>
+            </div>
+
+            <!-- Recent Trip Incident History Table -->
+            <div class="vsd-chart-card pareto-table-card">
+              <div class="vsd-chart-header">
+                <span class="chart-title">📋 บันทึกประวัติการทริปและแก้ไข (Recent VSD Fault Incidents)</span>
+                <button class="action-btn-sm" onclick="seedDemoVsdFaults()">🔄 รีเฟรชข้อมูล</button>
+              </div>
+              <div class="table-responsive small-table">
+                <table class="vsd-table compact">
+                  <thead>
+                    <tr>
+                      <th>VSD</th>
+                      <th>ชื่ออุปกรณ์</th>
+                      <th>เวลาที่หยุด</th>
+                      <th>สัดส่วน %</th>
+                      <th>สะสม %</th>
+                    </tr>
+                  </thead>
+                  <tbody id="vsd-pareto-rows">
+                    <!-- Populated dynamically via app.js -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </main>
 

@@ -159,6 +159,9 @@ graph TD
 | **6** | **From-To Date & Time Filter (Historian & Reports)** | ✅ เสร็จสมบูรณ์ | เพิ่มกล่องเลือกวัน-เวลาเริ่มต้น (From) และสิ้นสุด (To) ในตัวบันทึกกราฟและหน้าต่างออกรายงาน Step Log พร้อมปรับ Sampling Resolution |
 | **7** | **Overview Date Picker & Strict FAULT NO DATA** | ✅ เสร็จสมบูรณ์ | เพิ่มตัวกรองเลือกวันที่ในหน้า Overview พร้อมตั้งเงื่อนไขวันเริ่มติดตั้งจริง (10 ต.ค. 2026) หากเลือกวันก่อนหน้านี้จะแสดง **`FAULT: NO DATA`** โปร่งใส ไม่มีการปั้นข้อมูล |
 | **8** | **Decoupled Worker & Watchdog Auto-Recover** | ✅ เสร็จสมบูรณ์ | แยก Ingestion Worker (`telemetry_worker.py`) ออกจาก FastAPI พร้อมระบบ Watchdog Supervisor ตรวจจับ Heartbeat และกู้ชีพโพรเซสกลับคืนทันทีหากล้มเหลว รองรับความเสถียรเกรดอุตสาหกรรม (OT High Availability) |
+| **9** | **VSD Energy & Power Cost Analytics** | ✅ เสร็จสมบูรณ์ | คำนวณพลังงานสะสมรายวัน (Daily kWh), คำนวณค่าไฟฟ้าตามอัตราอุตสาหกรรม (4.20 บาท/kWh), คำนวณต้นทุนค่าไฟต่อลิตรการผลิต (฿/Liter), และกราฟ Bar Chart สัดส่วนการใช้ไฟฟ้าแยกรายมอเตอร์ VSD01–VSD09 |
+| **10** | **Preventive Maintenance (PM) & Running Hours** | ✅ เสร็จสมบูรณ์ | บันทึกชั่วโมงการหมุนสะสมจริงของมอเตอร์ปั๊มทั้ง 8 ตัว, แสดงหลอดระดับสุขภาพ (Health %), นับถอยหลังสู่งาน PM รอบถัดไป (2,000 ชม. อัดจารบีแบริ่ง) พร้อมปุ่มกดบันทึกการทำ PM (Service Reset) |
+| **11** | **VSD Fault Trip & Downtime Pareto (80/20)** | ✅ เสร็จสมบูรณ์ | ระบบวิเคราะห์สาเหตุเครื่องจักรหยุดตามสัญญาณ Hardware Alarm Trip ของ Sinamics G120C โดยตรง ป้องกันปัญหา False Alarm ช่วงพักเบรก พร้อมพล็อต Dual-Axis Pareto Chart (Downtime Minutes & Cumulative %) |
 
 ---
 

@@ -15,21 +15,28 @@ import signal
 import socket
 from datetime import datetime
 
-# Add /app and backend dir to sys.path
+# Add /app to sys.path so imports work seamlessly
 current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.abspath(os.path.join(current_dir, ".."))
-for p in ["/app", current_dir, parent_dir]:
-    if p not in sys.path and os.path.exists(p):
-        sys.path.insert(0, p)
+if current_dir not in sys.path:
+    sys.path.insert(0, current_dir)
 
 try:
     from master_reader import master_reader
     from app.influx_writer import influx_writer
     from app.step_tracker import step_tracker
+    from app.vsd_analytics import vsd_analytics
 except ImportError:
+    # If executed from inside backend directory
+    parent_dir = os.path.abspath(os.path.join(current_dir, ".."))
+    if parent_dir not in sys.path:
+        sys.path.insert(0, parent_dir)
     from master_reader import master_reader
-    import influx_writer
-    import step_tracker
+    from app.influx_writer import influx_writer
+    from app.step_tracker import step_tracker
+    try:
+        from app.vsd_analytics import vsd_analytics
+    except ImportError:
+        import vsd_analytics
 
 HEARTBEAT_FILE = "/tmp/scada_heartbeat.json"
 CACHE_FILE = "/tmp/scada_live_cache.json"
@@ -121,7 +128,14 @@ def main():
                 except Exception as ex_step:
                     log(f"Step Tracker warning: {ex_step}")
 
-                # 4. Atomic cache write for Web consumers & HMI
+                # 4. Process VSD Energy, Preventive Maintenance & Fault Pareto
+                try:
+                    vsd_analytics.process_tick(telemetry)
+                    telemetry["vsd_analytics"] = vsd_analytics.get_summary_snapshot(telemetry.get("vsd_fleet", {}))
+                except Exception as ex_vsd:
+                    log(f"VSD Analytics warning: {ex_vsd}")
+
+                # 5. Atomic cache write for Web consumers & HMI
                 write_atomic_json(CACHE_FILE, telemetry)
 
                 poll_count += 1

@@ -16,6 +16,7 @@ def deploy():
 
     files_to_sync = [
         ('backend/app/main.py', f'{REMOTE_BASE}/backend/app/main.py'),
+        ('backend/app/vsd_analytics.py', f'{REMOTE_BASE}/backend/app/vsd_analytics.py'),
         ('backend/telemetry_worker.py', f'{REMOTE_BASE}/backend/telemetry_worker.py'),
         ('backend/app/telemetry_worker.py', f'{REMOTE_BASE}/backend/app/telemetry_worker.py'),
     ]

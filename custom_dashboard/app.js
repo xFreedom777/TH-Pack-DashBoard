@@ -2068,6 +2068,7 @@ function applyLiveTelemetry(d) {
   if (d.vsd_fleet) {
     renderVsdTables(d.vsd_fleet);
     renderDriveBayCards(d.vsd_fleet);
+    updateVsdAnalyticsUI(d);
   }
 
   // 6. EXECUTIVE KPIS
@@ -2451,5 +2452,335 @@ document.addEventListener('click', (e) => {
     closeHistorianRangeModal();
   }
 });
+
+// =========================================================================
+// FEATURE 2, 4, 5: VSD ENERGY ANALYTICS, PREVENTIVE MAINTENANCE & FAULT PARETO
+// =========================================================================
+let vsdEnergyChart = null;
+let vsdParetoChart = null;
+let lastVsdAnalyticsFetch = 0;
+
+function updateVsdAnalyticsUI(telemetryData) {
+  const host = window.location.hostname || '127.0.0.1';
+  const now = Date.now();
+  
+  // 1. If vsd_analytics is embedded in live telemetry cache, use it immediately!
+  if (telemetryData && telemetryData.vsd_analytics) {
+    renderVsdEnergyUI(telemetryData.vsd_analytics.energy_analytics, telemetryData.vsd_fleet);
+    renderVsdMaintenanceUI(telemetryData.vsd_analytics.preventive_maintenance);
+    renderVsdParetoUI(telemetryData.vsd_analytics.fault_pareto);
+    return;
+  }
+
+  // 2. Fallback: fetch from REST API every 5 seconds
+  if (now - lastVsdAnalyticsFetch > 5000) {
+    lastVsdAnalyticsFetch = now;
+    
+    // Fetch Energy
+    fetch(`http://${host}:8000/api/v1/vsd/energy`)
+      .then(res => res.json())
+      .then(data => renderVsdEnergyUI(data, telemetryData.vsd_fleet))
+      .catch(e => console.warn('VSD energy fetch err:', e));
+
+    // Fetch Maintenance
+    fetch(`http://${host}:8000/api/v1/vsd/maintenance`)
+      .then(res => res.json())
+      .then(data => renderVsdMaintenanceUI(data))
+      .catch(e => console.warn('VSD maint fetch err:', e));
+
+    // Fetch Pareto
+    fetch(`http://${host}:8000/api/v1/vsd/fault_pareto`)
+      .then(res => res.json())
+      .then(data => renderVsdParetoUI(data))
+      .catch(e => console.warn('VSD pareto fetch err:', e));
+  }
+}
+
+// -------------------------------------------------------------------------
+// 2. VSD ENERGY & POWER ANALYTICS
+// -------------------------------------------------------------------------
+function renderVsdEnergyUI(energyData, vf) {
+  if (!energyData) return;
+
+  const totalKw = (vf) ? Object.values(vf).reduce((sum, v) => sum + (v.power_kw || 0), 0) : 0;
+  setText('vsd-energy-live-kw', `${totalKw.toFixed(1)} kW`);
+  setText('vsd-energy-daily-kwh', `${(energyData.total_daily_kwh || 0).toFixed(2)} kWh`);
+  setText('vsd-energy-daily-thb', `${(energyData.total_cost_thb || 0).toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} บาท`);
+  setText('vsd-energy-cost-per-liter', `${(energyData.cost_per_liter_thb || 0.007).toFixed(4)} ฿/L`);
+
+  // Render or Update Energy Breakdown Bar Chart
+  const ctx = document.getElementById('chartVsdEnergy');
+  if (!ctx) return;
+
+  const items = energyData.by_vsd || [];
+  const labels = items.map(i => `${i.tag} (${i.name.split(' ')[0]})`);
+  const kwhVals = items.map(i => i.daily_kwh || i.energy_kwh || 0);
+  const costVals = items.map(i => i.daily_cost_thb || i.cost_thb || 0);
+
+  if (vsdEnergyChart) {
+    vsdEnergyChart.data.labels = labels;
+    vsdEnergyChart.data.datasets[0].data = kwhVals;
+    vsdEnergyChart.data.datasets[1].data = costVals;
+    vsdEnergyChart.update('none');
+  } else {
+    vsdEnergyChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'พลังงานสะสม (kWh)',
+            data: kwhVals,
+            backgroundColor: 'rgba(245, 158, 11, 0.75)',
+            borderColor: '#f59e0b',
+            borderWidth: 1,
+            borderRadius: 4,
+            yAxisID: 'y'
+          },
+          {
+            label: 'ค่าไฟฟ้าสะสม (บาท)',
+            data: costVals,
+            backgroundColor: 'rgba(6, 182, 212, 0.75)',
+            borderColor: '#06b6d4',
+            borderWidth: 1,
+            borderRadius: 4,
+            yAxisID: 'y1'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: '#cbd5e1', font: { family: 'Outfit, Sarabun' } } },
+          tooltip: {
+            callbacks: {
+              afterBody: function(context) {
+                return `อัตราค่าไฟ: 4.20 บาท/หน่วย (TOU PEA)`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: { ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono' } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+          y: {
+            type: 'linear',
+            display: true,
+            position: 'left',
+            title: { display: true, text: 'หน่วยไฟฟ้า (kWh)', color: '#f59e0b' },
+            ticks: { color: '#f59e0b' },
+            grid: { color: 'rgba(255,255,255,0.05)' }
+          },
+          y1: {
+            type: 'linear',
+            display: true,
+            position: 'right',
+            title: { display: true, text: 'ค่าไฟฟ้า (บาท)', color: '#06b6d4' },
+            ticks: { color: '#06b6d4' },
+            grid: { drawOnChartArea: false }
+          }
+        }
+      }
+    });
+  }
+}
+
+// -------------------------------------------------------------------------
+// 4. PREVENTIVE MAINTENANCE & RUNNING HOURS
+// -------------------------------------------------------------------------
+function renderVsdMaintenanceUI(maintData) {
+  if (!maintData) return;
+
+  const healthText = document.getElementById('vsd-overall-health-text');
+  if (healthText) {
+    const avg = maintData.overall_fleet_health_pct || 99.5;
+    healthText.textContent = `${avg.toFixed(1)}%`;
+    healthText.style.color = (avg >= 90) ? '#34d399' : (avg >= 75 ? '#fbbf24' : '#f87171');
+  }
+
+  const tbody = document.getElementById('vsd-pm-rows');
+  if (!tbody || !maintData.fleet) return;
+
+  tbody.innerHTML = maintData.fleet.map(f => {
+    const health = f.health_pct || 100;
+    const barClass = (health >= 85) ? 'good' : (health >= 60 ? 'warn' : 'danger');
+    const statusClass = (f.status === 'GOOD') ? 'good' : (f.status === 'DUE_SOON' ? 'warn' : 'danger');
+    const statusLabel = (f.status === 'GOOD') ? 'ปกติ (GOOD)' : (f.status === 'DUE_SOON' ? 'ใกล้ครบกำหนด' : 'เกินกำหนด PM!');
+
+    return `
+      <tr>
+        <td><strong class="highlight-cyan font-mono">${f.tag}</strong></td>
+        <td><strong>${f.name}</strong></td>
+        <td><span class="tag-sub">${f.section}</span></td>
+        <td class="font-mono">${f.rated_kw} kW</td>
+        <td class="font-mono highlight-gold"><strong>${(f.total_running_hours || 0).toFixed(1)} ชม.</strong></td>
+        <td>
+          <div class="pm-health-cell">
+            <div class="pm-health-bar-wrap">
+              <div class="pm-health-bar-fill ${barClass}" style="width: ${health}%;"></div>
+            </div>
+            <span class="font-mono" style="font-size:11px;font-weight:700;">${health.toFixed(1)}%</span>
+          </div>
+        </td>
+        <td class="font-mono highlight-green">${(f.hours_remaining || 0).toFixed(1)} ชม.</td>
+        <td style="font-size:12px;color:#cbd5e1;">${f.pm_task || 'Level 2: Grease Motor Bearings'}</td>
+        <td><span class="pm-status-pill ${statusClass}">${statusLabel}</span></td>
+        <td>
+          <button class="pm-reset-btn" onclick="resetVsdPm('${f.tag}')" title="กดเมื่อช่างซ่อมบำรุงตรวจเช็คหรืออัดจารบีเสร็จแล้ว">
+            🛠️ รีเซ็ต PM
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+window.resetVsdPm = async function(vsdTag) {
+  if (!confirm(`ยืนยันการบันทึกงานซ่อมบำรุง (PM Complete) สำหรับมอเตอร์ ${vsdTag} หรือไม่?\n\nระบบจะบันทึกชั่วโมงปัจจุบันเป็นจุดเริ่มต้นรอบใหม่ และรีเซ็ตดัชนีสุขภาพเป็น 100% ทันที`)) {
+    return;
+  }
+  const host = window.location.hostname || '127.0.0.1';
+  try {
+    const res = await fetch(`http://${host}:8000/api/v1/vsd/maintenance/reset?vsd_tag=${vsdTag}`, { method: 'POST' });
+    const json = await res.json();
+    if (json.status === 'success') {
+      alert(`✅ บันทึกงานซ่อมบำรุง ${vsdTag} สำเร็จ!\nรอบ PM ถัดไปที่: ${json.next_pm_due_hours} ชม.`);
+      // Force refresh maintenance UI
+      const maintRes = await fetch(`http://${host}:8000/api/v1/vsd/maintenance`);
+      const maintData = await maintRes.json();
+      renderVsdMaintenanceUI(maintData);
+    } else {
+      alert('เกิดข้อผิดพลาด: ' + (json.message || 'ไม่สามารถรีเซ็ตได้'));
+    }
+  } catch (err) {
+    alert('เชื่อมต่อเซิร์ฟเวอร์ล้มเหลว: ' + err.message);
+  }
+};
+
+// -------------------------------------------------------------------------
+// 5. VSD FAULT & DOWNTIME PARETO ANALYSIS
+// -------------------------------------------------------------------------
+function renderVsdParetoUI(paretoData) {
+  if (!paretoData) return;
+
+  setText('vsd-pareto-total-trips', `${paretoData.total_trip_events || 0} ครั้ง`);
+  setText('vsd-pareto-total-mins', `${(paretoData.total_downtime_minutes || 0).toFixed(1)} นาที`);
+
+  const items = paretoData.pareto_items || [];
+  if (items.length > 0) {
+    const top = items[0];
+    setText('vsd-pareto-top-culprit', `${top.tag} (${top.pct_of_total_downtime}%)`);
+  } else {
+    setText('vsd-pareto-top-culprit', 'ไม่มีทริป (0%)');
+  }
+
+  // Populate Pareto Incident Table
+  const tbody = document.getElementById('vsd-pareto-rows');
+  if (tbody) {
+    if (items.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#64748b;padding:16px;">ยังไม่มีประวัติ VSD ทริป (ระบบทำงานสมบูรณ์ 100%)</td></tr>`;
+    } else {
+      tbody.innerHTML = items.map(item => `
+        <tr>
+          <td><strong class="highlight-cyan font-mono">${item.tag}</strong></td>
+          <td>${item.name}</td>
+          <td class="font-mono highlight-gold"><strong>${item.downtime_minutes} นาที</strong> (${item.trip_count} ครั้ง)</td>
+          <td class="font-mono highlight-red">${item.pct_of_total_downtime}%</td>
+          <td class="font-mono highlight-green"><strong>${item.cumulative_pct}%</strong></td>
+        </tr>
+      `).join('');
+    }
+  }
+
+  // Render Dual-Axis Pareto Chart
+  const ctx = document.getElementById('chartVsdPareto');
+  if (!ctx || items.length === 0) return;
+
+  const labels = items.map(i => `${i.tag}`);
+  const downtimeMins = items.map(i => i.downtime_minutes);
+  const cumPcts = items.map(i => i.cumulative_pct);
+
+  if (vsdParetoChart) {
+    vsdParetoChart.data.labels = labels;
+    vsdParetoChart.data.datasets[0].data = downtimeMins;
+    vsdParetoChart.data.datasets[1].data = cumPcts;
+    vsdParetoChart.update('none');
+  } else {
+    vsdParetoChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            type: 'bar',
+            label: 'เวลาเครื่องหยุด (นาที)',
+            data: downtimeMins,
+            backgroundColor: 'rgba(239, 68, 68, 0.75)',
+            borderColor: '#ef4444',
+            borderWidth: 1,
+            borderRadius: 4,
+            yAxisID: 'y'
+          },
+          {
+            type: 'line',
+            label: 'สัดส่วนสะสม (Cumulative %)',
+            data: cumPcts,
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.2)',
+            borderWidth: 3,
+            pointBackgroundColor: '#10b981',
+            pointRadius: 5,
+            fill: false,
+            tension: 0.2,
+            yAxisID: 'y1'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: '#cbd5e1', font: { family: 'Outfit, Sarabun' } } }
+        },
+        scales: {
+          x: { ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono' } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+          y: {
+            type: 'linear',
+            display: true,
+            position: 'left',
+            title: { display: true, text: 'เวลา Downtime (นาที)', color: '#ef4444' },
+            ticks: { color: '#ef4444' },
+            grid: { color: 'rgba(255,255,255,0.05)' }
+          },
+          y1: {
+            type: 'linear',
+            display: true,
+            position: 'right',
+            min: 0,
+            max: 100,
+            title: { display: true, text: 'สะสม (%)', color: '#10b981' },
+            ticks: { color: '#10b981', callback: val => `${val}%` },
+            grid: { drawOnChartArea: false }
+          }
+        }
+      }
+    });
+  }
+}
+
+window.seedDemoVsdFaults = async function() {
+  const host = window.location.hostname || '127.0.0.1';
+  try {
+    const res = await fetch(`http://${host}:8000/api/v1/vsd/fault/seed_demo`, { method: 'POST' });
+    const json = await res.json();
+    alert('✅ อัพเดทข้อมูลตัวอย่างประวัติการทริปเรียบร้อยแล้ว');
+    const paretoRes = await fetch(`http://${host}:8000/api/v1/vsd/fault_pareto`);
+    const paretoData = await paretoRes.json();
+    renderVsdParetoUI(paretoData);
+  } catch (err) {
+    alert('เชื่อมต่อเซิร์ฟเวอร์ล้มเหลว: ' + err.message);
+  }
+};
+
 
 

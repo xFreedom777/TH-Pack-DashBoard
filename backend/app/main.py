@@ -517,3 +517,182 @@ def seed_demo_step_logs():
         inserted += 1
 
     return {"status": "success", "inserted": inserted, "batch_id": batch_ref}
+
+# =========================================================================
+# VSD ENERGY, PREVENTIVE MAINTENANCE & FAULT PARETO APIS
+# =========================================================================
+
+@app.get("/api/v1/vsd/energy")
+def get_vsd_energy(
+    date_filter: Optional[str] = Query(None, description="Date filter YYYY-MM-DD")
+):
+    """
+    Returns VSD Energy Consumption, Electricity Cost (THB),
+    and Energy Cost per Liter for all 8 Inverter Motors.
+    """
+    # Check cache first for real-time live data
+    global cached_telemetry
+    if cached_telemetry and "vsd_analytics" in cached_telemetry:
+        return cached_telemetry["vsd_analytics"]["energy_analytics"]
+    
+    # Fallback to MySQL
+    target_d = date_filter or date.today().isoformat()
+    rows = fetch_all("""
+        SELECT vsd_tag, vsd_name, section, energy_kwh, cost_thb, cost_per_liter, peak_power_kw
+        FROM vsd_energy_logs
+        WHERE record_date = %s
+        ORDER BY energy_kwh DESC
+    """, (target_d,))
+
+    total_kwh = sum(float(r["energy_kwh"]) for r in rows) if rows else 0.0
+    total_cost = sum(float(r["cost_thb"]) for r in rows) if rows else 0.0
+
+    return {
+        "date": target_d,
+        "total_daily_kwh": round(total_kwh, 2),
+        "total_cost_thb": round(total_cost, 2),
+        "electricity_rate": 4.20,
+        "cost_per_liter_thb": round(rows[0]["cost_per_liter"], 4) if rows else 0.007,
+        "by_vsd": rows
+    }
+
+@app.get("/api/v1/vsd/maintenance")
+def get_vsd_maintenance():
+    """
+    Returns Operating Hours, PM Countdown, and Health % of all 8 VSD Motors.
+    """
+    global cached_telemetry
+    if cached_telemetry and "vsd_analytics" in cached_telemetry:
+        return cached_telemetry["vsd_analytics"]["preventive_maintenance"]
+
+    rows = fetch_all("SELECT * FROM vsd_maintenance_records ORDER BY vsd_tag ASC")
+    fleet = []
+    for r in rows:
+        hrs = float(r.get("total_running_hours", 0))
+        last_pm = float(r.get("last_pm_hours", 0))
+        interval = float(r.get("pm_interval_hours", 2000))
+        since_pm = hrs - last_pm
+        rem = max(0.0, round(interval - since_pm, 1))
+        fleet.append({
+            "tag": r["vsd_tag"],
+            "name": r["vsd_name"],
+            "section": r["section"],
+            "rated_kw": float(r["rated_kw"]),
+            "total_running_hours": hrs,
+            "hours_since_pm": round(since_pm, 1),
+            "hours_remaining": rem,
+            "health_pct": float(r["health_pct"]),
+            "pm_task": r["pm_task_desc"],
+            "status": r["status"]
+        })
+
+    avg_health = round(sum(f["health_pct"] for f in fleet) / len(fleet), 1) if fleet else 100.0
+    return {
+        "overall_fleet_health_pct": avg_health,
+        "fleet": fleet
+    }
+
+@app.post("/api/v1/vsd/maintenance/reset")
+def reset_vsd_maintenance(
+    vsd_tag: str = Query(..., description="VSD Tag e.g. VSD01"),
+    technician_name: str = Query("Piyapong EE", description="Name of maintenance technician")
+):
+    """
+    Resets PM counter after maintenance service is completed.
+    """
+    row = fetch_all("SELECT total_running_hours, pm_interval_hours FROM vsd_maintenance_records WHERE vsd_tag = %s", (vsd_tag,))
+    if not row:
+        return {"status": "error", "message": f"VSD {vsd_tag} not found"}
+
+    curr_hrs = float(row[0]["total_running_hours"])
+    interval = float(row[0]["pm_interval_hours"])
+    next_hrs = curr_hrs + interval
+
+    execute_insert("""
+        UPDATE vsd_maintenance_records
+        SET last_pm_hours = %s,
+            next_pm_hours = %s,
+            health_pct = 100.00,
+            status = 'GOOD'
+        WHERE vsd_tag = %s
+    """, (curr_hrs, next_hrs, vsd_tag))
+
+    return {
+        "status": "success",
+        "vsd_tag": vsd_tag,
+        "reset_at_hours": curr_hrs,
+        "next_pm_due_hours": next_hrs,
+        "technician": technician_name
+    }
+
+@app.get("/api/v1/vsd/fault_pareto")
+def get_vsd_fault_pareto():
+    """
+    Returns Pareto Analysis of VSD Inverter Fault Trips (80/20 Rule)
+    Categorized strictly by hardware VSD alarms to prevent false alarms during plant breaks.
+    """
+    global cached_telemetry
+    if cached_telemetry and "vsd_analytics" in cached_telemetry:
+        return cached_telemetry["vsd_analytics"]["fault_pareto"]
+
+    rows = fetch_all("""
+        SELECT vsd_tag, vsd_name, section, 
+               COUNT(*) as trip_count, 
+               ROUND(SUM(duration_minutes), 2) as total_downtime_minutes,
+               ROUND(AVG(duration_minutes), 2) as avg_downtime_minutes
+        FROM vsd_fault_incidents
+        GROUP BY vsd_tag, vsd_name, section
+        ORDER BY total_downtime_minutes DESC, trip_count DESC
+    """)
+
+    total_events = sum(r["trip_count"] for r in rows)
+    total_mins = sum(float(r["total_downtime_minutes"] or 0) for r in rows)
+
+    pareto_items = []
+    cum_pct = 0.0
+    for r in rows:
+        mins = float(r["total_downtime_minutes"] or 0)
+        pct = (mins / total_mins * 100.0) if total_mins > 0 else 0.0
+        cum_pct += pct
+        pareto_items.append({
+            "tag": r["vsd_tag"],
+            "name": r["vsd_name"],
+            "section": r["section"],
+            "trip_count": r["trip_count"],
+            "downtime_minutes": mins,
+            "pct_of_total_downtime": round(pct, 1),
+            "cumulative_pct": round(min(100.0, cum_pct), 1)
+        })
+
+    return {
+        "total_trip_events": total_events,
+        "total_downtime_minutes": round(total_mins, 2),
+        "active_trips_count": 0,
+        "pareto_items": pareto_items
+    }
+
+@app.post("/api/v1/vsd/fault/seed_demo")
+def seed_vsd_fault_demo():
+    """
+    Seeds realistic historical VSD trip incidents for testing Pareto chart.
+    """
+    samples = [
+        ("VSD02", "UHT PUMP_FEED", "UHT", 45, 12.5, "Overcurrent Trip (F30001)"),
+        ("VSD02", "UHT PUMP_FEED", "UHT", 30, 8.0, "DC Bus Overvoltage (F00002)"),
+        ("VSD01", "UHT PUMP_BOOST", "UHT", 20, 6.5, "Motor Overtemperature (F07011)"),
+        ("VSD04", "CIP L1 P_S Supply", "CIP 1", 15, 4.0, "Inverter Overload (F00005)"),
+        ("VSD06", "UHT PUMP_RETURN", "UHT", 10, 3.2, "Phase Loss (F30016)"),
+        ("VSD08", "Prod Supply P101", "Prod Supply", 8, 2.1, "Communication Timeout (F01910)")
+    ]
+    base_t = datetime.now() - timedelta(days=2)
+    for tag, name, sec, mins, cur, f_type in samples:
+        st = base_t
+        et = base_t + timedelta(minutes=mins)
+        base_t += timedelta(hours=4)
+        sql = """
+            INSERT INTO vsd_fault_incidents
+            (vsd_tag, vsd_name, section, start_time, end_time, duration_seconds, duration_minutes, fault_type, current_at_fault, status)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 'RESOLVED')
+        """
+        execute_insert(sql, (tag, name, sec, st, et, int(mins*60), mins, f_type, cur))
+    return {"status": "success", "message": "Demo VSD fault incidents populated"}
