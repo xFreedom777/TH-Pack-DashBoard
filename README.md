@@ -1,12 +1,10 @@
 # 🏭 TH-PACK INTELLIGENT SCADA & PLANT ANALYTICS SYSTEM
 ## ระบบควบคุมและวิเคราะห์ข้อมูลอัจฉริยะ TH-Pack (Siemens S7-1500 & Multi-Tier Architecture)
 
-> **Client:** TH-PACK Industrial Automation  
-> **Plant Site (หน้างานจริง):** บริษัท รุ่งทรัพย์พัฒนา (ประเทศไทย) จำกัด / **RUNGSAPPATTANA (THAILAND) CO., LTD.**  
+
 > **Engineer & System Developer:** Dream Piyapong xFreedom777 ([xDev.0777@gmail.com](mailto:xDev.0777@gmail.com))  
 > **Host Node:** `xuht-001` (`192.168.1.2`)  
 > **Target PLC:** Siemens SIMATIC S7-1500 (`192.168.1.11` / `192.168.0.101`)  
-> **System Commissioning Date (วันเริ่มติดตั้งระบบ):** 10 ตุลาคม 2026 (2026-10-10)
 
 <div align="center">
 
@@ -188,7 +186,5 @@ docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
 ## 👥 Contributors & Version Control
 
-- **End-User Plant:** **บริษัท รุ่งทรัพย์พัฒนา (ประเทศไทย) จำกัด (RUNGSAPPATTANA (THAILAND) CO., LTD.)**
-- **Client & Automation Contractor:** **TH-PACK Industrial Automation**
 - **Engineer & System Developer:** **Dream Piyapong xFreedom777** ([xDev.0777@gmail.com](mailto:xDev.0777@gmail.com))
 - **Repository:** `https://github.com/xFreedom777/TH-Pack-DashBoard.git`
