@@ -61,23 +61,33 @@ graph TD
         StepEngine --> PLC
     end
 
-    subgraph Layer2["2. Telemetry Ingestion & Microservices"]
-        Backend["FastAPI Backend (Port 8000)<br/>Python-snap7 DB Reader (1Hz)"]
-        Tracker["Step Transition Watcher<br/>Auto Start/Stop & Duration Calc"]
-        Reporter["BMR Report Generator<br/>HTML5 & PDF Print Engine"]
-        RabbitMQ["RabbitMQ Broker (Port 5672)<br/>Event & Telemetry Queue"]
-        PLC -- S7comm (Port 102) --> Backend
-        Backend --> Tracker
+    subgraph Layer2["2. Decoupled Ingestion & Watchdog Microservices"]
+        Worker["⚙️ Dedicated Telemetry Worker<br/>(telemetry_worker.py 1Hz)<br/>S7-1500 Snap7 Ingestion Daemon"]
+        Tracker["Step Transition Engine<br/>Auto Start/Stop & Duration Calc"]
+        Supervisor["🛡️ Industrial Watchdog Supervisor<br/>Heartbeat Check (5s) & Auto-Recover"]
+        Cache["⚡ Atomic Shared Cache<br/>/tmp/scada_live_cache.json"]
+        Heartbeat["💓 Worker Heartbeat Pulse<br/>/tmp/scada_heartbeat.json"]
+        Backend["🌐 FastAPI Gateway (Port 8000)<br/>WebSocket Broadcaster & REST API"]
+        Reporter["Official BMR Report Engine<br/>A4 Portrait HTML5 & PDF"]
+
+        PLC -- S7comm (Port 102) --> Worker
+        Worker --> Tracker
+        Worker --> Cache
+        Worker --> Heartbeat
+        Supervisor -.->|Auto-Recover Re-spawn| Worker
+        Heartbeat -.-> Supervisor
+        Backend --> Supervisor
+        Cache --> Backend
         Backend --> Reporter
-        Backend --> RabbitMQ
     end
 
     subgraph Layer3["3. Data Persistence Layer"]
         InfluxDB["InfluxDB 2.7 (Port 8086)<br/>High-frequency Multi-Pen Historian"]
         MySQL["MySQL 8.4 LTS (Port 3306)<br/>process_step_logs & Shift OEE"]
         Telegraf["Telegraf Collector<br/>Host & Plant Metrics"]
+        
+        Worker -- High-Speed Influx Ingestion (1Hz) --> InfluxDB
         Tracker --> MySQL
-        Backend -- Flux Ingestion --> InfluxDB
         Telegraf --> InfluxDB
     end
 
@@ -87,7 +97,8 @@ graph TD
         OverviewUI["Executive Analytics Horizon<br/>Date Picker & FAULT NO DATA Check"]
         BMRDoc["Official A4 BMR Report<br/>Marine Logo + 3-Party Signatures"]
         Grafana["Grafana Dashboards (Port 3002)<br/>Plant Trend Analytics"]
-        Backend -- WebSocket (1Hz) --> SCADA
+
+        Backend -- WebSocket (1Hz Cache Push) --> SCADA
         Backend -- REST API --> HistorianUI
         Backend -- REST API --> BMRDoc
         MySQL --> OverviewUI
