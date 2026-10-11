@@ -7,8 +7,8 @@ def generate_step_report_html(section: str, batch_id: str, date_str: str, steps:
     section_titles = {
         "uht": ("UHT STERILIZATION UNIT [DB1200]", "Continuous High-Temperature Short-Time Sterilization Log"),
         "atank": ("ASEPTIC TANK STORAGE [DB1301]", "Aseptic Air Barrier & Sterile Storage Integrity Log"),
-        "cip_line1": ("CIP SYSTEM LINE 1 [DB1400]", "Automated Clean-In-Place Validation & Chemical Recovery Log"),
-        "cip_line2": ("CIP SYSTEM LINE 2 [DB1500]", "Automated Clean-In-Place Validation & Chemical Recovery Log")
+        "cip_line1": ("CIP SYSTEM CIRCUIT 1 [DB1801]", "Automated Clean-In-Place Validation & Chemical Recovery Log"),
+        "cip_line2": ("CIP SYSTEM CIRCUIT 2 [DB1802]", "Automated Clean-In-Place Validation & Chemical Recovery Log")
     }
     
     sec_title, sec_sub = section_titles.get(section, ("PLANT PROCESS UNIT", "Process Step Execution Log"))
@@ -23,6 +23,41 @@ def generate_step_report_html(section: str, batch_id: str, date_str: str, steps:
     sku_name = meta.get("sku_name") or (steps[0].get("sku_name") if steps else "Standard Production") or "UHT Milk 200ml"
     sku_id = meta.get("sku_id") or (steps[0].get("sku_id") if steps else "SKU-UHT-01") or "SKU-UHT-01"
     batch_ref = batch_id or (steps[0].get("batch_id") if steps else "P" + datetime.now().strftime("%y%m%d") + "-01")
+
+    is_cip = section in ("cip_line1", "cip_line2")
+    if is_cip:
+        route_display = meta.get("route_name") or meta.get("route_desc") or (steps[0].get("route_desc") if steps and "route_desc" in steps[0] else None) or (sku_name if "Route:" in str(sku_name) else ("Filler Machine" if section == "cip_line1" else "Aseptic Tank"))
+        prog_display = meta.get("program_name") or meta.get("program_desc") or (steps[0].get("program_desc") if steps and "program_desc" in steps[0] else None) or (sku_id if "Prog:" in str(sku_id) else "Alkali+Acid")
+        # Clean up prefixes if present
+        route_clean = str(route_display).replace("Route: ", "")
+        prog_clean = str(prog_display).replace("Prog: ", "")
+        unit_label = "CIRCUIT 1 [DB1801]" if section == "cip_line1" else "CIRCUIT 2 [DB1802]"
+        
+        meta_fields_html = f"""
+            <tr>
+              <td class="field-lbl">Circuit Unit :</td>
+              <td class="field-val" style="color:#0284c7;">{unit_label}</td>
+              <td class="field-lbl">CIP Program :</td>
+              <td class="field-val" style="color:#9333ea;">{prog_clean}</td>
+            </tr>
+            <tr>
+              <td class="field-lbl">Target Route :</td>
+              <td colspan="3" class="field-val" style="color:#0369a1;font-size:9pt;">{route_clean}</td>
+            </tr>
+        """
+    else:
+        meta_fields_html = f"""
+            <tr>
+              <td class="field-lbl">Process Unit :</td>
+              <td class="field-val">{section.upper()}</td>
+              <td class="field-lbl">SKU ID :</td>
+              <td class="field-val">{sku_id}</td>
+            </tr>
+            <tr>
+              <td class="field-lbl">Product :</td>
+              <td colspan="3" class="field-val">{sku_name}</td>
+            </tr>
+        """
 
     # Determine table columns based on section
     if section == "uht":
@@ -152,16 +187,7 @@ th, td {{ font-size: 8pt; }}
               <td class="field-lbl">Batch Ref. :</td>
               <td colspan="3" class="field-val" style="color:#2563eb;">{batch_ref}</td>
             </tr>
-            <tr>
-              <td class="field-lbl">Process Unit :</td>
-              <td class="field-val">{section.upper()}</td>
-              <td class="field-lbl">SKU ID :</td>
-              <td class="field-val">{sku_id}</td>
-            </tr>
-            <tr>
-              <td class="field-lbl">Product :</td>
-              <td colspan="3" class="field-val">{sku_name}</td>
-            </tr>
+            {meta_fields_html}
             <tr>
               <td class="field-lbl">Operator :</td>
               <td class="field-val">{op_name}</td>

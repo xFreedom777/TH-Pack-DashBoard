@@ -524,6 +524,58 @@ def seed_demo_step_logs():
         execute_insert(sql, params)
         inserted += 1
 
+    # CIP Circuit 1 Sequence (Route: Filler Machine, Program: Alkali+Acid)
+    cip1_seq = [
+        (1, "Wait for Start", 5, 5, 30.5, 0.05, 0.0),
+        (4, "PreRinse Fill Line", 5, 10, 31.0, 0.08, 2500.0),
+        (6, "PreRinse", 600, 600, 32.5, 0.12, 5400.0),
+        (8, "Prerinse ClearLine", 10, 15, 32.0, 0.10, 4800.0),
+        (12, "Alkali With Agitator", 10, 15, 65.0, 5.20, 3200.0),
+        (14, "Alkali Recir", 1200, 1200, 78.5, 13.50, 6200.0),
+        (16, "Alkali Clear Line", 10, 15, 76.0, 11.20, 5800.0),
+        (18, "Alkali Recovery", 30, 35, 74.0, 9.80, 5500.0),
+        (20, "PostRinse With Agitator", 5, 10, 55.0, 3.50, 4500.0),
+        (22, "PostRinse", 600, 600, 35.0, 0.35, 5600.0),
+        (24, "PostRinse Clear Line", 10, 15, 33.0, 0.20, 5200.0),
+        (28, "Acid With Agitator", 10, 15, 58.0, 4.10, 4100.0),
+        (30, "Acid.Recir", 900, 900, 68.2, 8.80, 6100.0),
+        (32, "Acid.Clear Line", 10, 15, 65.0, 6.20, 5600.0),
+        (34, "Acid.Recovery", 30, 35, 62.0, 5.00, 5300.0),
+        (44, "FinalRinse Fill Line", 5, 10, 32.0, 0.80, 3500.0),
+        (46, "FinalRinse", 600, 600, 30.5, 0.08, 5500.0),
+        (48, "FinalRinse Clear Line", 10, 15, 30.0, 0.05, 5100.0),
+        (60, "Empty Process", 15, 20, 29.5, 0.05, 1200.0),
+        (62, "CIP Done", 5, 5, 29.0, 0.05, 0.0)
+    ]
+    cip1_ref = "CIP-" + datetime.now().strftime("%y%m%d") + "-C1-01"
+    curr_t = base_time - timedelta(minutes=60)
+    for s_int, desc, sp, dur, tt, ct, fl in cip1_seq:
+        st = curr_t
+        et = curr_t + timedelta(seconds=dur)
+        curr_t = et
+        dur_fmt = f"{dur//3600:02d}:{(dur%3600)//60:02d}:{dur%60:02d}"
+        val_res = "OK"
+
+        sql = """
+        INSERT INTO process_step_logs (
+            section, batch_id, sku_id, sku_name, step_int, step_desc, step_setpoint,
+            start_time, stop_time, duration_sec, duration_formatted, status,
+            validation_result, validation_note, temp_primary_avg, temp_primary_min,
+            temp_primary_max, conductivity_avg, flow_avg, operator_name
+        ) VALUES (
+            %s, %s, %s, %s, %s, %s, %s,
+            %s, %s, %s, %s, %s,
+            %s, %s, %s, %s, %s, %s, %s, %s
+        )
+        """
+        params = (
+            "cip_line1", cip1_ref, "Prog: Alkali+Acid", "Route: Filler Machine", s_int, desc, sp,
+            st, et, dur, dur_fmt, "COMPLETED",
+            val_res, "CIP Cycle Verified", tt, tt - 0.2, tt + 0.3, ct, fl, "cj"
+        )
+        execute_insert(sql, params)
+        inserted += 1
+
     return {"status": "success", "inserted": inserted, "batch_id": batch_ref}
 
 # =========================================================================

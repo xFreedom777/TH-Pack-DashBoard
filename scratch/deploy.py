@@ -18,6 +18,7 @@ def deploy():
         ('backend/master_reader.py', f'{REMOTE_BASE}/backend/master_reader.py'),
         ('backend/app/main.py', f'{REMOTE_BASE}/backend/app/main.py'),
         ('backend/app/step_tracker.py', f'{REMOTE_BASE}/backend/app/step_tracker.py'),
+        ('backend/app/report_generator.py', f'{REMOTE_BASE}/backend/app/report_generator.py'),
         ('backend/app/vsd_analytics.py', f'{REMOTE_BASE}/backend/app/vsd_analytics.py'),
         ('backend/telemetry_worker.py', f'{REMOTE_BASE}/backend/telemetry_worker.py'),
         ('backend/app/telemetry_worker.py', f'{REMOTE_BASE}/backend/app/telemetry_worker.py'),
@@ -37,6 +38,7 @@ def deploy():
         f"docker cp '{REMOTE_BASE}/backend/telemetry_worker.py' thpack_backend:/app/telemetry_worker.py",
         f"docker cp '{REMOTE_BASE}/backend/app/main.py' thpack_backend:/app/app/main.py",
         f"docker cp '{REMOTE_BASE}/backend/app/step_tracker.py' thpack_backend:/app/app/step_tracker.py",
+        f"docker cp '{REMOTE_BASE}/backend/app/report_generator.py' thpack_backend:/app/app/report_generator.py",
         f"docker cp '{REMOTE_BASE}/backend/app/vsd_analytics.py' thpack_backend:/app/app/vsd_analytics.py",
         f"docker cp '{REMOTE_BASE}/backend/app/vsd_analytics.py' thpack_backend:/app/vsd_analytics.py",
         # Copy custom_dashboard files to container

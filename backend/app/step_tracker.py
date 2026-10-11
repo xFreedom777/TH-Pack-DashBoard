@@ -100,31 +100,47 @@ class StepTransitionTracker:
             }
             self._handle_step_tick("atank", step_int, step_desc, step_sp, sensors, now)
 
-        # 3. Process CIP Line 1
+        # 3. Process CIP Circuit 1
         cip1_data = telemetry.get("cip_line1")
         if cip1_data:
             step_int = cip1_data.get("step_int", 0)
             step_desc = cip1_data.get("step_desc", "System Standby")
             step_sp = cip1_data.get("step_setpoint", 0)
+            route_desc = cip1_data.get("route_desc", "None")
+            prog_desc = cip1_data.get("program_desc", "Off")
+            if route_desc != "None":
+                self.states["cip_line1"].sku_name = f"Route: {route_desc}"
+            if prog_desc != "Off":
+                self.states["cip_line1"].sku_id = f"Prog: {prog_desc}"
             sensors = {
                 "ct_r": cip1_data.get("ct_r", 0.0),
                 "tt_r": cip1_data.get("tt_r", 0.0),
                 "tt_s": cip1_data.get("tt_s", 0.0),
-                "ft_s": cip1_data.get("ft_s", 0.0)
+                "ft_s": cip1_data.get("ft_s", 0.0),
+                "route_desc": route_desc,
+                "program_desc": prog_desc
             }
             self._handle_step_tick("cip_line1", step_int, step_desc, step_sp, sensors, now)
 
-        # 4. Process CIP Line 2
+        # 4. Process CIP Circuit 2
         cip2_data = telemetry.get("cip_line2")
         if cip2_data:
             step_int = cip2_data.get("step_int", 0)
             step_desc = cip2_data.get("step_desc", "System Standby")
             step_sp = cip2_data.get("step_setpoint", 0)
+            route_desc = cip2_data.get("route_desc", "None")
+            prog_desc = cip2_data.get("program_desc", "Off")
+            if route_desc != "None":
+                self.states["cip_line2"].sku_name = f"Route: {route_desc}"
+            if prog_desc != "Off":
+                self.states["cip_line2"].sku_id = f"Prog: {prog_desc}"
             sensors = {
                 "ct_r": cip2_data.get("ct_r", 0.0),
                 "tt_r": cip2_data.get("tt_r", 0.0),
                 "tt_s": cip2_data.get("tt_s", 0.0),
-                "ft_s": cip2_data.get("ft_s", 0.0)
+                "ft_s": cip2_data.get("ft_s", 0.0),
+                "route_desc": route_desc,
+                "program_desc": prog_desc
             }
             self._handle_step_tick("cip_line2", step_int, step_desc, step_sp, sensors, now)
 
@@ -254,9 +270,21 @@ class StepTransitionTracker:
         elif section in ("cip_line1", "cip_line2"):
             if step_int == 14:  # Alkali Recir
                 ct_avg = avg_s.get("ct_r", 0.0)
+                tt_avg = avg_s.get("tt_r", 0.0)
                 if ct_avg >= 10.0:
-                    return "OK", f"Caustic Conductivity Target Met ({ct_avg:.1f} mS/cm)"
-                return "OK", f"Caustic Circulated ({ct_avg:.1f} mS/cm)"
+                    return "OK", f"Caustic Target Met (Cond: {ct_avg:.1f} mS/cm, Temp: {tt_avg:.1f}°C)"
+                return "OK", f"Caustic Circulated (Cond: {ct_avg:.1f} mS/cm, Temp: {tt_avg:.1f}°C)"
+            elif step_int == 30:  # Acid.Recir
+                ct_avg = avg_s.get("ct_r", 0.0)
+                tt_avg = avg_s.get("tt_r", 0.0)
+                return "OK", f"Acid Target Met (Cond: {ct_avg:.1f} mS/cm, Temp: {tt_avg:.1f}°C)"
+            elif step_int == 38:  # Hotwater.Recir
+                tt_avg = avg_s.get("tt_r", 0.0)
+                if tt_avg >= 75.0:
+                    return "OK", f"Hotwater Thermal Sanitation Met (Temp: {tt_avg:.1f}°C >= 75°C)"
+                return "OK", f"Hotwater Circulated (Temp: {tt_avg:.1f}°C)"
+            elif step_int == 62:  # CIP Done
+                return "OK", "CIP Cycle Completed Successfully"
             return "OK", "Normal Transition"
 
         return "OK", "Step Passed"
