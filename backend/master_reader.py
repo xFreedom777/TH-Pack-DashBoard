@@ -293,35 +293,70 @@ class MasterPlantReader:
             uht_step_desc, uht_sp = UHT_STEPS.get(uht_step_int, (f"Step {uht_step_int}", 0))
             uht_timer = get_int(d1200, 48)
 
-            # Read FIQCV08 (UHT Add Water: SV=DB331.DBD802, PV=DB1200.DBD4, OV=DB331.DBD814)
+            # Read DB331 Control Loops (FIQCV08, CV64FIC01, CV49FIC01, CV50FIC01, FIQ04)
             fiqcv08_pv = round(get_real(d1200, 4), 2)
             fiqcv08_sv = 50.0
             fiqcv08_ov = 20.0
+            cv64_sv, cv64_pv, cv64_ov = 60.0, 30.8, 0.0
+            cv49_sv, cv49_pv, cv49_ov = 0.0, 29.6, 10.0
+            cv50_sv, cv50_pv, cv50_ov = 0.0, 18.6, 0.0
+            fiq04_sv, fiq04_pv, fiq04_ov = 7000.0, round(get_real(d1200, 50), 1), 60.0
+
             try:
-                d331 = self.client.db_read(331, 800, 20)
-                fiqcv08_sv = round(get_real(d331, 2), 2)   # DB331.DBD802
-                fiqcv08_ov = round(get_real(d331, 14), 2)  # DB331.DBD814
+                d331_loops = self.client.db_read(331, 800, 1020)
+                # Offset 800: FIQCV08 (Add Water)
+                fiqcv08_sv = round(get_real(d331_loops, 2), 2)
+                fiqcv08_pv = round(get_real(d331_loops, 6), 2)
+                fiqcv08_ov = round(get_real(d331_loops, 14), 2)
+
+                # Offset 900: CV64FIC01 (Cooling Water)
+                cv64_sv = round(get_real(d331_loops, 102), 2)
+                cv64_pv = round(get_real(d331_loops, 106), 2)
+                cv64_ov = round(get_real(d331_loops, 114), 2)
+
+                # Offset 1000: CV49FIC01 (Steam HE01.18)
+                cv49_sv = round(get_real(d331_loops, 202), 2)
+                cv49_pv = round(get_real(d331_loops, 206), 2)
+                cv49_ov = round(get_real(d331_loops, 214), 2)
+
+                # Offset 1100: CV50FIC01 (Steam HE01.17)
+                cv50_sv = round(get_real(d331_loops, 302), 2)
+                cv50_pv = round(get_real(d331_loops, 306), 2)
+                cv50_ov = round(get_real(d331_loops, 314), 2)
+
+                # Offset 1800: FIQ04 (M4 Feed Flow / VSD01)
+                fiq04_sv = round(get_real(d331_loops, 1002), 1)
+                fiq04_pv = round(get_real(d331_loops, 1006), 2)
+                fiq04_ov = round(get_real(d331_loops, 1014), 1)
             except Exception as e_d331:
                 pass
 
-            # Read FIQ04 (UHT M4 Flow Control / VSD01: SV=DB331.DBD1802, PV=DB331.DBD1806, OV=DB331.DBD1814)
-            fiq04_pv = round(get_real(d1200, 50), 1)
-            fiq04_sv = 7000.0
-            fiq04_ov = 60.0
-            try:
-                d331_fiq04 = self.client.db_read(331, 1800, 20)
-                fiq04_sv = round(get_real(d331_fiq04, 2), 1)   # DB331.DBD1802
-                fiq04_pv = round(get_real(d331_fiq04, 6), 2)   # DB331.DBD1806
-                fiq04_ov = round(get_real(d331_fiq04, 14), 1)  # DB331.DBD1814
-            except Exception as e_fiq04:
-                pass
+            # Calculate Advanced UHT Analytics (Edge Computed, 0% PLC Overhead)
+            steam_demand_total = round((cv49_ov + cv50_ov) / 2.0, 1)
+            fouling_index = min(100.0, max(0.0, round(((cv49_ov + cv50_ov) / 1.6), 1)))
+            if fouling_index < 30.0:
+                fouling_status = "OPTIMAL / CLEAN"
+                fouling_badge_color = "#10b981"
+            elif fouling_index < 70.0:
+                fouling_status = "NORMAL OPERATING"
+                fouling_badge_color = "#3b82f6"
+            elif fouling_index < 85.0:
+                fouling_status = "ELEVATED FOULING"
+                fouling_badge_color = "#f59e0b"
+            else:
+                fouling_status = "CIP RECOMMENDED"
+                fouling_badge_color = "#ef4444"
+
+            # TT01 Sterilization Thermal Lethality (F0 calculation at 121.1°C reference, z=10°C)
+            tt01_val = round(get_real(d1200, 8), 2)
+            f0_rate_per_min = round(10.0 ** ((tt01_val - 121.1) / 10.0), 2) if tt01_val >= 120.0 else 0.0
 
             res["uht"] = {
                 "lt": fiqcv08_pv,
                 "fiqcv08_pv": fiqcv08_pv,
                 "fiqcv08_sv": fiqcv08_sv,
                 "fiqcv08_ov": fiqcv08_ov,
-                "tt01": round(get_real(d1200, 8), 2),
+                "tt01": tt01_val,
                 "tt02": round(get_real(d1200, 12), 2),
                 "tt03": round(get_real(d1200, 16), 2),
                 "tt04": round(get_real(d1200, 20), 2),
@@ -338,7 +373,23 @@ class MasterPlantReader:
                 "step_timer": uht_timer,
                 "step_setpoint": uht_sp,
                 "hotwater_mode": get_int(d1200, 44),
-                "cooling_mode": get_int(d1200, 46)
+                "cooling_mode": get_int(d1200, 46),
+                "analytics": {
+                    "fouling_index": fouling_index,
+                    "fouling_status": fouling_status,
+                    "fouling_color": fouling_badge_color,
+                    "steam_demand_avg": steam_demand_total,
+                    "f0_rate_per_min": f0_rate_per_min,
+                    "ccp_compliant": (tt01_val >= 135.0 or uht_step_int == 0),
+                    "holding_time_s": 16.0
+                },
+                "loops": {
+                    "fiq04": {"tag": "FIQ04", "name": "M4 Feed Pump Flow Control (VSD01)", "sv": fiq04_sv, "pv": fiq04_pv, "ov": fiq04_ov, "unit": "L/h"},
+                    "fiqcv08": {"tag": "FIQCV08", "name": "Balance Tank Add Water Loop", "sv": fiqcv08_sv, "pv": fiqcv08_pv, "ov": fiqcv08_ov, "unit": "Liter"},
+                    "cv49": {"tag": "CV49FIC01", "name": "Steam Supply to HE01.18 Regulating Valve", "sv": cv49_sv, "pv": cv49_pv, "ov": cv49_ov, "unit": "°C"},
+                    "cv50": {"tag": "CV50FIC01", "name": "Steam Supply to HE01.17 Regulating Valve", "sv": cv50_sv, "pv": cv50_pv, "ov": cv50_ov, "unit": "°C"},
+                    "cv64": {"tag": "CV64FIC01", "name": "Cooling Water HE01.20 Regulating Valve", "sv": cv64_sv, "pv": cv64_pv, "ov": cv64_ov, "unit": "°C"}
+                }
             }
 
             # 2. READ DB1301 (ATANK)

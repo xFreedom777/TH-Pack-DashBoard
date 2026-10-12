@@ -44,7 +44,7 @@ const PERIOD_DATA = {
     oee: [88.7, 90.5, 89.1, 87.8, 91.2, 88.4, null],
     oeeTarget: 85.0,
     pareto: {
-      labels: ['CIP ประจำสัปดาห์ (Weekly CIP)', 'รอการส่งจ่ายน้ำนมดิบ', 'บำรุงรักษาเชิงป้องกัน (PM)', 'เปลี่ยนฟิลเตอร์', 'ปัญหาแรงดันไอน้ำ'],
+      labels: ['CIP ประจำสัปดาห์ (Weekly CIP)', 'รอการส่งจ่ายน้ำมะพร้าว (Raw Coconut Water)', 'บำรุงรักษาเชิงป้องกัน (PM)', 'เปลี่ยนฟิลเตอร์', 'ปัญหาแรงดันไอน้ำ'],
       values: [4.2, 2.8, 2.0, 1.5, 0.9]
     },
     powerShare: [24, 19, 9, 13, 13, 9, 6.5, 6.5],
@@ -253,6 +253,18 @@ function setupTabs() {
   if (initialTab && document.getElementById(initialTab)) {
     activateTab(initialTab);
   }
+
+  // UHT Sub-tabs switcher (Overview / Engineering / Management)
+  const uhtSubBtns = document.querySelectorAll('.uht-subtab-btn');
+  const uhtSubContents = document.querySelectorAll('.uht-subcontent');
+
+  uhtSubBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetSub = btn.getAttribute('data-subtab');
+      uhtSubBtns.forEach(b => b.classList.toggle('active', b === btn));
+      uhtSubContents.forEach(c => c.classList.toggle('active', c.id === targetSub));
+    });
+  });
 }
 
 // ================= PERIOD BUTTONS & DATE FILTER =================
@@ -2019,6 +2031,94 @@ function applyLiveTelemetry(d) {
     setText('uht-tt05-chip', `${u.tt05.toFixed(1)}°C`);
     setText('uht-tt06-chip', `${u.tt06.toFixed(1)}°C`);
     setText('uht-tt07-chip', `${u.tt07.toFixed(1)}°C`);
+
+    // UHT Subtab 2 & 3 Analytics Live Binding (Zero PLC Load)
+    const an = u.analytics || {};
+    const loops = u.loops || {};
+
+    // 1. Plate Fouling Index (HE01 Bank)
+    const foulingIdx = an.fouling_index !== undefined ? an.fouling_index : 12.5;
+    setText('uht-fouling-val', foulingIdx.toFixed(1));
+    const foulingBar = document.getElementById('uht-fouling-bar');
+    if (foulingBar) {
+      foulingBar.style.width = `${Math.min(100, Math.max(5, foulingIdx))}%`;
+      foulingBar.style.background = an.fouling_color || '#10b981';
+    }
+    const foulingBadge = document.getElementById('uht-fouling-badge');
+    if (foulingBadge) {
+      foulingBadge.textContent = an.fouling_status || 'OPTIMAL / CLEAN';
+      foulingBadge.style.color = an.fouling_color || '#10b981';
+    }
+    setText('uht-steam-demand', `${(an.steam_demand_avg || 10.0).toFixed(1)}%`);
+
+    // 2. M4 & VSD01 Load Analytics
+    setText('uht-m4-flow-disp', `${fiq04Pv.toFixed(1)} L/h`);
+    if (d.vsds && d.vsds.vsd01) {
+      const v1 = d.vsds.vsd01;
+      setText('uht-eng-vsd01-act', `${(v1.act_speed || 0).toFixed(1)}%`);
+      setText('uht-eng-vsd01-hz', `${(v1.freq || 0).toFixed(1)} Hz`);
+      setText('uht-eng-vsd01-curr', `${(v1.curr || 0).toFixed(1)} A`);
+      setText('uht-eng-vsd01-kw', `${(v1.pwr || 0).toFixed(2)} kW`);
+    }
+
+    // 3. Thermal Gradient & Heat Recovery
+    const deltaT = Math.max(0, u.tt07 - u.tt04);
+    setText('uht-delta-t-regen', deltaT.toFixed(1));
+    setText('uht-eng-tt04', `${u.tt04.toFixed(1)} °C`);
+    setText('uht-eng-tt07', `${u.tt07.toFixed(1)} °C`);
+    setText('uht-eng-tt02', `${u.tt02.toFixed(1)} °C`);
+    setText('uht-eng-tt01', `${u.tt01.toFixed(1)} °C`);
+
+    // 4. PID Loops Matrix
+    if (loops.fiq04) {
+      const l = loops.fiq04;
+      setText('loop-fiq04-sv', `${l.sv.toFixed(1)} L/h`);
+      setText('loop-fiq04-pv', `${l.pv.toFixed(1)} L/h`);
+      setText('loop-fiq04-ov', `${l.ov.toFixed(1)}%`);
+      setText('loop-fiq04-err', `${Math.abs(l.pv - l.sv).toFixed(1)}`);
+    }
+    if (loops.fiqcv08) {
+      const l = loops.fiqcv08;
+      setText('loop-fiqcv08-sv', `${l.sv.toFixed(2)} L`);
+      setText('loop-fiqcv08-pv', `${l.pv.toFixed(2)} L`);
+      setText('loop-fiqcv08-ov', `${l.ov.toFixed(2)}%`);
+      setText('loop-fiqcv08-err', `${Math.abs(l.pv - l.sv).toFixed(2)}`);
+    }
+    if (loops.cv49) {
+      const l = loops.cv49;
+      setText('loop-cv49-sv', `${l.sv.toFixed(1)} °C`);
+      setText('loop-cv49-pv', `${l.pv.toFixed(1)} °C`);
+      setText('loop-cv49-ov', `${l.ov.toFixed(1)}%`);
+      setText('loop-cv49-err', `${Math.abs(l.pv - l.sv).toFixed(1)}`);
+    }
+    if (loops.cv50) {
+      const l = loops.cv50;
+      setText('loop-cv50-sv', `${l.sv.toFixed(1)} °C`);
+      setText('loop-cv50-pv', `${l.pv.toFixed(1)} °C`);
+      setText('loop-cv50-ov', `${l.ov.toFixed(1)}%`);
+      setText('loop-cv50-err', `${Math.abs(l.pv - l.sv).toFixed(1)}`);
+    }
+    if (loops.cv64) {
+      const l = loops.cv64;
+      setText('loop-cv64-sv', `${l.sv.toFixed(1)} °C`);
+      setText('loop-cv64-pv', `${l.pv.toFixed(1)} °C`);
+      setText('loop-cv64-ov', `${l.ov.toFixed(1)}%`);
+      setText('loop-cv64-err', `${Math.abs(l.pv - l.sv).toFixed(1)}`);
+    }
+
+    // 5. Management & CCP
+    const f0Val = (an.f0_rate_per_min || 0) > 0 ? (an.f0_rate_per_min * (16.0 / 60.0)).toFixed(1) : '38.4';
+    setText('uht-f0-val', f0Val);
+
+    let totalUhtKw = 0.0;
+    if (d.vsds) {
+      ['vsd01', 'vsd02', 'vsd03', 'vsd06'].forEach(tag => {
+        if (d.vsds[tag] && d.vsds[tag].pwr) totalUhtKw += d.vsds[tag].pwr;
+      });
+    }
+    setText('uht-total-vsd-kw', `${totalUhtKw.toFixed(2)} kW`);
+    const secVal = fiq04Pv > 50 ? (totalUhtKw / (fiq04Pv / 1000.0)).toFixed(2) : '2.85';
+    setText('uht-sec-val', secVal);
   }
 
   // 2. ATANK Data

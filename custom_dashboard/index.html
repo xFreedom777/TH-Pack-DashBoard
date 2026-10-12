@@ -313,6 +313,25 @@
           </div>
         </div>
 
+        <!-- UHT SUB-NAVIGATION TABS -->
+        <div class="uht-subnav">
+          <button class="uht-subtab-btn active" data-subtab="uht-sub-overview">
+            <span class="icon">📊</span>
+            <span>1. Process & Thermal Recorder (ภาพรวมกระบวนการ & บันทึกค่า)</span>
+          </button>
+          <button class="uht-subtab-btn" data-subtab="uht-sub-engineering">
+            <span class="icon">🔧</span>
+            <span>2. Engineering & Equipment Health (วิศวกรรมกระบวนการ & สุขภาพเครื่องจักร)</span>
+          </button>
+          <button class="uht-subtab-btn" data-subtab="uht-sub-management">
+            <span class="icon">💼</span>
+            <span>3. Management & CCP Compliance (การบริหารการผลิต & มาตรฐานคุณภาพ)</span>
+          </button>
+        </div>
+
+        <!-- ================= SUB-TAB 1: OVERVIEW & RECORDER ================= -->
+        <div class="uht-subcontent active" id="uht-sub-overview">
+
         <!-- UHT Process Values Grid -->
         <div class="instruments-grid">
           <div class="meter-card">
@@ -496,12 +515,220 @@
                 <th>กำลังไฟฟ้า (kW)</th>
               </tr>
             </thead>
-            <tbody id="uht-vsd-rows">
-              <!-- Dynamically populated -->
             </tbody>
           </table>
         </div>
-      </section>
+      </div> <!-- END SUB-TAB 1: OVERVIEW & RECORDER -->
+
+      <!-- ================= SUB-TAB 2: ENGINEERING & EQUIPMENT HEALTH ================= -->
+      <div class="uht-subcontent" id="uht-sub-engineering">
+        <div class="card-head section-head">
+          <h3>🥥 ประสิทธิภาพความร้อน & การจับคราบน้ำมะพร้าว (Heat Exchanger Fouling & Thermal Health)</h3>
+          <span class="badge info">OT Deep Analytics • Zero PLC Load</span>
+        </div>
+        <div class="analytics-grid-3">
+          <div class="analytics-card" id="card-uht-fouling">
+            <div class="analytics-card-header">
+              <div class="analytics-card-title">🧮 Plate Fouling Index (HE01 Bank)</div>
+              <span class="analytics-badge success" id="uht-fouling-badge">OPTIMAL / CLEAN</span>
+            </div>
+            <div class="analytics-val-huge"><span id="uht-fouling-val">12.5</span><span class="unit">%</span></div>
+            <div class="analytics-subtext">ประเมินอัตราคราบน้ำตาลมะพร้าว (Caramelization) & เนื้อเยื่อที่เกาะแผ่นแลกเปลี่ยนความร้อน อิงจากความชันของวาล์วไอน้ำ</div>
+            <div class="meter-bar"><div class="fill" id="uht-fouling-bar" style="width: 12.5%; background:#10b981;"></div></div>
+            <div class="analytics-metrics-row">
+              <div class="analytics-submetric"><span class="lbl">Steam Valves Avg Demand:</span><span class="val" id="uht-steam-demand">10.0%</span></div>
+              <div class="analytics-submetric"><span class="lbl">CIP Recommendation:</span><span class="val text-success" id="uht-cip-advisory">ปกติ (ยังไม่ต้องล้าง)</span></div>
+            </div>
+          </div>
+
+          <div class="analytics-card accent-warning">
+            <div class="analytics-card-header">
+              <div class="analytics-card-title">⚡ ปั๊มส่ง M4 & Sinamics VSD01 (15 kW Booster)</div>
+              <span class="analytics-badge info" id="uht-vsd01-badge">DRIVE NORMAL</span>
+            </div>
+            <div class="analytics-val-huge"><span id="uht-m4-flow-disp">1.1</span><span class="unit">L/h (Flow)</span></div>
+            <div class="analytics-subtext">ความสัมพันธ์ระหว่างอัตราไหล FIQ04 กับโหลดมอเตอร์ VSD01 ป้องกันใบพัดสึกหรอและท่ออุดตัน</div>
+            <div class="analytics-metrics-row">
+              <div class="analytics-submetric"><span class="lbl">Speed Setpoint / Actual:</span><span class="val font-mono">60.0% / <span id="uht-eng-vsd01-act">0.0%</span></span></div>
+              <div class="analytics-submetric"><span class="lbl">Inverter Output (Hz):</span><span class="val font-mono" id="uht-eng-vsd01-hz">0.0 Hz</span></div>
+            </div>
+            <div class="analytics-metrics-row">
+              <div class="analytics-submetric"><span class="lbl">Motor Current (A):</span><span class="val font-mono" id="uht-eng-vsd01-curr">0.0 A</span></div>
+              <div class="analytics-submetric"><span class="lbl">Motor Power (kW):</span><span class="val font-mono" id="uht-eng-vsd01-kw">0.0 kW</span></div>
+            </div>
+          </div>
+
+          <div class="analytics-card accent-purple">
+            <div class="analytics-card-header">
+              <div class="analytics-card-title">🌡️ อัตราการนำความร้อนกลับมาใช้ (Heat Recovery ΔT)</div>
+              <span class="analytics-badge info">HEAT RECOVERY</span>
+            </div>
+            <div class="analytics-val-huge"><span id="uht-delta-t-regen">13.4</span><span class="unit">°C ΔT</span></div>
+            <div class="analytics-subtext">การแลกเปลี่ยนความร้อนระหว่างน้ำมะพร้าวผ่านฆ่าเชื้อ (TT07) กับน้ำมะพร้าวดิบเข้าเครื่อง (TT04)</div>
+            <div class="analytics-metrics-row">
+              <div class="analytics-submetric"><span class="lbl">Inlet Raw (TT04):</span><span class="val font-mono" id="uht-eng-tt04">18.6 °C</span></div>
+              <div class="analytics-submetric"><span class="lbl">Outlet Finished (TT07):</span><span class="val font-mono" id="uht-eng-tt07">32.0 °C</span></div>
+            </div>
+            <div class="analytics-metrics-row">
+              <div class="analytics-submetric"><span class="lbl">Pre-heat 1 (TT02):</span><span class="val font-mono" id="uht-eng-tt02">31.2 °C</span></div>
+              <div class="analytics-submetric"><span class="lbl">Sterile Peak (TT01):</span><span class="val font-mono" id="uht-eng-tt01">30.8 °C</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- S7-1500 PID Control Loops Matrix -->
+        <div class="card-head section-head" style="margin-top: 12px;">
+          <h3>🎛️ ตารางสุขภาพลูปควบคุมอัตโนมัติ (S7-1500 DB331 PID Loops Matrix)</h3>
+          <span class="badge info">5x Realtime Control Loops</span>
+        </div>
+        <div class="table-responsive">
+          <table class="loop-matrix-table">
+            <thead>
+              <tr>
+                <th>Loop Tag</th>
+                <th>หน้าที่ / จุดควบคุม (Description)</th>
+                <th>เป้าหมาย (SV)</th>
+                <th>ตรวจวัดจริง (PV)</th>
+                <th>สั่งขับ (OV %)</th>
+                <th>ส่วนเบี่ยงเบน (|Error|)</th>
+                <th>สถานะลูป (Loop Health)</th>
+              </tr>
+            </thead>
+            <tbody id="uht-loops-tbody">
+              <tr>
+                <td class="loop-tag-cell">FIQ04</td>
+                <td><div class="font-bold">UHT M4 Feed Pump Flow Control</div><div class="loop-name-cell">ควบคุมอัตราการไหลน้ำมะพร้าวผ่านปั๊ม M4 ขับโดย VSD01 (15 kW)</div></td>
+                <td class="font-mono font-bold" id="loop-fiq04-sv">7000.0 L/h</td>
+                <td class="font-mono font-bold text-success" id="loop-fiq04-pv">1.1 L/h</td>
+                <td class="font-mono text-cyan" id="loop-fiq04-ov">60.0%</td>
+                <td class="font-mono text-warning" id="loop-fiq04-err">6998.9</td>
+                <td><span class="analytics-badge info" id="loop-fiq04-status">TRACKING</span></td>
+              </tr>
+              <tr>
+                <td class="loop-tag-cell">FIQCV08</td>
+                <td><div class="font-bold">UHT Add Water Balance Tank</div><div class="loop-name-cell">วาล์วเติมน้ำสะอาดเข้าแทงก์บาลานซ์สำหรับเตรียมระบบและวนน้ำ</div></td>
+                <td class="font-mono font-bold" id="loop-fiqcv08-sv">50.00 L</td>
+                <td class="font-mono font-bold text-success" id="loop-fiqcv08-pv">11.23 L</td>
+                <td class="font-mono text-cyan" id="loop-fiqcv08-ov">20.00%</td>
+                <td class="font-mono text-warning" id="loop-fiqcv08-err">38.77</td>
+                <td><span class="analytics-badge info" id="loop-fiqcv08-status">TRACKING</span></td>
+              </tr>
+              <tr>
+                <td class="loop-tag-cell">CV49FIC01</td>
+                <td><div class="font-bold">Steam Supply to HE01.18 Regulating Valve</div><div class="loop-name-cell">คอนโทรลวาล์วไอน้ำเข้าชุดแลกเปลี่ยนความร้อนตอนที่ 18</div></td>
+                <td class="font-mono font-bold" id="loop-cv49-sv">0.0 °C</td>
+                <td class="font-mono font-bold text-success" id="loop-cv49-pv">29.6 °C</td>
+                <td class="font-mono text-cyan" id="loop-cv49-ov">10.0%</td>
+                <td class="font-mono text-warning" id="loop-cv49-err">29.6</td>
+                <td><span class="analytics-badge info" id="loop-cv49-status">READY</span></td>
+              </tr>
+              <tr>
+                <td class="loop-tag-cell">CV50FIC01</td>
+                <td><div class="font-bold">Steam Supply to HE01.17 Regulating Valve</div><div class="loop-name-cell">คอนโทรลวาล์วไอน้ำเข้าชุดแลกเปลี่ยนความร้อนตอนที่ 17</div></td>
+                <td class="font-mono font-bold" id="loop-cv50-sv">0.0 °C</td>
+                <td class="font-mono font-bold text-success" id="loop-cv50-pv">18.6 °C</td>
+                <td class="font-mono text-cyan" id="loop-cv50-ov">0.0%</td>
+                <td class="font-mono text-warning" id="loop-cv50-err">18.6</td>
+                <td><span class="analytics-badge success" id="loop-cv50-status">CLOSED</span></td>
+              </tr>
+              <tr>
+                <td class="loop-tag-cell">CV64FIC01</td>
+                <td><div class="font-bold">Cooling Water HE01.20 Regulating Valve</div><div class="loop-name-cell">คอนโทรลวาล์วน้ำหล่อเย็นควบคุมอุณหภูมิลดความร้อนตอนที่ 20</div></td>
+                <td class="font-mono font-bold" id="loop-cv64-sv">60.0 °C</td>
+                <td class="font-mono font-bold text-success" id="loop-cv64-pv">30.8 °C</td>
+                <td class="font-mono text-cyan" id="loop-cv64-ov">0.0%</td>
+                <td class="font-mono text-warning" id="loop-cv64-err">29.2</td>
+                <td><span class="analytics-badge success" id="loop-cv64-status">CLOSED</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div> <!-- END SUB-TAB 2: ENGINEERING -->
+
+      <!-- ================= SUB-TAB 3: MANAGEMENT & CCP COMPLIANCE ================= -->
+      <div class="uht-subcontent" id="uht-sub-management">
+        <div class="card-head section-head">
+          <h3>🛡️ การปฏิบัติตามมาตรฐานความปลอดภัยอาหาร & CCP (Food Safety & CCP Compliance)</h3>
+          <span class="badge success">Audit-Ready Report</span>
+        </div>
+        <div class="analytics-grid-3">
+          <div class="analytics-card accent-success">
+            <div class="analytics-card-header">
+              <div class="analytics-card-title">🏅 CCP TT01 Compliance Rate</div>
+              <span class="analytics-badge success" id="uht-ccp-badge">100% AUDIT READY</span>
+            </div>
+            <div class="analytics-val-huge">100.0<span class="unit">%</span></div>
+            <div class="analytics-subtext">อุณหภูมิฆ่าเชื้อน้ำมะพร้าว TT01 อยู่ในเกณฑ์มาตรฐาน ไม่พบประวัติอุณหภูมิวูบต่ำกว่าเกณฑ์</div>
+            <div class="analytics-metrics-row">
+              <div class="analytics-submetric"><span class="lbl">Critical Limit (LL):</span><span class="val text-danger">135.0 °C</span></div>
+              <div class="analytics-submetric"><span class="lbl">Under-Temp Violations:</span><span class="val text-success">0 ครั้ง (0s)</span></div>
+            </div>
+          </div>
+
+          <div class="analytics-card accent-purple">
+            <div class="analytics-card-header">
+              <div class="analytics-card-title">🔥 ค่าการทำลายเชื้อสะสม (F₀ Sterilization Lethality)</div>
+              <span class="analytics-badge info">COMMERCIAL STERILITY</span>
+            </div>
+            <div class="analytics-val-huge"><span id="uht-f0-val">38.4</span><span class="unit">min (F₀)</span></div>
+            <div class="analytics-subtext">ค่าการฆ่าเชื้อเทียบเท่า 121.1°C ใน Holding Tube (16 วินาที) มั่นใจคุณภาพน้ำมะพร้าวสดและปลอดเชื้อ</div>
+            <div class="analytics-metrics-row">
+              <div class="analytics-submetric"><span class="lbl">Holding Time:</span><span class="val font-mono">16.0 วินาที</span></div>
+              <div class="analytics-submetric"><span class="lbl">Target F₀ Criteria:</span><span class="val font-mono">≥ 3.0 min (Safe)</span></div>
+            </div>
+          </div>
+
+          <div class="analytics-card">
+            <div class="analytics-card-header">
+              <div class="analytics-card-title">⚡ ต้นทุนพลังงานจำเพาะ (Specific Energy Consumption)</div>
+              <span class="analytics-badge info">SEC KPI</span>
+            </div>
+            <div class="analytics-val-huge"><span id="uht-sec-val">2.85</span><span class="unit">kWh / 1,000L</span></div>
+            <div class="analytics-subtext">พลังงานไฟฟ้าเฉลี่ยจาก Sinamics Inverters ต่อการแปรรูปน้ำมะพร้าว 1,000 ลิตร</div>
+            <div class="analytics-metrics-row">
+              <div class="analytics-submetric"><span class="lbl">รวมกำลังขับ 4 Drives:</span><span class="val font-mono" id="uht-total-vsd-kw">0.0 kW</span></div>
+              <div class="analytics-submetric"><span class="lbl">อัตราผลิตน้ำมะพร้าว:</span><span class="val font-mono" id="uht-prod-flow-rate">7,000 L/h</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-head section-head" style="margin-top: 12px;">
+          <h3>📊 สมดุลปริมาณผลผลิต & ทรัพยากรน้ำ (Coconut Water Production & Utility Balance)</h3>
+        </div>
+        <div class="analytics-grid-3">
+          <div class="analytics-card">
+            <div class="analytics-card-header">
+              <div class="analytics-card-title">🥥 ปริมาณน้ำมะพร้าวผ่าน UHT สะสม</div>
+              <span class="analytics-badge info">TOTALIZER</span>
+            </div>
+            <div class="analytics-val-huge"><span id="uht-total-prod-liters">42,500</span><span class="unit">Liter</span></div>
+            <div class="analytics-subtext">คำนวณจากอัตราไหล FIQ04 สะสมตลอดรอบการผลิตน้ำมะพร้าวแท้</div>
+          </div>
+
+          <div class="analytics-card accent-warning">
+            <div class="analytics-card-header">
+              <div class="analytics-card-title">💧 ปริมาณน้ำใช้เตรียมระบบ & ล้าง (FIQCV08)</div>
+              <span class="analytics-badge warning">WATER UTILITY</span>
+            </div>
+            <div class="analytics-val-huge"><span id="uht-water-used-liters">850</span><span class="unit">Liter</span></div>
+            <div class="analytics-subtext">น้ำที่เติมเข้าแทงก์บาลานซ์สำหรับช่วงสเตอริไลซ์ด้วยน้ำร้อนและการล้างทำความสะอาด</div>
+          </div>
+
+          <div class="analytics-card accent-success">
+            <div class="analytics-card-header">
+              <div class="analytics-card-title">📑 เอกสารรับรองการผลิต (Batch Compliance)</div>
+              <span class="analytics-badge success">OFFICIAL</span>
+            </div>
+            <div class="analytics-subtext" style="font-size: 13px; margin-top: 6px;">
+              ระบบบันทึกค่าทุกๆ วินาทีลง InfluxDB พร้อมประวัติ Step Transition สามารถออกรายงาน PDF มีลายเซ็น 3 ฝ่ายได้ทันที
+            </div>
+            <button class="ctrl-btn btn-step-report" onclick="openStepReportModal('uht')" style="margin-top: 10px; width: 100%; justify-content: center;">
+              📑 ออกรายงาน UHT Batch Compliance Log (PDF)
+            </button>
+          </div>
+        </div>
+      </div> <!-- END SUB-TAB 3: MANAGEMENT -->
+    </section>
 
       <!-- TAB 3: ASEPTIC TANK ATANK (DB1301) -->
       <section class="tab-content" id="tab-atank">
