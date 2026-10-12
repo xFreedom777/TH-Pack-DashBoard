@@ -1,4 +1,11 @@
+import os
 import time
+
+# Enforce Asia/Bangkok (+07:00) timezone
+os.environ["TZ"] = "Asia/Bangkok"
+if hasattr(time, "tzset"):
+    time.tzset()
+
 from datetime import datetime, timedelta
 import json
 import mysql.connector

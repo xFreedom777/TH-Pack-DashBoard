@@ -10,6 +10,12 @@ Decoupled from FastAPI web server to eliminate Single Point of Failure (SPOF).
 import os
 import sys
 import time
+
+# Enforce Asia/Bangkok (+07:00) timezone for all logging and datetimes
+os.environ["TZ"] = "Asia/Bangkok"
+if hasattr(time, "tzset"):
+    time.tzset()
+
 import json
 import signal
 import socket

@@ -7,6 +7,9 @@
 CREATE DATABASE IF NOT EXISTS thpack_dashboard DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE thpack_dashboard;
 
+SET GLOBAL time_zone = '+07:00';
+SET time_zone = '+07:00';
+
 SET FOREIGN_KEY_CHECKS = 0;
 DROP VIEW IF EXISTS vw_siemens_plc_db_map;
 DROP VIEW IF EXISTS vw_scada_live_metrics;

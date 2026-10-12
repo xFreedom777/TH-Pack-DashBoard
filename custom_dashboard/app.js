@@ -655,7 +655,7 @@ function initCharts() {
   charts.power = new Chart(ctxPower, {
     type: 'doughnut',
     data: {
-      labels: ['VSD01 (Booster 15kW)', 'VSD02 (Feed 11kW)', 'VSD03 (PID Supply 5.5kW)', 'VSD04 (CIP L1 7.5kW)', 'VSD05 (CIP L2 7.5kW)', 'VSD06 (Return 5.5kW)', 'VSD08 (P101 4kW)', 'VSD09 (Agitator 4kW)'],
+      labels: ['VSD01 (Booster 15kW)', 'VSD02 (Feed 11kW)', 'VSD03 (PID Supply 5.5kW)', 'VSD04 (CIP L2 7.5kW)', 'VSD05 (CIP L1 7.5kW)', 'VSD06 (Return 5.5kW)', 'VSD08 (P101 4kW)', 'VSD09 (Agitator 4kW)'],
       datasets: [{
         data: p.powerShare,
         backgroundColor: [
@@ -1797,8 +1797,8 @@ function renderDriveBayCards(vf) {
     { key: 'VSD02', tag: 'VSD02', name: 'UHT PUMP FEED', section: 'UHT STERILIZER', rated: '11.0 kW', group: 'uht' },
     { key: 'VSD03', tag: 'VSD03', name: 'UHT PUMP SUPPLY (PID)', section: 'UHT STERILIZER', rated: '5.5 kW', group: 'uht' },
     { key: 'VSD06', tag: 'VSD06', name: 'UHT PUMP RETURN', section: 'UHT STERILIZER', rated: '5.5 kW', group: 'uht' },
-    { key: 'VSD04', tag: 'VSD04', name: 'CIP L1 SUPPLY PUMP', section: 'CIP SYSTEMS', rated: '7.5 kW', group: 'cip' },
-    { key: 'VSD05', tag: 'VSD05', name: 'CIP L2 SUPPLY PUMP', section: 'CIP SYSTEMS', rated: '7.5 kW', group: 'cip' },
+    { key: 'VSD04', tag: 'VSD04', name: 'CIP L2 SUPPLY PUMP', section: 'CIP SYSTEMS', rated: '7.5 kW', group: 'cip' },
+    { key: 'VSD05', tag: 'VSD05', name: 'CIP L1 SUPPLY PUMP', section: 'CIP SYSTEMS', rated: '7.5 kW', group: 'cip' },
     { key: 'VSD08', tag: 'VSD08', name: 'PROD P101 SUPPLY PUMP', section: 'PROD SUPPLY', rated: '4.0 kW', group: 'tank' },
     { key: 'VSD09', tag: 'VSD09', name: 'ATANK ASEPTIC AGITATOR', section: 'ASEPTIC TANK', rated: '4.0 kW', group: 'tank' }
   ];
@@ -2275,15 +2275,15 @@ function renderVsdTables(vf) {
 
   // Update Line 1 & Line 2 pump status
   const c1Status = document.getElementById('cip1-vsd-status');
-  if (c1Status && vf['VSD04']) {
-    const v = vf['VSD04'];
+  if (c1Status && vf['VSD05']) {
+    const v = vf['VSD05'];
     c1Status.textContent = v.running ? `RUNNING (${v.power_kw} kW)` : `STOPPED (0.00 kW)`;
     c1Status.className = v.running ? 'status-run' : 'status-stop';
   }
 
   const c2Status = document.getElementById('cip2-vsd-status');
-  if (c2Status && vf['VSD05']) {
-    const v = vf['VSD05'];
+  if (c2Status && vf['VSD04']) {
+    const v = vf['VSD04'];
     c2Status.textContent = v.running ? `RUNNING (${v.power_kw} kW)` : `STOPPED (0.00 kW)`;
     c2Status.className = v.running ? 'status-run' : 'status-stop';
   }

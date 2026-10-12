@@ -1,5 +1,12 @@
-import asyncio
+import os
 import time
+
+# Enforce Asia/Bangkok (+07:00) timezone for all logging and datetimes
+os.environ["TZ"] = "Asia/Bangkok"
+if hasattr(time, "tzset"):
+    time.tzset()
+
+import asyncio
 from datetime import datetime, date, timedelta
 from typing import Optional
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query
@@ -740,7 +747,7 @@ def seed_vsd_fault_demo():
         ("VSD02", "UHT PUMP_FEED", "UHT", 45, 12.5, "Overcurrent Trip (F30001)"),
         ("VSD02", "UHT PUMP_FEED", "UHT", 30, 8.0, "DC Bus Overvoltage (F00002)"),
         ("VSD01", "UHT PUMP_BOOST", "UHT", 20, 6.5, "Motor Overtemperature (F07011)"),
-        ("VSD04", "CIP L1 P_S Supply", "CIP 1", 15, 4.0, "Inverter Overload (F00005)"),
+        ("VSD05", "CIP L1 P_S Supply", "CIP 1", 15, 4.0, "Inverter Overload (F00005)"),
         ("VSD06", "UHT PUMP_RETURN", "UHT", 10, 3.2, "Phase Loss (F30016)"),
         ("VSD08", "Prod Supply P101", "Prod Supply", 8, 2.1, "Communication Timeout (F01910)")
     ]

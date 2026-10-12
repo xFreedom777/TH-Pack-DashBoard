@@ -490,8 +490,8 @@ class MasterPlantReader:
                 ("VSD01", 0, "UHT PUMP_BOOST", 15.0, "UHT"),
                 ("VSD02", 34, "UHT PUMP_FEED", 11.0, "UHT"),
                 ("VSD03", 68, "UHT PUMP_SUPPLY (PID)", 5.5, "UHT"),
-                ("VSD04", 102, "CIP L1 P_S Supply", 7.5, "CIP 1"),
-                ("VSD05", 136, "CIP L2 P_S Supply", 7.5, "CIP 2"),
+                ("VSD04", 102, "CIP L2 P_S Supply", 7.5, "CIP 2"),
+                ("VSD05", 136, "CIP L1 P_S Supply", 7.5, "CIP 1"),
                 ("VSD06", 170, "UHT PUMP_RETURN", 5.5, "UHT"),
                 ("VSD08", 238, "Prod Supply P101", 4.0, "Prod Supply"),
                 ("VSD09", 272, "ATANK Agitator", 4.0, "ATANK")

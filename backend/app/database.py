@@ -17,9 +17,10 @@ try:
         port=MYSQL_PORT,
         user=MYSQL_USER,
         password=MYSQL_PASSWORD,
-        database=MYSQL_DATABASE
+        database=MYSQL_DATABASE,
+        init_command="SET time_zone = '+07:00'"
     )
-    print(f"Connected to MySQL Pool at {MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}")
+    print(f"Connected to MySQL Pool at {MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE} (time_zone=+07:00)")
 except Exception as e:
     print(f"MySQL Pool Initialization Warning: {e}")
     db_pool = None
@@ -32,7 +33,8 @@ def get_db_connection():
         port=MYSQL_PORT,
         user=MYSQL_USER,
         password=MYSQL_PASSWORD,
-        database=MYSQL_DATABASE
+        database=MYSQL_DATABASE,
+        init_command="SET time_zone = '+07:00'"
     )
 
 def fetch_all(query, params=None):
