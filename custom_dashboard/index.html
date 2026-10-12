@@ -315,11 +315,38 @@
 
         <!-- UHT Process Values Grid -->
         <div class="instruments-grid">
-          <div class="meter-card">
-            <span class="meter-tag">LT (DB1200.DBD4)</span>
-            <div class="meter-name">Balance Tank Level</div>
-            <div class="meter-val font-mono" id="uht-lt">0.00 <span class="unit">Liter</span></div>
-            <div class="meter-bar"><div class="fill" id="uht-lt-bar" style="width: 50%;"></div></div>
+          <div class="meter-card fiqcv-card">
+            <div class="meter-card-header">
+              <span class="meter-tag">FIQCV08 (DB331 / DB1200)</span>
+              <span class="badge-mini">WATER DOSING</span>
+            </div>
+            <div class="meter-name">UHT Add Water Control</div>
+
+            <!-- WinCC Industrial Matrix Widget: SV, PV, OV -->
+            <div class="fiqcv-matrix font-mono">
+              <div class="fiq-row fiq-sv">
+                <span class="fiq-lbl">SV(Liter)</span>
+                <span class="fiq-val highlight-green" id="uht-fiq-sv">50.00</span>
+              </div>
+              <div class="fiq-row fiq-pv">
+                <span class="fiq-lbl">PV(Liter)</span>
+                <span class="fiq-val highlight-gold" id="uht-lt">11.18</span>
+              </div>
+              <div class="fiq-row fiq-ov">
+                <span class="fiq-lbl">OV( % )</span>
+                <span class="fiq-val highlight-orange" id="uht-fiq-ov">20.00</span>
+              </div>
+            </div>
+
+            <div class="meter-bar-dual">
+              <div class="meter-bar-label font-mono">
+                <span>BATCH: <strong id="uht-fiq-pct">22.4%</strong></span>
+                <span>VALVE: <strong id="uht-fiq-ov-pct">20.0%</strong></span>
+              </div>
+              <div class="meter-bar">
+                <div class="fill gold" id="uht-lt-bar" style="width: 22.4%;"></div>
+              </div>
+            </div>
           </div>
 
           <div class="meter-card">
@@ -443,10 +470,10 @@
             <div class="pen-chip" data-section="uht" data-pen="4">
               <span class="pen-color-dot" style="background:#8b5cf6; box-shadow:0 0 8px #8b5cf6;"></span>
               <div class="pen-meta">
-                <span class="pen-tag">PEN 5: LT BALANCE LEVEL</span>
+                <span class="pen-tag">PEN 5: FIQCV08 ADD WATER</span>
                 <span class="pen-val font-mono" id="uht-pen-lt">-- Liter</span>
               </div>
-              <span class="pen-limit">Tank Level</span>
+              <span class="pen-limit">SV: 50.00 Liter</span>
             </div>
 
             <div class="pen-chip" data-section="uht" data-pen="5">

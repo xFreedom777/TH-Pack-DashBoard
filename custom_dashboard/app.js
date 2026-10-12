@@ -844,7 +844,7 @@ function initUhtRecorder() {
         { label: 'TT02 Pre-Heat 1 (°C)', data: [], borderColor: '#06b6d4', backgroundColor: 'rgba(6, 182, 212, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
         { label: 'TT04 Inlet Temp (°C)', data: [], borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
         { label: 'FT04FIQ Inlet Flow (L/h)', data: [], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.08)', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yFlow' },
-        { label: 'LT Balance Level (Liter)', data: [], borderColor: '#8b5cf6', backgroundColor: 'rgba(139, 92, 246, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yLevel' },
+        { label: 'FIQCV08 Add Water (Liter)', data: [], borderColor: '#8b5cf6', backgroundColor: 'rgba(139, 92, 246, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yLevel' },
         { label: 'UHT VSDs Power (kW)', data: [], borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yPower' }
       ]
     },
@@ -1418,7 +1418,7 @@ const PEN_ALARM_LIMITS = {
     { pen: 1, tag: 'TT02 Pre-Heat 1', unit: '°C', target: '80.0 - 90.0', ll: 70.0, l: 75.0, h: 92.0, hh: 96.0, ccp: false },
     { pen: 2, tag: 'TT04 Inlet Temp', unit: '°C', target: '60.0 - 70.0', ll: 50.0, l: 55.0, h: 75.0, hh: 80.0, ccp: false },
     { pen: 3, tag: 'FT04FIQ Inlet Flow', unit: 'L/h', target: '12000 - 16000', ll: 9000, l: 10000, h: 16500, hh: 18000, ccp: true },
-    { pen: 4, tag: 'LT Balance Level', unit: 'Liter', target: '10 - 200', ll: null, l: null, h: null, hh: null, ccp: false },
+    { pen: 4, tag: 'FIQCV08 Add Water', unit: 'Liter', target: 'SV: 50.0 L', ll: null, l: null, h: null, hh: null, ccp: false },
     { pen: 5, tag: 'UHT VSDs Power', unit: 'kW', target: '< 38.0', ll: null, l: null, h: 36.0, hh: 40.0, ccp: false }
   ],
   atank: [
@@ -1554,7 +1554,8 @@ function pushAllSectionRecordersData(d) {
   setText('uht-pen-tt02', `${(u.tt02 || 0).toFixed(1)} °C`);
   setText('uht-pen-tt04', `${(u.tt04 || 0).toFixed(1)} °C`);
   setText('uht-pen-flow', `${(u.ft04fiq || 0).toFixed(0)} L/h`);
-  setText('uht-pen-lt', `${(u.lt || 0).toFixed(2)} Liter`);
+  const fiqPv = (u.fiqcv08_pv !== undefined) ? u.fiqcv08_pv : (u.lt || 0);
+  setText('uht-pen-lt', `${fiqPv.toFixed(2)} Liter`);
   setText('uht-pen-power', `${uhtPower.toFixed(1)} kW`);
 
   // Update UHT Alarm Alerts on Chips
@@ -1982,7 +1983,20 @@ function applyLiveTelemetry(d) {
     setText('uht-timer-val', `${u.step_timer}s`);
     setText('uht-sp-val', `${u.step_setpoint}s`);
 
-    setText('uht-lt', `${u.lt.toFixed(2)} Liter`);
+    const fiqSv = (u.fiqcv08_sv !== undefined) ? u.fiqcv08_sv : 50.0;
+    const fiqPv = (u.fiqcv08_pv !== undefined) ? u.fiqcv08_pv : (u.lt || 0);
+    const fiqOv = (u.fiqcv08_ov !== undefined) ? u.fiqcv08_ov : 20.0;
+
+    setText('uht-fiq-sv', fiqSv.toFixed(2));
+    setText('uht-lt', fiqPv.toFixed(2));
+    setText('uht-fiq-ov', fiqOv.toFixed(2));
+
+    const pct = fiqSv > 0 ? Math.min(100, Math.max(0, (fiqPv / fiqSv) * 100)) : 0;
+    setText('uht-fiq-pct', `${pct.toFixed(1)}%`);
+    setText('uht-fiq-ov-pct', `${fiqOv.toFixed(1)}%`);
+
+    const fiqBar = document.getElementById('uht-lt-bar');
+    if (fiqBar) fiqBar.style.width = `${pct}%`;
     setText('uht-flow', `${u.ft04fiq.toFixed(1)} L/h`);
     setText('kpi-live-flow', `${u.ft04fiq.toFixed(1)} L/h`);
     setText('uht-ct', `${u.ct.toFixed(3)} mS/cm`);

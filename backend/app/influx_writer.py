@@ -17,7 +17,7 @@ SECTION_CONFIG = {
             "TT02 Pre-Heat 1 (°C)",
             "TT04 Inlet Temp (°C)",
             "FT04FIQ Inlet Flow (L/h)",
-            "LT Balance Level (Liter)",
+            "FIQCV08 Add Water (Liter)",
             "UHT VSDs Power (kW)"
         ]
     },

@@ -293,8 +293,22 @@ class MasterPlantReader:
             uht_step_desc, uht_sp = UHT_STEPS.get(uht_step_int, (f"Step {uht_step_int}", 0))
             uht_timer = get_int(d1200, 48)
 
+            # Read FIQCV08 (UHT Add Water: SV=DB331.DBD802, PV=DB1200.DBD4, OV=DB331.DBD814)
+            fiqcv08_pv = round(get_real(d1200, 4), 2)
+            fiqcv08_sv = 50.0
+            fiqcv08_ov = 20.0
+            try:
+                d331 = self.client.db_read(331, 800, 20)
+                fiqcv08_sv = round(get_real(d331, 2), 2)   # DB331.DBD802
+                fiqcv08_ov = round(get_real(d331, 14), 2)  # DB331.DBD814
+            except Exception as e_d331:
+                pass
+
             res["uht"] = {
-                "lt": round(get_real(d1200, 4), 2),
+                "lt": fiqcv08_pv,
+                "fiqcv08_pv": fiqcv08_pv,
+                "fiqcv08_sv": fiqcv08_sv,
+                "fiqcv08_ov": fiqcv08_ov,
                 "tt01": round(get_real(d1200, 8), 2),
                 "tt02": round(get_real(d1200, 12), 2),
                 "tt03": round(get_real(d1200, 16), 2),
