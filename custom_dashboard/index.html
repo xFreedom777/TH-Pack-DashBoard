@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=20261012_fiq04">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
@@ -329,10 +329,16 @@
           </div>
 
           <div class="meter-card">
-            <span class="meter-tag">FT04FIQ (DB1200.DBD50)</span>
-            <div class="meter-name">Inlet Flow Rate</div>
+            <div class="meter-card-header">
+              <span class="meter-tag">FIQ04 (DB331 / M4 / VSD01)</span>
+              <div class="fiq-pill-group font-mono">
+                <span class="fiq-pill sv">SV: <strong id="uht-fiq04-sv">7000.0</strong> L/h</span>
+                <span class="fiq-pill ov">OV: <strong id="uht-fiq04-ov">60.0</strong>%</span>
+              </div>
+            </div>
+            <div class="meter-name">UHT M4 Feed Pump (VSD01 Flow Control)</div>
             <div class="meter-val font-mono" id="uht-flow">0.0 <span class="unit">L/h</span></div>
-            <div class="meter-bar"><div class="fill" id="uht-flow-bar" style="width: 75%;"></div></div>
+            <div class="meter-bar"><div class="fill" id="uht-flow-bar" style="width: 60%;"></div></div>
           </div>
 
           <div class="meter-card">
@@ -440,10 +446,10 @@
             <div class="pen-chip" data-section="uht" data-pen="3">
               <span class="pen-color-dot" style="background:#10b981; box-shadow:0 0 8px #10b981;"></span>
               <div class="pen-meta">
-                <span class="pen-tag">PEN 4: FT04FIQ INLET FLOW</span>
+                <span class="pen-tag">PEN 4: FIQ04 INLET FLOW (M4)</span>
                 <span class="pen-val font-mono" id="uht-pen-flow">-- L/h</span>
               </div>
-              <span class="pen-limit">PID Feed Rate</span>
+              <span class="pen-limit">SV: 7000 L/h</span>
             </div>
 
             <div class="pen-chip" data-section="uht" data-pen="4">

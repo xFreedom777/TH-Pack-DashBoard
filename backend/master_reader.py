@@ -304,6 +304,18 @@ class MasterPlantReader:
             except Exception as e_d331:
                 pass
 
+            # Read FIQ04 (UHT M4 Flow Control / VSD01: SV=DB331.DBD1802, PV=DB331.DBD1806, OV=DB331.DBD1814)
+            fiq04_pv = round(get_real(d1200, 50), 1)
+            fiq04_sv = 7000.0
+            fiq04_ov = 60.0
+            try:
+                d331_fiq04 = self.client.db_read(331, 1800, 20)
+                fiq04_sv = round(get_real(d331_fiq04, 2), 1)   # DB331.DBD1802
+                fiq04_pv = round(get_real(d331_fiq04, 6), 2)   # DB331.DBD1806
+                fiq04_ov = round(get_real(d331_fiq04, 14), 1)  # DB331.DBD1814
+            except Exception as e_fiq04:
+                pass
+
             res["uht"] = {
                 "lt": fiqcv08_pv,
                 "fiqcv08_pv": fiqcv08_pv,
@@ -317,7 +329,10 @@ class MasterPlantReader:
                 "tt06": round(get_real(d1200, 28), 2),
                 "tt07": round(get_real(d1200, 32), 2),
                 "ct": round(get_real(d1200, 36), 3),
-                "ft04fiq": round(get_real(d1200, 50), 1),
+                "ft04fiq": fiq04_pv if fiq04_pv > 0 else round(get_real(d1200, 50), 1),
+                "fiq04_pv": fiq04_pv,
+                "fiq04_sv": fiq04_sv,
+                "fiq04_ov": fiq04_ov,
                 "step_int": uht_step_int,
                 "step_desc": uht_step_desc,
                 "step_timer": uht_timer,
