@@ -44,7 +44,7 @@
 
 ## 🇹🇭 สถาปัตยกรรมระบบโดยละเอียด (System Architecture)
 
-ระบบ **TH-PACK Intelligent SCADA** พัฒนาขึ้นเพื่อรองรับมาตรฐานอุตสาหกรรมอาหารและเครื่องดื่ม (GMP/BMR Compliant) ของโรงงาน **บริษัท รุ่งทรัพย์พัฒนา (ประเทศไทย) จำกัด** โดยแบ่งสถาปัตยกรรมออกเป็น 4 ระดับ:
+ระบบ **TH-PACK Intelligent SCADA** พัฒนาขึ้นเพื่อรองรับมาตรฐานอุตสาหกรรมอาหารและเครื่องดื่มปลอดเชื้อ (GMP/BMR Compliant Aseptic Facility) โดยแบ่งสถาปัตยกรรมออกเป็น 4 ระดับ:
 
 ```mermaid
 graph TD
@@ -89,7 +89,7 @@ graph TD
     end
 
     subgraph Layer4["4. Executive HMI & Visualization Layer"]
-        SCADA["Custom SCADA HMI (Port 3003)<br/>RUNGSAPPATTANA Operations Center"]
+        SCADA["Custom SCADA HMI (Port 3003)<br/>Plant Operations Center"]
         HistorianUI["From-To Range Recorders<br/>Sampling Window & CSV Export"]
         OverviewUI["Executive Analytics Horizon<br/>Date Picker & FAULT NO DATA Check"]
         BMRDoc["Official A4 BMR Report<br/>Marine Logo + 3-Party Signatures"]
@@ -140,7 +140,7 @@ graph TD
   - **Executive Analytics Overview**: วิเคราะห์ภาพรวมฝ่ายบริหาร 4 ระดับเวลา (Daily, Weekly, Monthly, Yearly)
   - **Date Picker Filter & FAULT NO DATA Guard**: รองรับการเลือกวันที่ดูย้อนหลัง โดยมีระบบป้องกันข้อมูลหลอก — หากเลือกวันที่ก่อนเริ่มติดตั้งระบบจริง (**ก่อน 10 ตุลาคม 2026**) ระบบจะแสดงป้ายเตือน **`⚠️ FAULT: NO DATA`** อย่างโปร่งใส
   - **From-To Historian Modal**: กล่องเลือกช่วงวันและเวลาเริ่มต้น-สิ้นสุดในตัวบันทึกกราฟทั้ง 4 หมวด (UHT, ATANK, CIP, Duplex Filter) พร้อมเลือกความละเอียด Sampling (10s, 1m, 5m, 15m, 1h) และปุ่มดาวน์โหลด CSV (UTF-8 BOM ภาษาไทย)
-  - **Official A4 Portrait BMR Report**: รายงานทางการพร้อมตราสัญลักษณ์ **marine (มารีน)** ฉบับเต็มขอบมนไม่มีการตัดขอบ ระบุชื่อโรงงาน **บริษัท รุ่งทรัพย์พัฒนา (ประเทศไทย) จำกัด**
+  - **Official A4 Portrait BMR Report**: รายงานทางการพร้อมตราสัญลักษณ์ **marine (มารีน)** ฉบับเต็มขอบมนไม่มีการตัดขอบ ระบุข้อมูลมาตรฐานกำกับกระบวนการผลิต
 
 ---
 
@@ -168,7 +168,7 @@ graph TD
 | **2** | **Step Transition Engine (`step_tracker.py`)** | ✅ เสร็จสมบูรณ์ | เชื่อมต่อเข้ากับ Background PLC Polling Loop ตรวจจับ Step เปลี่ยนค่าแบบ Real-time และบันทึกลงฐานข้อมูลอัตโนมัติ |
 | **3** | **ATANK Step List 0–128 (TIA Portal Text List)** | ✅ เสร็จสมบูรณ์ | ปรับปรุงพจนานุกรมขั้นตอน A_TANK_STEP ครบ 100% ตามหน้างานจริง (Step 24/26 Condensate Drain, Step 28 Ready Production, Step 30 Production, Step 66 Plant Cleaning ฯลฯ) |
 | **4** | **Official A4 BMR Report Generator** | ✅ เสร็จสมบูรณ์ | สร้างระบบรายงานมาตรฐาน A4 Portrait พร้อมฝัง Base64 ตราสัญลักษณ์ **marine (มารีน)** เต็มใบขอบมน, ตารางข้อมูล Step, และช่องลงนาม 3 ฝ่าย (Operator, QC, ผจก.ผลิต) |
-| **5** | **RUNGSAPPATTANA Branding** | ✅ เสร็จสมบูรณ์ | ปรับเปลี่ยนชื่อโรงงานหน้างานจริงทั้งในหัวเอกสารและแถบหลักแดชบอร์ด |
+| **5** | **Executive Plant Branding** | ✅ เสร็จสมบูรณ์ | ปรับเปลี่ยนชื่อหัวเอกสารและแดชบอร์ดตามมาตรฐานหน้างานจริง |
 | **6** | **From-To Date & Time Filter (Historian & Reports)** | ✅ เสร็จสมบูรณ์ | เพิ่มกล่องเลือกวัน-เวลาเริ่มต้น (From) และสิ้นสุด (To) ในตัวบันทึกกราฟและหน้าต่างออกรายงาน Step Log พร้อมปรับ Sampling Resolution |
 | **7** | **Overview Date Picker & Strict FAULT NO DATA** | ✅ เสร็จสมบูรณ์ | เพิ่มตัวกรองเลือกวันที่ในหน้า Overview พร้อมตั้งเงื่อนไขวันเริ่มติดตั้งจริง (10 ต.ค. 2026) หากเลือกวันก่อนหน้านี้จะแสดง **`FAULT: NO DATA`** โปร่งใส ไม่มีการปั้นข้อมูล |
 | **8** | **Decoupled Worker & Watchdog Auto-Recover** | ✅ เสร็จสมบูรณ์ | แยก Ingestion Worker (`telemetry_worker.py`) ออกจาก FastAPI พร้อมระบบ Watchdog Supervisor ตรวจจับ Heartbeat และกู้ชีพโพรเซสกลับคืนทันทีหากล้มเหลว รองรับความเสถียรเกรดอุตสาหกรรม (OT High Availability) |
