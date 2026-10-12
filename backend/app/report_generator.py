@@ -63,7 +63,7 @@ def generate_step_report_html(section: str, batch_id: str, date_str: str, steps:
     if section == "uht":
         col1_header = "Temp TT01 (°C)"
         col2_header = "Inlet Flow (L/h)"
-        col3_header = "Balance LT (m)"
+        col3_header = "Balance LT (Liter)"
     elif section == "atank":
         col1_header = "Sterile Temp (°C)"
         col2_header = "Pressure (bar)"

@@ -844,14 +844,14 @@ function initUhtRecorder() {
         { label: 'TT02 Pre-Heat 1 (°C)', data: [], borderColor: '#06b6d4', backgroundColor: 'rgba(6, 182, 212, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
         { label: 'TT04 Inlet Temp (°C)', data: [], borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
         { label: 'FT04FIQ Inlet Flow (L/h)', data: [], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.08)', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yFlow' },
-        { label: 'LT Balance Level (m)', data: [], borderColor: '#8b5cf6', backgroundColor: 'rgba(139, 92, 246, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yLevel' },
+        { label: 'LT Balance Level (Liter)', data: [], borderColor: '#8b5cf6', backgroundColor: 'rgba(139, 92, 246, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yLevel' },
         { label: 'UHT VSDs Power (kW)', data: [], borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yPower' }
       ]
     },
     options: getRecorderChartOptions({
       yTemp: { min: 0, max: 160, title: 'Temp (°C)', color: '#ef4444', position: 'left' },
       yFlow: { min: 0, max: 20000, title: 'Flow (L/h)', color: '#10b981', position: 'right' },
-      yLevel: { min: 0, max: 15, title: 'Level (m)', color: '#8b5cf6', position: 'left', display: false },
+      yLevel: { min: 0, max: 200, title: 'Level (Liter)', color: '#8b5cf6', position: 'left', display: false },
       yPower: { min: 0, max: 45, title: 'Power (kW)', color: '#f59e0b', position: 'right' }
     })
   });
@@ -1418,7 +1418,7 @@ const PEN_ALARM_LIMITS = {
     { pen: 1, tag: 'TT02 Pre-Heat 1', unit: '°C', target: '80.0 - 90.0', ll: 70.0, l: 75.0, h: 92.0, hh: 96.0, ccp: false },
     { pen: 2, tag: 'TT04 Inlet Temp', unit: '°C', target: '60.0 - 70.0', ll: 50.0, l: 55.0, h: 75.0, hh: 80.0, ccp: false },
     { pen: 3, tag: 'FT04FIQ Inlet Flow', unit: 'L/h', target: '12000 - 16000', ll: 9000, l: 10000, h: 16500, hh: 18000, ccp: true },
-    { pen: 4, tag: 'LT Balance Level', unit: 'm', target: '1.5 - 3.5', ll: 0.5, l: 1.0, h: 4.0, hh: 4.8, ccp: false },
+    { pen: 4, tag: 'LT Balance Level', unit: 'Liter', target: '10 - 200', ll: null, l: null, h: null, hh: null, ccp: false },
     { pen: 5, tag: 'UHT VSDs Power', unit: 'kW', target: '< 38.0', ll: null, l: null, h: 36.0, hh: 40.0, ccp: false }
   ],
   atank: [
@@ -1554,7 +1554,7 @@ function pushAllSectionRecordersData(d) {
   setText('uht-pen-tt02', `${(u.tt02 || 0).toFixed(1)} °C`);
   setText('uht-pen-tt04', `${(u.tt04 || 0).toFixed(1)} °C`);
   setText('uht-pen-flow', `${(u.ft04fiq || 0).toFixed(0)} L/h`);
-  setText('uht-pen-lt', `${(u.lt || 0).toFixed(2)} m`);
+  setText('uht-pen-lt', `${(u.lt || 0).toFixed(2)} Liter`);
   setText('uht-pen-power', `${uhtPower.toFixed(1)} kW`);
 
   // Update UHT Alarm Alerts on Chips
@@ -1982,7 +1982,7 @@ function applyLiveTelemetry(d) {
     setText('uht-timer-val', `${u.step_timer}s`);
     setText('uht-sp-val', `${u.step_setpoint}s`);
 
-    setText('uht-lt', `${u.lt.toFixed(2)} m`);
+    setText('uht-lt', `${u.lt.toFixed(2)} Liter`);
     setText('uht-flow', `${u.ft04fiq.toFixed(1)} L/h`);
     setText('kpi-live-flow', `${u.ft04fiq.toFixed(1)} L/h`);
     setText('uht-ct', `${u.ct.toFixed(3)} mS/cm`);
