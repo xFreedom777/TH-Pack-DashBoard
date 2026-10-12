@@ -315,38 +315,17 @@
 
         <!-- UHT Process Values Grid -->
         <div class="instruments-grid">
-          <div class="meter-card fiqcv-card">
+          <div class="meter-card">
             <div class="meter-card-header">
               <span class="meter-tag">FIQCV08 (DB331 / DB1200)</span>
-              <span class="badge-mini">WATER DOSING</span>
+              <div class="fiq-pill-group font-mono">
+                <span class="fiq-pill sv">SV: <strong id="uht-fiq-sv">50.00</strong> L</span>
+                <span class="fiq-pill ov">OV: <strong id="uht-fiq-ov">20.00</strong>%</span>
+              </div>
             </div>
             <div class="meter-name">UHT Add Water เข้า Balance Tank</div>
-
-            <!-- WinCC Industrial Matrix Widget: SV, PV, OV -->
-            <div class="fiqcv-matrix font-mono">
-              <div class="fiq-row fiq-sv">
-                <span class="fiq-lbl">SV(Liter)</span>
-                <span class="fiq-val highlight-green" id="uht-fiq-sv">50.00</span>
-              </div>
-              <div class="fiq-row fiq-pv">
-                <span class="fiq-lbl">PV(Liter)</span>
-                <span class="fiq-val highlight-gold" id="uht-lt">11.18</span>
-              </div>
-              <div class="fiq-row fiq-ov">
-                <span class="fiq-lbl">OV( % )</span>
-                <span class="fiq-val highlight-orange" id="uht-fiq-ov">20.00</span>
-              </div>
-            </div>
-
-            <div class="meter-bar-dual">
-              <div class="meter-bar-label font-mono">
-                <span>BATCH: <strong id="uht-fiq-pct">22.4%</strong></span>
-                <span>VALVE: <strong id="uht-fiq-ov-pct">20.0%</strong></span>
-              </div>
-              <div class="meter-bar">
-                <div class="fill gold" id="uht-lt-bar" style="width: 22.4%;"></div>
-              </div>
-            </div>
+            <div class="meter-val font-mono" id="uht-lt">0.00 <span class="unit">Liter</span></div>
+            <div class="meter-bar"><div class="fill" id="uht-lt-bar" style="width: 22%;"></div></div>
           </div>
 
           <div class="meter-card">

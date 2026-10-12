@@ -1988,7 +1988,7 @@ function applyLiveTelemetry(d) {
     const fiqOv = (u.fiqcv08_ov !== undefined) ? u.fiqcv08_ov : 20.0;
 
     setText('uht-fiq-sv', fiqSv.toFixed(2));
-    setText('uht-lt', fiqPv.toFixed(2));
+    setText('uht-lt', `${fiqPv.toFixed(2)} Liter`);
     setText('uht-fiq-ov', fiqOv.toFixed(2));
 
     const pct = fiqSv > 0 ? Math.min(100, Math.max(0, (fiqPv / fiqSv) * 100)) : 0;
