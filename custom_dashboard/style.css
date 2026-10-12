@@ -73,11 +73,26 @@ body {
   gap: 14px;
 }
 
+.brand-logo-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #253b1b;
+  border-radius: 9px;
+  padding: 3px 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(85, 125, 60, 0.4);
+  height: 48px;
+  min-width: 98px;
+  flex-shrink: 0;
+}
+
 .brand-logo {
-  height: 44px;
+  height: 40px;
   width: auto;
-  border-radius: 8px;
+  border-radius: 6px;
   object-fit: contain;
+  display: block;
 }
 
 .brand-title {
@@ -1835,6 +1850,19 @@ body {
   border-color: #10b981;
 }
 
+.ctrl-btn.btn-trend-pdf {
+  background: linear-gradient(135deg, rgba(234, 88, 12, 0.18), rgba(194, 65, 12, 0.3));
+  border: 1px solid rgba(251, 146, 60, 0.45);
+  color: #fdba74;
+}
+.ctrl-btn.btn-trend-pdf:hover {
+  background: linear-gradient(135deg, rgba(234, 88, 12, 0.38), rgba(194, 65, 12, 0.55));
+  border-color: #fb923c;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(251, 146, 60, 0.35);
+  transform: translateY(-1px);
+}
+
 .ctrl-btn.btn-limits {
   background: rgba(139, 92, 246, 0.12);
   border-color: rgba(139, 92, 246, 0.35);
@@ -2064,6 +2092,61 @@ body {
   font-size: 11px;
   color: #64748b;
   margin-top: 4px;
+}
+
+/* =========================================================
+   TREND PDF & TIME STAMP SETTINGS MODAL
+   ========================================================= */
+.trend-pdf-scope-toggle {
+  display: flex;
+  gap: 16px;
+  background: rgba(15, 23, 42, 0.6);
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #334155;
+  margin-bottom: 10px;
+}
+.trend-pdf-scope-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 12.5px;
+  color: #f1f5f9;
+  font-weight: 500;
+  user-select: none;
+}
+.trend-pdf-scope-label input[type="radio"] {
+  accent-color: #ea580c;
+  cursor: pointer;
+  width: 15px;
+  height: 15px;
+}
+.trend-pdf-options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  font-size: 12px;
+  color: #cbd5e1;
+  background: rgba(15, 23, 42, 0.6);
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #334155;
+}
+.trend-pdf-opt-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 12px;
+  color: #e2e8f0;
+}
+.trend-pdf-opt-label input[type="checkbox"] {
+  accent-color: #ea580c;
+  cursor: pointer;
+  width: 15px;
+  height: 15px;
 }
 
 /* =========================================================

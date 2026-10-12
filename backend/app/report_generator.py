@@ -173,7 +173,7 @@ th, td {{ font-size: 8pt; }}
           <div style="font-size:13pt;font-weight:900;color:#1e3a8a;letter-spacing:1px;line-height:1.2;">RUNGSAPPATTANA (THAILAND) CO., LTD.</div>
           <div style="font-size:8.5pt;font-weight:700;color:#059669;letter-spacing:0.5px;margin-top:2px;">บริษัท รุ่งทรัพย์พัฒนา (ประเทศไทย) จำกัด • SCADA PROCESS BMR REPORT</div>
           <div style="font-size:10pt;font-weight:700;color:#0f172a;margin-top:3px;">{sec_title}</div>
-          <div style="font-size:7pt;color:#64748b;margin-top:1px;">{sec_sub} • Process Control System by TH-PACK</div>
+          <div style="font-size:7pt;color:#64748b;margin-top:1px;">{sec_sub} • Process Control System By xDev.CO.LTD</div>
         </td>
         <td style="width:290px;vertical-align:top;padding:4px 8px;font-size:7.5pt;">
           <table style="width:100%;border-collapse:collapse;">

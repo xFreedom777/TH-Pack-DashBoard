@@ -15,10 +15,12 @@
     <!-- TOP EXECUTIVE COMMAND BAR -->
     <header class="top-header">
       <div class="header-brand">
-        <img src="logo.jpg" alt="Logo" class="brand-logo" onerror="this.style.display='none'">
+        <div class="brand-logo-badge">
+          <img src="marine_logo.png" alt="Marine Logo" class="brand-logo" onerror="this.src='logo.jpg'">
+        </div>
         <div class="brand-text">
           <div class="brand-title">RUNGSAPPATTANA <span>(THAILAND)</span></div>
-          <div class="brand-sub">UHT SCADA OPERATIONS & INVENTORY COMMAND CENTER • BY TH-PACK INDUSTRIAL</div>
+          <div class="brand-sub">UHT SCADA OPERATIONS & INVENTORY COMMAND CENTER • By xDev.CO.LTD</div>
         </div>
       </div>
 
@@ -418,11 +420,14 @@
               <button class="ctrl-btn btn-pause" data-section="uht" id="btn-pause-uht" title="หยุด/เล่นต่อ">
                 <span class="pause-icon">⏸️</span> <span class="pause-text">หยุดชั่วคราว</span>
               </button>
-              <button class="ctrl-btn btn-export" data-section="uht" id="btn-export-uht" title="ส่งออกข้อมูลเป็น CSV/Excel">
-                📥 ส่งออก CSV
+              <button class="ctrl-btn btn-export" data-section="uht" id="btn-export-uht" title="ส่งออกข้อมูล Trend เป็น CSV ตามเวลาที่เลือก">
+                📥 ส่งออก Trend CSV
+              </button>
+              <button class="ctrl-btn btn-trend-pdf" data-section="uht" id="btn-trend-pdf-uht" onclick="exportTrendPdfReport('uht')" title="ออกรายงาน Trend กราฟพร้อมสถิติ (PDF)">
+                📊 ออกรายงาน Trend (PDF)
               </button>
               <button class="ctrl-btn btn-step-report" onclick="openStepReportModal('uht')" title="ออกรายงาน Step Log พร้อมตราสัญลักษณ์">
-                📑 ออกรายงาน Step Log (PDF)
+                📑 รายงาน Step Log
               </button>
               <button class="ctrl-btn btn-limits" data-section="uht" id="btn-limits-uht" title="ดู/ตั้งค่าเกณฑ์ Alarm Limit">
                 ⚙️ เกณฑ์เตือน (Limits)
@@ -804,11 +809,14 @@
               <button class="ctrl-btn btn-pause" data-section="atank" id="btn-pause-atank" title="หยุด/เล่นต่อ">
                 <span class="pause-icon">⏸️</span> <span class="pause-text">หยุดชั่วคราว</span>
               </button>
-              <button class="ctrl-btn btn-export" data-section="atank" id="btn-export-atank" title="ส่งออกข้อมูลเป็น CSV/Excel">
-                📥 ส่งออก CSV
+              <button class="ctrl-btn btn-export" data-section="atank" id="btn-export-atank" title="ส่งออกข้อมูล Trend เป็น CSV ตามเวลาที่เลือก">
+                📥 ส่งออก Trend CSV
+              </button>
+              <button class="ctrl-btn btn-trend-pdf" data-section="atank" id="btn-trend-pdf-atank" onclick="exportTrendPdfReport('atank')" title="ออกรายงาน Trend กราฟพร้อมสถิติ (PDF)">
+                📊 ออกรายงาน Trend (PDF)
               </button>
               <button class="ctrl-btn btn-step-report" onclick="openStepReportModal('atank')" title="ออกรายงาน Step Log พร้อมตราสัญลักษณ์">
-                📑 ออกรายงาน Step Log (PDF)
+                📑 รายงาน Step Log
               </button>
               <button class="ctrl-btn btn-limits" data-section="atank" id="btn-limits-atank" title="ดู/ตั้งค่าเกณฑ์ Alarm Limit">
                 ⚙️ เกณฑ์เตือน (Limits)
@@ -1019,11 +1027,14 @@
               <button class="ctrl-btn btn-pause" data-section="cip" id="btn-pause-cip" title="หยุด/เล่นต่อ">
                 <span class="pause-icon">⏸️</span> <span class="pause-text">หยุดชั่วคราว</span>
               </button>
-              <button class="ctrl-btn btn-export" data-section="cip" id="btn-export-cip" title="ส่งออกข้อมูลเป็น CSV/Excel">
-                📥 ส่งออก CSV
+              <button class="ctrl-btn btn-export" data-section="cip" id="btn-export-cip" title="ส่งออกข้อมูล Trend เป็น CSV ตามเวลาที่เลือก">
+                📥 ส่งออก Trend CSV
+              </button>
+              <button class="ctrl-btn btn-trend-pdf" data-section="cip" id="btn-trend-pdf-cip" onclick="exportTrendPdfReport('cip')" title="ออกรายงาน Trend กราฟพร้อมสถิติ (PDF)">
+                📊 ออกรายงาน Trend (PDF)
               </button>
               <button class="ctrl-btn btn-step-report" id="btn-cip-step-report" onclick="openStepReportModal('cip_line1')" title="ออกรายงาน Step Log พร้อมตราสัญลักษณ์">
-                📑 ออกรายงาน Step Log (PDF)
+                📑 รายงาน Step Log
               </button>
               <button class="ctrl-btn btn-limits" data-section="cip" id="btn-limits-cip" title="ดู/ตั้งค่าเกณฑ์ Alarm Limit">
                 ⚙️ เกณฑ์เตือน (Limits)
@@ -1274,8 +1285,11 @@
               <button class="ctrl-btn btn-pause" data-section="prod" id="btn-pause-prod" title="หยุด/เล่นต่อ">
                 <span class="pause-icon">⏸️</span> <span class="pause-text">หยุดชั่วคราว</span>
               </button>
-              <button class="ctrl-btn btn-export" data-section="prod" id="btn-export-prod" title="ส่งออกข้อมูลเป็น CSV/Excel">
-                📥 ส่งออก CSV
+              <button class="ctrl-btn btn-export" data-section="prod" id="btn-export-prod" title="ส่งออกข้อมูล Trend เป็น CSV ตามเวลาที่เลือก">
+                📥 ส่งออก Trend CSV
+              </button>
+              <button class="ctrl-btn btn-trend-pdf" data-section="prod" id="btn-trend-pdf-prod" onclick="exportTrendPdfReport('prod')" title="ออกรายงาน Trend กราฟพร้อมสถิติ (PDF)">
+                📊 ออกรายงาน Trend (PDF)
               </button>
               <button class="ctrl-btn btn-limits" data-section="prod" id="btn-limits-prod" title="ดู/ตั้งค่าเกณฑ์ Alarm Limit">
                 ⚙️ เกณฑ์เตือน (Limits)
@@ -1773,8 +1787,11 @@
         </div>
         <div class="scada-modal-footer">
           <button class="ctrl-btn" onclick="closeHistorianRangeModal()">ยกเลิก</button>
-          <button class="ctrl-btn btn-export" onclick="exportHistorianCsvCustomRange()" style="font-weight:600;">
+          <button class="ctrl-btn btn-export" onclick="exportHistorianCsvCustomRange()" style="font-weight:600;" title="ส่งออกข้อมูล Trend เป็น CSV">
             📥 ส่งออก CSV
+          </button>
+          <button class="ctrl-btn btn-trend-pdf" onclick="exportHistorianPdfCustomRange()" style="font-weight:600;" title="ออกรายงาน Trend กราฟพร้อมสถิติ (PDF)">
+            📊 ออกรายงาน PDF
           </button>
           <button class="ctrl-btn btn-limits" onclick="applyHistorianCustomRange()" style="font-weight:700;background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%);color:#fff;">
             🔍 โหลดกราฟ Historian
@@ -1783,10 +1800,150 @@
       </div>
     </div>
 
+    <!-- TREND PDF & TIME STAMP SETTINGS MODAL -->
+    <div class="scada-modal-overlay" id="trend-pdf-modal-overlay">
+      <div class="scada-modal-card" style="max-width: 630px;">
+        <div class="scada-modal-header">
+          <div class="scada-modal-title">
+            <span style="font-size: 24px;">⚙️</span>
+            <div>
+              <h3 id="trend-pdf-modal-title">กำหนดค่ารายงาน Trend PDF & การดึงข้อมูล Time Stamp</h3>
+              <p>ตั้งค่าความถี่การดึงเวลา (Time Stamp Resolution), ขอบเขตเวลา และองค์ประกอบรายงานก่อนพิมพ์</p>
+            </div>
+          </div>
+          <button class="scada-modal-close" onclick="closeTrendPdfModal()">&times;</button>
+        </div>
+        <div class="scada-modal-body">
+          <!-- หมวดกระบวนการ -->
+          <div class="export-form-group">
+            <label class="export-label">หมวดกระบวนการ (Process Section):</label>
+            <select class="export-select" id="trend-pdf-sec-select" onchange="onTrendPdfSectionChange()">
+              <option value="uht">🔥 UHT Sterilizer [DB1200]</option>
+              <option value="atank">🛡️ Aseptic Tank ATANK [DB1301]</option>
+              <option value="cip">🧼 CIP Systems [Line 1 & 2 Combined]</option>
+              <option value="cip_line1">💧 CIP Circuit 1 [DB1801]</option>
+              <option value="cip_line2">🧼 CIP Circuit 2 [DB1802]</option>
+              <option value="prod">🚚 Production Supply & Filter [DB1100]</option>
+            </select>
+          </div>
+
+          <!-- ขอบเขตช่วงเวลา -->
+          <div class="export-form-group">
+            <label class="export-label">ขอบเขตช่วงเวลา (Time Horizon Scope):</label>
+            <div class="trend-pdf-scope-toggle">
+              <label class="trend-pdf-scope-label">
+                <input type="radio" name="trend-pdf-scope-radio" value="current" checked onchange="onTrendPdfScopeChange()">
+                <span>📌 ตามหน้าจอกราฟปัจจุบัน (Current View)</span>
+              </label>
+              <label class="trend-pdf-scope-label">
+                <input type="radio" name="trend-pdf-scope-radio" value="custom" onchange="onTrendPdfScopeChange()">
+                <span>📅 ระบุช่วงวัน-เวลาเจาะจง (From - To)</span>
+              </label>
+            </div>
+
+            <div id="trend-pdf-custom-range-box" style="display:none; gap:12px; margin-top:8px;">
+              <div style="flex:1;">
+                <label class="export-label" style="font-size:11px;">ตั้งแต่ (From Datetime):</label>
+                <input type="datetime-local" class="export-select" id="trend-pdf-from-input" style="font-family:inherit; font-size:12px;" onchange="updateTrendPdfEstimate()">
+              </div>
+              <div style="flex:1;">
+                <label class="export-label" style="font-size:11px;">ถึง (To Datetime):</label>
+                <input type="datetime-local" class="export-select" id="trend-pdf-to-input" style="font-family:inherit; font-size:12px;" onchange="updateTrendPdfEstimate()">
+              </div>
+            </div>
+          </div>
+
+          <!-- ความถี่การดึงข้อมูล Time Stamp ลงตาราง -->
+          <div class="export-form-group">
+            <label class="export-label">ความถี่การดึงข้อมูล Time Stamp ลงตาราง (Data Pull Interval & Stamp Resolution):</label>
+            <select class="export-select" id="trend-pdf-interval-select" onchange="updateTrendPdfEstimate()">
+              <optgroup label="⏱️ ดึงตามความถี่เวลา (Time Interval Sampling)">
+                <option value="step_1m">ทุก 1 นาที (Every 1 Minute)</option>
+                <option value="step_2m">ทุก 2 นาที (Every 2 Minutes)</option>
+                <option value="step_5m" selected>ทุก 5 นาที (Every 5 Minutes) — [แนะนำสำหรับ Audit]</option>
+                <option value="step_10m">ทุก 10 นาที (Every 10 Minutes)</option>
+                <option value="step_15m">ทุก 15 นาที (Every 15 Minutes)</option>
+                <option value="step_30m">ทุก 30 นาที (Every 30 Minutes)</option>
+                <option value="step_60m">ทุก 1 ชั่วโมง (Every 1 Hour)</option>
+              </optgroup>
+              <optgroup label="🎯 สุ่มกระจายเฉลี่ยตามจำนวนแถว (Fixed Sample Rows)">
+                <option value="fixed_15">เฉลี่ย 15 แถว (A4 1 หน้ากระดาษพอดี)</option>
+                <option value="fixed_25">เฉลี่ย 25 แถว (A4 1-2 หน้ากระดาษ)</option>
+                <option value="fixed_50">เฉลี่ย 50 แถว (A4 2-3 หน้ากระดาษ)</option>
+                <option value="fixed_100">เฉลี่ย 100 แถว (รายงานละเอียดพิเศษ)</option>
+              </optgroup>
+              <optgroup label="📋 ดึงทุกจุดข้อมูล (All Logged Points)">
+                <option value="all">ดึงทุกจุดข้อมูลทั้งหมด (ไม่ข้ามจุด)</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <!-- Metadata -->
+          <div class="export-form-group" style="display:flex; gap:12px;">
+            <div style="flex:1;">
+              <label class="export-label">รหัสรุ่นการผลิต (Batch / Lot Ref.):</label>
+              <input type="text" class="export-select" id="trend-pdf-batch-input" placeholder="เช่น UHT-B261012-01">
+            </div>
+            <div style="flex:1;">
+              <label class="export-label">ผู้บันทึก / หมายเหตุ (Operator / Note):</label>
+              <input type="text" class="export-select" id="trend-pdf-operator-input" placeholder="เช่น SCADA Operations Team">
+            </div>
+          </div>
+
+          <!-- Report Sections Toggles -->
+          <div class="export-form-group">
+            <label class="export-label">องค์ประกอบที่บรรจุในเอกสาร PDF (Report Sections):</label>
+            <div class="trend-pdf-options-grid">
+              <label class="trend-pdf-opt-label">
+                <input type="checkbox" id="trend-pdf-opt-chart" checked>
+                <span>📈 ภาพกราฟเส้นแนวโน้ม (High-Res Chart)</span>
+              </label>
+              <label class="trend-pdf-opt-label">
+                <input type="checkbox" id="trend-pdf-opt-stats" checked>
+                <span>📊 ตารางสรุปสถิติ & เกณฑ์ CCP Compliance</span>
+              </label>
+              <label class="trend-pdf-opt-label">
+                <input type="checkbox" id="trend-pdf-opt-table" checked>
+                <span>⏱️ ตารางดึงข้อมูล Time Stamp ตาม Setting</span>
+              </label>
+              <label class="trend-pdf-opt-label">
+                <input type="checkbox" id="trend-pdf-opt-sign" checked>
+                <span>✍️ ช่องลงนามรับรอง 3 ฝ่าย (Sign-off Block)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Estimate Box -->
+          <div class="export-estimate-box">
+            <div class="est-row">
+              <span>จุดข้อมูลต้นทางในกราฟ:</span>
+              <strong id="trend-pdf-est-source-points" style="color: #38bdf8;">721 จุด</strong>
+            </div>
+            <div class="est-row" style="margin-top:4px;">
+              <span>ประมาณการข้อมูล Time Stamp ในรายงาน:</span>
+              <strong id="trend-pdf-est-target-rows" style="color: #4ade80;">24 แถว (ทุก 5 นาที)</strong>
+            </div>
+            <div class="est-hint" id="trend-pdf-est-hint">ระบบจะดึงเฉพาะ Record ที่ตรงตาม Interval เวลาที่เลือกอย่างแม่นยำ พร้อมระบุวันที่และเวลาเอเชีย/กรุงเทพฯ (+07:00)</div>
+          </div>
+        </div>
+        <div class="scada-modal-footer">
+          <button class="ctrl-btn" onclick="closeTrendPdfModal()">ยกเลิก</button>
+          <div style="display:flex; gap:8px;">
+            <button class="ctrl-btn btn-export" onclick="executeConfiguredTrendCsv()" style="font-weight:600;" title="ดาวน์โหลดตารางข้อมูลนี้เป็นไฟล์ CSV">
+              📥 ส่งออกตาราง CSV
+            </button>
+            <button class="ctrl-btn btn-trend-pdf" id="btn-trend-pdf-confirm" onclick="executeConfiguredTrendPdf()" style="font-weight:700;" title="เปิดเอกสารรายงานและสั่งพิมพ์ / บันทึกเป็น PDF">
+              🖨️ สร้างรายงาน PDF ทันที
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- FOOTER -->
     <footer class="app-footer">
       <div class="footer-left">
-        TH-PACK INDUSTRIAL AUTOMATION • DESIGNED FOR EXECUTIVE MANAGEMENT & SENIOR PLANT ENGINEERS
+        xDev.CO.LTD INDUSTRIAL AUTOMATION • DESIGNED FOR EXECUTIVE MANAGEMENT & SENIOR PLANT ENGINEERS
       </div>
       <div class="footer-right font-mono">
         ISO-101 COMPLIANT • REFRESH: LIVE (1.0s) • TAILSCALE / LAN ENABLED

@@ -19,7 +19,7 @@ from app.report_generator import generate_step_report_html
 from app.database import fetch_all, execute_insert
 
 app = FastAPI(
-    title="TH-Pack Siemens S7 Industrial Plant Operations Intelligence API",
+    title="xDev.CO.LTD Siemens S7 Industrial Plant Operations Intelligence API",
     description="Real-time SCADA telemetry, 1-Year Historian & Process Step Log Report for UHT, ATANK, CIP 1/2, Prod Supply & Sinamics G120C VSD Fleet",
     version="2.2.0"
 )
@@ -97,7 +97,7 @@ def spawn_worker():
 @app.on_event("startup")
 async def startup_event():
     print("==================================================================")
-    print("TH-PACK INDUSTRIAL SCADA API GATEWAY & SUPERVISOR INITIALIZING...")
+    print("xDev.CO.LTD INDUSTRIAL SCADA API GATEWAY & SUPERVISOR INITIALIZING...")
     print("Target Node: Siemens S7-1500 PLC (192.168.1.11:102)")
     print("==================================================================")
     # 1. Spawn / Verify Telemetry Ingestion Worker
@@ -190,7 +190,7 @@ def root():
         except Exception:
             pass
     return {
-        "service": "TH-Pack Master SCADA Operations Intelligence API Gateway",
+        "service": "xDev.CO.LTD Master SCADA Operations Intelligence API Gateway",
         "plant": "RUNGSAPPATTANA (THAILAND) CO., LTD.",
         "plc_host": "192.168.1.11:102",
         "status": "ONLINE",
@@ -231,7 +231,7 @@ def health_check():
 
     return {
         "status": overall_status,
-        "system": "TH-PACK Industrial SCADA (RUNGSAPPATTANA Plant)",
+        "system": "xDev.CO.LTD Industrial SCADA (RUNGSAPPATTANA Plant)",
         "plc_host": "192.168.1.11:102",
         "worker": worker_info,
         "active_websockets": len(connected_websockets),

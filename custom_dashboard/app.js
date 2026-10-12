@@ -1,4 +1,4 @@
-// TH-PACK Industrial SCADA Executive Operations Center Logic
+// By xDev.CO.LTD - Industrial SCADA Executive Operations Center Logic
 let charts = {};
 let currentPeriod = 'daily';
 let liveTelemetry = null;
@@ -1301,11 +1301,12 @@ function setupSectionRecorderControls() {
     });
   }
 
-  // Export CSV buttons - open resolution picker modal
-  document.querySelectorAll('.btn-export').forEach(btn => {
-    btn.addEventListener('click', () => {
+  // Export CSV buttons - direct Trend CSV export
+  document.querySelectorAll('.recorder-card .btn-export').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
       const sec = btn.getAttribute('data-section');
-      if (sec) openExportModal(sec, btn);
+      if (sec) exportDirectTrendCsv(sec, btn);
     });
   });
 
@@ -1525,7 +1526,8 @@ async function executeExportWithResolution() {
 
     // Build CSV with UTF-8 BOM (\uFEFF)
     let csv = '\uFEFF';
-    csv += `# UHT INTELLIGENT DASHBOARD - INDUSTRIAL PROCESS RECORDER REPORT\n`;
+    csv += `# RUNGSAPPATTANA (THAILAND) CO., LTD. - INDUSTRIAL PROCESS RECORDER REPORT\n`;
+    csv += `# UHT SCADA OPERATIONS & INVENTORY COMMAND CENTER • By xDev.CO.LTD\n`;
     csv += `# SECTION: ${sec.toUpperCase()}\n`;
     csv += `# EXPORT DATE: ${now.toLocaleString('th-TH')}\n`;
     csv += `# TIME RANGE: ${range.toUpperCase()}\n`;
@@ -2821,12 +2823,16 @@ window.exportHistorianCsvCustomRange = async function() {
     const filename = `${secTitles[sec] || sec}_Custom_${fromVal.replace(/[:T]/g, '')}_to_${toVal.replace(/[:T]/g, '')}.csv`;
 
     let csv = '\uFEFF';
-    csv += `# UHT INTELLIGENT DASHBOARD - HISTORIAN CUSTOM RANGE EXPORT\n`;
-    csv += `# SECTION: ${sec.toUpperCase()}\n`;
-    csv += `# FILTER FROM: ${fromVal.replace('T', ' ')}\n`;
-    csv += `# FILTER TO: ${toVal.replace('T', ' ')}\n`;
-    csv += `# EXPORT DATE: ${now.toLocaleString('th-TH')}\n`;
-    csv += `# TOTAL POINTS: ${data.count}\n#\n`;
+    csv += `# =========================================================================\n`;
+    csv += `# RUNGSAPPATTANA (THAILAND) CO., LTD. - SCADA PROCESS RECORDER REPORT\n`;
+    csv += `# UHT SCADA OPERATIONS & INVENTORY COMMAND CENTER • By xDev.CO.LTD\n`;
+    csv += `# =========================================================================\n`;
+    csv += `# PROCESS UNIT        : ${secTitles[sec] || sec.toUpperCase()}\n`;
+    csv += `# FILTER FROM         : ${fromVal.replace('T', ' ')} (Asia/Bangkok +07:00)\n`;
+    csv += `# FILTER TO           : ${toVal.replace('T', ' ')} (Asia/Bangkok +07:00)\n`;
+    csv += `# EXPORT DATE & TIME  : ${now.toLocaleDateString('th-TH')} ${now.toLocaleTimeString('th-TH')}\n`;
+    csv += `# TOTAL DATA POINTS   : ${data.count}\n`;
+    csv += `# =========================================================================\n#\n`;
 
     const labelsList = data.pen_labels || ['Pen 1', 'Pen 2', 'Pen 3', 'Pen 4', 'Pen 5'];
     csv += `Timestamp,` + labelsList.map(l => `"${l}"`).join(',') + '\n';
@@ -2866,6 +2872,917 @@ document.addEventListener('click', (e) => {
     closeHistorianRangeModal();
   }
 });
+
+
+// =========================================================================
+// OFFICIAL SCADA TREND EXPORT: DIRECT CSV & AUDIT PDF REPORT (BY xDev.CO.LTD)
+// =========================================================================
+const MARINE_LOGO_B64 = "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";
+
+window.exportDirectTrendCsv = async function(section, btnEl) {
+  let effectiveSec = section;
+  if (section === 'cip') {
+    const cur = sectionRecorders.cip?.currentCircuit;
+    if (cur === 'cip_line1' || cur === 'cip_line2') effectiveSec = cur;
+  }
+  
+  const rec = (effectiveSec === 'cip_line1' || effectiveSec === 'cip_line2') ? sectionRecorders.cip : sectionRecorders[effectiveSec];
+  if (!rec || !rec.chart) {
+    alert('ไม่พบกราฟสำหรับกระบวนการนี้');
+    return;
+  }
+
+  const btn = btnEl || document.getElementById('btn-export-' + section);
+  const origText = btn ? btn.innerHTML : '';
+  if (btn) {
+    btn.innerHTML = '⏳ กำลังส่งออก...';
+    btn.style.opacity = '0.7';
+  }
+
+  try {
+    let timestamps = [];
+    let datasetsData = [];
+    let labelsList = [];
+
+    const secTitles = {
+      uht: 'UHT_Sterilizer_Process',
+      atank: 'Aseptic_Tank_ATANK',
+      cip: 'CIP_Systems',
+      cip_line1: 'CIP_Circuit1_DB1801',
+      cip_line2: 'CIP_Circuit2_DB1802',
+      prod: 'Production_Duplex_Filter'
+    };
+
+    const secFullTitles = {
+      uht: 'UHT STERILIZER PROCESS [DB1200]',
+      atank: 'ASEPTIC TANK ATANK [DB1301]',
+      cip: 'CIP SYSTEMS LINE 1 & 2 [DB1801 / DB1802]',
+      cip_line1: 'CIP CIRCUIT 1 [DB1801] (LINE 1)',
+      cip_line2: 'CIP CIRCUIT 2 [DB1802] (LINE 2)',
+      prod: 'PRODUCTION SUPPLY & FILTRATION'
+    };
+
+    let rangeLabel = 'Current_Display';
+
+    if (rec.mode === 'live') {
+      rangeLabel = 'Live_' + (rec.windowSec || 60) + 's';
+      const rawTimes = rec.history.fullTimes && rec.history.fullTimes.length > 0 
+        ? rec.history.fullTimes 
+        : (rec.history.times || []);
+      const numPens = rec.chart.data.datasets.length;
+
+      for (let p = 0; p < numPens; p++) {
+        datasetsData.push([]);
+        labelsList.push(rec.chart.data.datasets[p].label || ('Pen ' + (p + 1)));
+      }
+
+      for (let i = 0; i < rawTimes.length; i++) {
+        timestamps.push(rawTimes[i]);
+        for (let p = 0; p < numPens; p++) {
+          const penArr = rec.history['pen' + p] || [];
+          datasetsData[p].push(penArr[i] !== undefined && penArr[i] !== null ? penArr[i] : '');
+        }
+      }
+    } else {
+      const chartTs = rec.chart.data.$fullTimestamps || rec.chart.$fullTimestamps || rec.chart.data.labels;
+      if (chartTs && chartTs.length > 0 && rec.chart.data.datasets.length > 0 && rec.chart.data.datasets[0].data.length > 0) {
+        timestamps = chartTs;
+        rangeLabel = rec.historyRange === 'custom' 
+          ? 'Custom_' + (rec.customFrom || '').replace(/[:T]/g, '') + '_to_' + (rec.customTo || '').replace(/[:T]/g, '')
+          : (rec.historyRange || 'History');
+        
+        rec.chart.data.datasets.forEach((ds, idx) => {
+          labelsList.push(ds.label || ('Pen ' + (idx + 1)));
+          datasetsData.push(ds.data || []);
+        });
+      } else {
+        const host = window.location.hostname || '127.0.0.1';
+        let url = 'http://' + host + ':8000/api/v1/telemetry/history?section=' + encodeURIComponent(effectiveSec) + '&range=' + encodeURIComponent(rec.historyRange || '1d');
+        if (rec.historyRange === 'custom' && rec.customFrom && rec.customTo) {
+          url = 'http://' + host + ':8000/api/v1/telemetry/history?section=' + encodeURIComponent(effectiveSec) + '&from_time=' + encodeURIComponent(rec.customFrom) + '&to_time=' + encodeURIComponent(rec.customTo);
+        }
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        if (data.status === 'success' && data.timestamps && data.timestamps.length > 0) {
+          timestamps = data.full_timestamps || data.timestamps;
+          datasetsData = data.pens || [];
+          labelsList = data.pen_labels || (rec.chart.data.datasets.map(d => d.label) || []);
+          rangeLabel = rec.historyRange || '1d';
+        }
+      }
+    }
+
+    if (!timestamps || timestamps.length === 0) {
+      alert('ยังไม่มีข้อมูลกราฟ Trend สำหรับส่งออกในช่วงเวลานี้');
+      return;
+    }
+
+    const now = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    const dateStr = '' + now.getFullYear() + pad(now.getMonth() + 1) + pad(now.getDate());
+    const timeStr = '' + pad(now.getHours()) + pad(now.getMinutes()) + pad(now.getSeconds());
+    const filename = 'TREND_' + (secTitles[effectiveSec] || effectiveSec) + '_' + rangeLabel + '_' + dateStr + '_' + timeStr + '.csv';
+
+    const fromTime = timestamps[0] || '—';
+    const toTime = timestamps[timestamps.length - 1] || '—';
+
+    let csv = '\uFEFF';
+    csv += '# =========================================================================\n';
+    csv += '# RUNGSAPPATTANA (THAILAND) CO., LTD. - SCADA PROCESS RECORDER REPORT\n';
+    csv += '# UHT SCADA OPERATIONS & INVENTORY COMMAND CENTER • By xDev.CO.LTD\n';
+    csv += '# =========================================================================\n';
+    csv += '# PROCESS UNIT        : ' + (secFullTitles[effectiveSec] || effectiveSec.toUpperCase()) + '\n';
+    csv += '# SELECTED HORIZON    : ' + rangeLabel.replace(/_/g, ' ') + '\n';
+    csv += '# START TIMESTAMP     : ' + fromTime + ' (Asia/Bangkok +07:00)\n';
+    csv += '# END TIMESTAMP       : ' + toTime + ' (Asia/Bangkok +07:00)\n';
+    csv += '# TOTAL DATA POINTS   : ' + timestamps.length + '\n';
+    csv += '# EXPORT DATE & TIME  : ' + now.toLocaleDateString('th-TH') + ' ' + now.toLocaleTimeString('th-TH') + '\n';
+    csv += '# =========================================================================\n#\n';
+
+    const headerCols = ['ลำดับ (Index)', 'วัน-เวลา (Timestamp Asia/Bangkok +07:00)'];
+    labelsList.forEach(l => headerCols.push('"' + (l || '').replace(/"/g, '""') + '"'));
+    csv += headerCols.join(',') + '\n';
+
+    for (let i = 0; i < timestamps.length; i++) {
+      const row = [i + 1, '"' + timestamps[i] + '"'];
+      for (let p = 0; p < datasetsData.length; p++) {
+        const val = datasetsData[p][i];
+        row.push(val !== undefined && val !== null ? val : '');
+      }
+      csv += row.join(',') + '\n';
+    }
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(blobUrl);
+
+    if (btn) {
+      btn.innerHTML = '✅ ส่งออกสำเร็จ!';
+      btn.style.background = 'rgba(16, 185, 129, 0.35)';
+      btn.style.borderColor = '#10b981';
+      btn.style.color = '#fff';
+      setTimeout(() => {
+        btn.innerHTML = origText || '📥 ส่งออก Trend CSV';
+        btn.style.background = '';
+        btn.style.borderColor = '';
+        btn.style.color = '';
+        btn.style.opacity = '1';
+      }, 2500);
+    }
+  } catch (err) {
+    console.error('Failed to export trend CSV:', err);
+    alert('เกิดข้อผิดพลาดในการส่งออกไฟล์ CSV: ' + err.message);
+    if (btn) {
+      btn.innerHTML = origText || '📥 ส่งออก Trend CSV';
+      btn.style.opacity = '1';
+    }
+  }
+};
+
+// =========================================================================
+// TREND PDF REPORT & DATA STAMP SETTINGS MODAL & SAMPLING LOGIC
+// =========================================================================
+
+function parseTimestampToMs(tsStr) {
+  if (!tsStr) return null;
+  if (tsStr instanceof Date) return tsStr.getTime();
+  if (typeof tsStr === 'number') return tsStr;
+
+  const str = String(tsStr).trim();
+  // Format DD/MM/YYYY HH:mm:ss or DD/MM/YYYY HH:mm
+  const dmyMatch = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?/);
+  if (dmyMatch) {
+    const day = parseInt(dmyMatch[1], 10);
+    const month = parseInt(dmyMatch[2], 10) - 1;
+    const year = parseInt(dmyMatch[3], 10);
+    const hour = dmyMatch[4] ? parseInt(dmyMatch[4], 10) : 0;
+    const min = dmyMatch[5] ? parseInt(dmyMatch[5], 10) : 0;
+    const sec = dmyMatch[6] ? parseInt(dmyMatch[6], 10) : 0;
+    return new Date(year, month, day, hour, min, sec).getTime();
+  }
+
+  // Format YYYY-MM-DD HH:mm:ss or ISO
+  const isoMatch = str.match(/^(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{2}):(\d{2})(?::(\d{2}))?)?/);
+  if (isoMatch) {
+    const year = parseInt(isoMatch[1], 10);
+    const month = parseInt(isoMatch[2], 10) - 1;
+    const day = parseInt(isoMatch[3], 10);
+    const hour = isoMatch[4] ? parseInt(isoMatch[4], 10) : 0;
+    const min = isoMatch[5] ? parseInt(isoMatch[5], 10) : 0;
+    const sec = isoMatch[6] ? parseInt(isoMatch[6], 10) : 0;
+    return new Date(year, month, day, hour, min, sec).getTime();
+  }
+
+  // Format HH:mm:ss
+  const timeMatch = str.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
+  if (timeMatch) {
+    const now = new Date();
+    const hour = parseInt(timeMatch[1], 10);
+    const min = parseInt(timeMatch[2], 10);
+    const sec = timeMatch[3] ? parseInt(timeMatch[3], 10) : 0;
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, min, sec).getTime();
+  }
+
+  const d = new Date(str);
+  return isNaN(d.getTime()) ? null : d.getTime();
+}
+
+function calculateSampleIndices(timestamps, intervalSetting) {
+  const total = timestamps.length;
+  if (total === 0) return [];
+
+  if (intervalSetting === 'all') {
+    const res = [];
+    for (let i = 0; i < total; i++) res.push(i);
+    return res;
+  }
+
+  if (intervalSetting && intervalSetting.startsWith('fixed_')) {
+    const targetCount = parseInt(intervalSetting.replace('fixed_', ''), 10) || 25;
+    if (total <= targetCount) {
+      const res = [];
+      for (let i = 0; i < total; i++) res.push(i);
+      return res;
+    }
+    const res = [];
+    const step = (total - 1) / (targetCount - 1);
+    for (let k = 0; k < targetCount; k++) {
+      res.push(Math.round(k * step));
+    }
+    return res;
+  }
+
+  // Time-based interval: step_1m, step_2m, step_5m, step_10m, step_15m, step_30m, step_60m
+  let intervalMinutes = 5;
+  if (intervalSetting && intervalSetting.startsWith('step_')) {
+    intervalMinutes = parseInt(intervalSetting.replace('step_', '').replace('m', ''), 10) || 5;
+  }
+  const intervalMs = intervalMinutes * 60 * 1000;
+
+  const parsedMs = timestamps.map(ts => parseTimestampToMs(ts));
+  const validCount = parsedMs.filter(m => m !== null).length;
+
+  if (validCount >= total * 0.5) {
+    const res = [];
+    let lastSampledMs = null;
+    for (let i = 0; i < total; i++) {
+      const curMs = parsedMs[i];
+      if (curMs === null) continue;
+      if (lastSampledMs === null) {
+        res.push(i);
+        lastSampledMs = curMs;
+      } else if ((curMs - lastSampledMs) >= (intervalMs - 1500)) {
+        res.push(i);
+        lastSampledMs = curMs;
+      }
+    }
+    if (res.length > 0 && res[res.length - 1] !== total - 1) {
+      res.push(total - 1);
+    }
+    if (res.length > 0) return res;
+  }
+
+  // Fallback if timestamps are index/relative
+  const step = Math.max(1, Math.round(total / 24));
+  const res = [];
+  for (let i = 0; i < total; i += step) {
+    res.push(i);
+  }
+  if (res[res.length - 1] !== total - 1) res.push(total - 1);
+  return res;
+}
+
+window.openTrendPdfModal = function(section, fromTime, toTime) {
+  let effectiveSec = section || 'uht';
+  if (section === 'cip') {
+    const cur = sectionRecorders.cip?.currentCircuit;
+    if (cur === 'cip_line1' || cur === 'cip_line2') effectiveSec = cur;
+  }
+
+  const modal = document.getElementById('trend-pdf-modal-overlay');
+  if (!modal) return;
+
+  const secSelect = document.getElementById('trend-pdf-sec-select');
+  if (secSelect) secSelect.value = effectiveSec;
+
+  const radioCurrent = document.querySelector('input[name="trend-pdf-scope-radio"][value="current"]');
+  const radioCustom = document.querySelector('input[name="trend-pdf-scope-radio"][value="custom"]');
+  const customBox = document.getElementById('trend-pdf-custom-range-box');
+  const fromInput = document.getElementById('trend-pdf-from-input');
+  const toInput = document.getElementById('trend-pdf-to-input');
+
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  const formatIsoLocal = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+
+  if (fromTime && toTime) {
+    if (radioCustom) radioCustom.checked = true;
+    if (customBox) customBox.style.display = 'flex';
+    if (fromInput) fromInput.value = fromTime;
+    if (toInput) toInput.value = toTime;
+  } else {
+    if (radioCurrent) radioCurrent.checked = true;
+    if (customBox) customBox.style.display = 'none';
+    if (toInput) toInput.value = formatIsoLocal(now);
+    const oneDayAgo = new Date(now.getTime() - 24 * 3600 * 1000);
+    if (fromInput) fromInput.value = formatIsoLocal(oneDayAgo);
+  }
+
+  const batchInput = document.getElementById('trend-pdf-batch-input');
+  if (batchInput) {
+    const prefix = effectiveSec.toUpperCase().slice(0, 3);
+    const dateCode = now.toISOString().slice(2, 10).replace(/-/g, '');
+    batchInput.value = `${prefix}-B${dateCode}-01`;
+  }
+
+  updateTrendPdfEstimate();
+  modal.classList.add('active');
+};
+
+window.closeTrendPdfModal = function() {
+  const modal = document.getElementById('trend-pdf-modal-overlay');
+  if (modal) modal.classList.remove('active');
+};
+
+window.onTrendPdfScopeChange = function() {
+  const isCustom = document.querySelector('input[name="trend-pdf-scope-radio"][value="custom"]')?.checked;
+  const customBox = document.getElementById('trend-pdf-custom-range-box');
+  if (customBox) {
+    customBox.style.display = isCustom ? 'flex' : 'none';
+  }
+  updateTrendPdfEstimate();
+};
+
+window.onTrendPdfSectionChange = function() {
+  const sec = document.getElementById('trend-pdf-sec-select')?.value || 'uht';
+  const now = new Date();
+  const prefix = sec.toUpperCase().slice(0, 3);
+  const dateCode = now.toISOString().slice(2, 10).replace(/-/g, '');
+  const batchInput = document.getElementById('trend-pdf-batch-input');
+  if (batchInput) batchInput.value = `${prefix}-B${dateCode}-01`;
+  updateTrendPdfEstimate();
+};
+
+window.updateTrendPdfEstimate = function() {
+  const sec = document.getElementById('trend-pdf-sec-select')?.value || 'uht';
+  const interval = document.getElementById('trend-pdf-interval-select')?.value || 'step_5m';
+  const isCustom = document.querySelector('input[name="trend-pdf-scope-radio"][value="custom"]')?.checked;
+
+  const rec = (sec === 'cip_line1' || sec === 'cip_line2') ? sectionRecorders.cip : sectionRecorders[sec];
+  const chartTs = rec?.chart?.data?.$fullTimestamps || rec?.chart?.$fullTimestamps || rec?.chart?.data?.labels || [];
+  const sourceCount = chartTs.length || (rec?.history?.times?.length || 0);
+
+  const srcPtsEl = document.getElementById('trend-pdf-est-source-points');
+  const tgtRowsEl = document.getElementById('trend-pdf-est-target-rows');
+  const hintEl = document.getElementById('trend-pdf-est-hint');
+
+  if (srcPtsEl) {
+    srcPtsEl.textContent = isCustom ? 'จะดึงใหม่จาก InfluxDB ตามช่วงเวลา' : `${sourceCount} จุด`;
+  }
+
+  let estRows = 24;
+  const labelMap = {
+    step_1m: 'ทุก 1 นาที',
+    step_2m: 'ทุก 2 นาที',
+    step_5m: 'ทุก 5 นาที',
+    step_10m: 'ทุก 10 นาที',
+    step_15m: 'ทุก 15 นาที',
+    step_30m: 'ทุก 30 นาที',
+    step_60m: 'ทุก 1 ชั่วโมง',
+    fixed_15: 'เฉลี่ย 15 แถว',
+    fixed_25: 'เฉลี่ย 25 แถว',
+    fixed_50: 'เฉลี่ย 50 แถว',
+    fixed_100: 'เฉลี่ย 100 แถว',
+    all: 'ทุกจุดข้อมูลทั้งหมด'
+  };
+  const intervalLabel = labelMap[interval] || interval;
+
+  if (interval === 'all') {
+    estRows = sourceCount || 720;
+  } else if (interval.startsWith('fixed_')) {
+    estRows = parseInt(interval.replace('fixed_', ''), 10) || 25;
+  } else if (chartTs.length > 1) {
+    const indices = calculateSampleIndices(chartTs, interval);
+    estRows = indices.length;
+  }
+
+  if (tgtRowsEl) {
+    tgtRowsEl.textContent = `~${estRows} แถว (${intervalLabel})`;
+  }
+  if (hintEl) {
+    hintEl.textContent = `ระบบจะดึงเฉพาะ Record ที่ตรงตาม Interval เวลา (${intervalLabel}) เพื่อลงตาราง Audit Trail ในรายงาน PDF`;
+  }
+};
+
+window.executeConfiguredTrendPdf = async function() {
+  const sec = document.getElementById('trend-pdf-sec-select')?.value || 'uht';
+  const isCustom = document.querySelector('input[name="trend-pdf-scope-radio"][value="custom"]')?.checked;
+  const fromVal = document.getElementById('trend-pdf-from-input')?.value;
+  const toVal = document.getElementById('trend-pdf-to-input')?.value;
+  const interval = document.getElementById('trend-pdf-interval-select')?.value || 'step_5m';
+  const batchNo = document.getElementById('trend-pdf-batch-input')?.value || '';
+  const operatorNote = document.getElementById('trend-pdf-operator-input')?.value || '';
+
+  const includeChart = document.getElementById('trend-pdf-opt-chart')?.checked !== false;
+  const includeStats = document.getElementById('trend-pdf-opt-stats')?.checked !== false;
+  const includeTable = document.getElementById('trend-pdf-opt-table')?.checked !== false;
+  const includeSign = document.getElementById('trend-pdf-opt-sign')?.checked !== false;
+
+  const btnConfirm = document.getElementById('btn-trend-pdf-confirm');
+  if (btnConfirm) {
+    btnConfirm.disabled = true;
+    btnConfirm.textContent = '⏳ กำลังเตรียมรายงาน...';
+  }
+
+  try {
+    if (isCustom) {
+      if (!fromVal || !toVal) {
+        alert('กรุณาระบุทั้งวัน-เวลาเริ่มต้น (From) และสิ้นสุด (To)');
+        if (btnConfirm) { btnConfirm.disabled = false; btnConfirm.textContent = '🖨️ สร้างรายงาน PDF ทันที'; }
+        return;
+      }
+      if (new Date(fromVal) > new Date(toVal)) {
+        alert('วัน-เวลาเริ่มต้น (From) ต้องมาก่อนวัน-เวลาสิ้นสุด (To)');
+        if (btnConfirm) { btnConfirm.disabled = false; btnConfirm.textContent = '🖨️ สร้างรายงาน PDF ทันที'; }
+        return;
+      }
+      await loadHistoricalCustomRange(sec, fromVal, toVal, '');
+    }
+
+    generateTrendPdfDocument(sec, {
+      interval,
+      batchNo,
+      operatorNote,
+      includeChart,
+      includeStats,
+      includeTable,
+      includeSign,
+      scope: isCustom ? 'custom' : 'current'
+    });
+
+    closeTrendPdfModal();
+  } catch (err) {
+    console.error('Error generating configured trend PDF:', err);
+    alert('เกิดข้อผิดพลาดในการสร้างรายงาน PDF: ' + err.message);
+  } finally {
+    if (btnConfirm) {
+      btnConfirm.disabled = false;
+      btnConfirm.textContent = '🖨️ สร้างรายงาน PDF ทันที';
+    }
+  }
+};
+
+window.executeConfiguredTrendCsv = async function() {
+  const sec = document.getElementById('trend-pdf-sec-select')?.value || 'uht';
+  const isCustom = document.querySelector('input[name="trend-pdf-scope-radio"][value="custom"]')?.checked;
+  const fromVal = document.getElementById('trend-pdf-from-input')?.value;
+  const toVal = document.getElementById('trend-pdf-to-input')?.value;
+  const interval = document.getElementById('trend-pdf-interval-select')?.value || 'step_5m';
+
+  if (isCustom) {
+    if (!fromVal || !toVal) {
+      alert('กรุณาระบุทั้งวัน-เวลาเริ่มต้น (From) และสิ้นสุด (To)');
+      return;
+    }
+    await loadHistoricalCustomRange(sec, fromVal, toVal, '');
+  }
+
+  const effectiveSec = (sec === 'cip_line1' || sec === 'cip_line2') ? sec : sec;
+  const rec = (sec === 'cip_line1' || sec === 'cip_line2') ? sectionRecorders.cip : sectionRecorders[sec];
+  if (!rec || !rec.chart) {
+    alert('ไม่พบข้อมูลกราฟสำหรับหมวดนี้');
+    return;
+  }
+
+  const timestamps = rec.chart.data.$fullTimestamps || rec.chart.$fullTimestamps || rec.chart.data.labels || [];
+  if (timestamps.length === 0) {
+    alert('ไม่มีข้อมูลสำหรับส่งออก CSV');
+    return;
+  }
+
+  const sampleIndices = calculateSampleIndices(timestamps, interval);
+  const datasets = rec.chart.data.datasets || [];
+  const confList = PEN_ALARM_LIMITS[effectiveSec] || [];
+
+  const headers = ['#', 'Date_Time_Bangkok_0700'];
+  datasets.forEach((ds, idx) => {
+    const conf = confList[idx];
+    const tag = conf?.tag || ds.label;
+    const unit = conf?.unit ? `_${conf.unit}` : '';
+    headers.push(`"${tag}${unit}"`);
+  });
+
+  const rows = [
+    `# RUNGSAPPATTANA (THAILAND) CO. LTD. - SCADA TREND STAMP DATA EXPORT`,
+    `# Process: ${sec.toUpperCase()} • Interval Setting: ${interval} • Attribution: By xDev.CO.LTD`,
+    headers.join(',')
+  ];
+
+  sampleIndices.forEach((rowIdx, seq) => {
+    const ts = timestamps[rowIdx] || '';
+    const r = [seq + 1, `"${ts}"`];
+    for (let p = 0; p < datasets.length; p++) {
+      const val = datasets[p].data ? datasets[p].data[rowIdx] : null;
+      if (val !== null && val !== undefined && !isNaN(val)) {
+        r.push(Number(val).toFixed(2));
+      } else {
+        r.push('');
+      }
+    }
+    rows.push(r.join(','));
+  });
+
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  const fileDate = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}`;
+  const filename = `RUNGSAPPATTANA_${sec.toUpperCase()}_STAMP_DATA_${interval}_${fileDate}.csv`;
+
+  const csvContent = '\uFEFF' + rows.join('\r\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
+window.exportTrendPdfReport = function(section) {
+  openTrendPdfModal(section);
+};
+
+window.exportHistorianPdfCustomRange = function() {
+  const sec = document.getElementById('hist-section-select')?.value || 'uht';
+  const fromVal = document.getElementById('hist-from-input')?.value;
+  const toVal = document.getElementById('hist-to-input')?.value;
+  closeHistorianRangeModal();
+  openTrendPdfModal(sec, fromVal, toVal);
+};
+
+window.generateTrendPdfDocument = function(section, options) {
+  const opts = options || {};
+  const intervalSetting = opts.interval || 'step_5m';
+  const includeChart = opts.includeChart !== false;
+  const includeStats = opts.includeStats !== false;
+  const includeTable = opts.includeTable !== false;
+  const includeSign = opts.includeSign !== false;
+
+  let effectiveSec = section;
+  if (section === 'cip') {
+    const cur = sectionRecorders.cip?.currentCircuit;
+    if (cur === 'cip_line1' || cur === 'cip_line2') effectiveSec = cur;
+  }
+  
+  const rec = (effectiveSec === 'cip_line1' || effectiveSec === 'cip_line2') ? sectionRecorders.cip : sectionRecorders[effectiveSec];
+  if (!rec || !rec.chart) {
+    alert('ไม่พบข้อมูลกราฟสำหรับกระบวนการนี้');
+    return;
+  }
+
+  const timestamps = rec.chart.data.$fullTimestamps || rec.chart.$fullTimestamps || rec.chart.data.labels || [];
+  if (timestamps.length === 0) {
+    alert('ยังไม่มีข้อมูลกราฟ Trend สำหรับออกรายงาน PDF');
+    return;
+  }
+
+  const chartImgUri = rec.chart.toBase64Image('image/png', 1.0);
+  const fromTime = timestamps[0] || '—';
+  const toTime = timestamps[timestamps.length - 1] || '—';
+  const totalPoints = timestamps.length;
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  const dateStr = '' + pad(now.getDate()) + '/' + pad(now.getMonth() + 1) + '/' + now.getFullYear();
+  const timeStr = '' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+
+  const labelMap = {
+    step_1m: 'ทุก 1 นาที (Every 1 Min)',
+    step_2m: 'ทุก 2 นาที (Every 2 Mins)',
+    step_5m: 'ทุก 5 นาที (Every 5 Mins)',
+    step_10m: 'ทุก 10 นาที (Every 10 Mins)',
+    step_15m: 'ทุก 15 นาที (Every 15 Mins)',
+    step_30m: 'ทุก 30 นาที (Every 30 Mins)',
+    step_60m: 'ทุก 1 ชั่วโมง (Every 1 Hour)',
+    fixed_15: 'สุ่มเฉลี่ย 15 แถว (Fixed 15 Rows)',
+    fixed_25: 'สุ่มเฉลี่ย 25 แถว (Fixed 25 Rows)',
+    fixed_50: 'สุ่มเฉลี่ย 50 แถว (Fixed 50 Rows)',
+    fixed_100: 'สุ่มเฉลี่ย 100 แถว (Fixed 100 Rows)',
+    all: 'บันทึกทุกจุดข้อมูลทั้งหมด (All Logged Points)'
+  };
+  const intervalDesc = labelMap[intervalSetting] || intervalSetting;
+
+  const secMeta = {
+    uht: {
+      name: 'UHT STERILIZATION UNIT [DB1200]',
+      desc: 'Continuous High-Temperature Short-Time Sterilization Process Trend Report',
+      batch: opts.batchNo || ('UHT-B' + now.toISOString().slice(2, 10).replace(/-/g, '') + '-01')
+    },
+    atank: {
+      name: 'ASEPTIC TANK STORAGE SYSTEM [DB1301]',
+      desc: 'Aseptic Air Barrier & Sterile Storage Integrity Process Trend Report',
+      batch: opts.batchNo || ('ATK-B' + now.toISOString().slice(2, 10).replace(/-/g, '') + '-01')
+    },
+    cip: {
+      name: 'CIP DUAL-LINE CHEMICAL & THERMAL RECORDER',
+      desc: 'Clean-In-Place Dual Circuit Conductivity & Thermal Trend Report',
+      batch: opts.batchNo || ('CIP-B' + now.toISOString().slice(2, 10).replace(/-/g, '') + '-01')
+    },
+    cip_line1: {
+      name: 'CIP CIRCUIT 1 [DB1801] (FILLER MACHINE)',
+      desc: 'Clean-In-Place Circuit 1 Conductivity & Thermal Trend Report',
+      batch: opts.batchNo || ('CIP1-B' + now.toISOString().slice(2, 10).replace(/-/g, '') + '-01')
+    },
+    cip_line2: {
+      name: 'CIP CIRCUIT 2 [DB1802] (ASEPTIC TANK)',
+      desc: 'Clean-In-Place Circuit 2 Conductivity & Thermal Trend Report',
+      batch: opts.batchNo || ('CIP2-B' + now.toISOString().slice(2, 10).replace(/-/g, '') + '-01')
+    },
+    prod: {
+      name: 'SUPPLY & DUPLEX FILTRATION SYSTEM',
+      desc: 'Pressure & Filtration Differential Integrity Trend Report',
+      batch: opts.batchNo || ('PRD-B' + now.toISOString().slice(2, 10).replace(/-/g, '') + '-01')
+    }
+  };
+
+  const meta = secMeta[effectiveSec] || {
+    name: effectiveSec.toUpperCase(),
+    desc: 'SCADA Telemetry Process Trend Report',
+    batch: opts.batchNo || ('BAT-' + now.toISOString().slice(2, 10).replace(/-/g, '') + '-01')
+  };
+
+  const confList = PEN_ALARM_LIMITS[effectiveSec] || [];
+  const datasets = rec.chart.data.datasets || [];
+  const statRows = [];
+
+  for (let i = 0; i < datasets.length; i++) {
+    const ds = datasets[i];
+    const conf = confList[i] || { tag: ds.label, unit: '', target: '—', ll: null, l: null, h: null, hh: null, ccp: false };
+    const rawVals = ds.data || [];
+    const validVals = rawVals.filter(v => v !== null && v !== undefined && !isNaN(v));
+
+    let minStr = '—', maxStr = '—', avgStr = '—', lastStr = '—', statusStr = 'NORMAL', statusColor = '#059669';
+    if (validVals.length > 0) {
+      const min = Math.min(...validVals);
+      const max = Math.max(...validVals);
+      const avg = validVals.reduce((a, b) => a + b, 0) / validVals.length;
+      const last = validVals[validVals.length - 1];
+
+      const fmt = v => conf.unit === 'kg'
+        ? Number(v).toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+        : Number(v).toFixed(2);
+
+      minStr = fmt(min);
+      maxStr = fmt(max);
+      avgStr = fmt(avg);
+      lastStr = fmt(last);
+
+      const ev = evaluatePenAlarm(conf, last);
+      statusStr = ev.status;
+      if (statusStr === 'CRITICAL') statusColor = '#dc2626';
+      else if (statusStr === 'WARNING') statusColor = '#d97706';
+      else statusColor = '#059669';
+    }
+
+    statRows.push(`
+      <tr>
+        <td style="font-weight:700; color:#0f172a;">
+          <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:${ds.borderColor || '#38bdf8'}; margin-right:6px; vertical-align:middle;"></span>
+          ${conf.tag || ds.label}
+          ${conf.ccp ? '<span style="color:#dc2626; font-size:7pt; font-weight:800; margin-left:4px;">[CCP]</span>' : ''}
+        </td>
+        <td style="text-align:center; font-family:monospace; color:#475569;">${conf.unit || '—'}</td>
+        <td style="text-align:center; font-size:7.5pt; color:#334155;">${conf.target || '—'}</td>
+        <td style="text-align:center; font-family:monospace; font-weight:700; color:#0284c7;">${minStr}</td>
+        <td style="text-align:center; font-family:monospace; font-weight:700; color:#b91c1c;">${maxStr}</td>
+        <td style="text-align:center; font-family:monospace; font-weight:700; color:#0d9488;">${avgStr}</td>
+        <td style="text-align:center; font-family:monospace; font-weight:800; color:#1e293b; background:#f1f5f9;">${lastStr}</td>
+        <td style="text-align:center; font-family:monospace; font-size:7pt; color:#64748b;">${conf.ll !== null ? conf.ll : '-'} / ${conf.hh !== null ? conf.hh : '-'}</td>
+        <td style="text-align:center; font-weight:800; color:${statusColor}; font-size:8pt;">${statusStr}</td>
+      </tr>
+    `);
+  }
+
+  const sampleIndices = calculateSampleIndices(timestamps, intervalSetting);
+
+  const sampleHeaders = ['#', 'วัน-เวลา (Date-Time +07:00)'];
+  datasets.forEach((ds, idx) => {
+    const conf = confList[idx];
+    sampleHeaders.push(conf?.tag ? (conf.tag + ' (' + conf.unit + ')') : ds.label);
+  });
+
+  const sampleRowsHtml = sampleIndices.map((rowIdx, num) => {
+    const bg = num % 2 === 0 ? '#ffffff' : '#f8fafc';
+    const ts = timestamps[rowIdx] || '';
+    const cols = ['<td style="text-align:center; font-family:monospace; color:#64748b;">' + (num + 1) + '</td>', '<td style="text-align:center; font-family:monospace; font-weight:600; color:#0f172a;">' + ts + '</td>'];
+    for (let p = 0; p < datasets.length; p++) {
+      const conf = confList[p];
+      const val = datasets[p].data ? datasets[p].data[rowIdx] : null;
+      let valDisp = '—';
+      if (val !== null && val !== undefined && !isNaN(val)) {
+        valDisp = conf?.unit === 'kg' 
+          ? Number(val).toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+          : Number(val).toFixed(2);
+      }
+      cols.push('<td style="text-align:center; font-family:monospace; color:#1e293b;">' + valDisp + '</td>');
+    }
+    return '<tr style="background:' + bg + ';">' + cols.join('') + '</tr>';
+  }).join('');
+
+  const rangeHorizon = rec.mode === 'live' 
+    ? ('Live Streaming (' + (rec.windowSec || 60) + ' วินาที)')
+    : (rec.historyRange === 'custom' ? 'ช่วงกำหนดเอง (From-To)' : ('ย้อนหลัง ' + (rec.historyRange || '1 วัน')));
+
+  const noteBlock = opts.operatorNote ? `<tr><td class="field-lbl">Operator Note :</td><td colspan="3" class="field-val" style="color:#0f172a; font-weight:600;">${opts.operatorNote}</td></tr>` : '';
+
+  const html = `<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>RUNGSAPPATTANA (THAILAND) — ${meta.name} TREND REPORT</title>
+<style>
+@page { size: A4 landscape; margin: 6mm 8mm; }
+* { box-sizing: border-box; font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+body { font-size: 8pt; color: #0f172a; background: #fff; padding: 10px 14px; margin: 0; line-height: 1.25; }
+table { width: 100%; border-collapse: collapse; page-break-inside: auto; }
+tr { page-break-inside: avoid; page-break-after: auto; }
+thead { display: table-header-group; }
+th, td { font-size: 7.5pt; border: 1px solid #cbd5e1; padding: 3px 5px; }
+th { background: #1e293b; color: #ffffff; font-weight: 700; text-align: center; }
+.header-box { border: 2px solid #0f172a; margin-bottom: 6px; }
+.header-table td { border: none; padding: 3px 6px; }
+.field-lbl { color: #64748b; font-size: 7pt; }
+.field-val { font-weight: 700; color: #0f172a; font-size: 8pt; }
+.chart-box { border: 1.5px solid #0f172a; border-radius: 6px; padding: 4px; background: #070d17; text-align: center; margin: 6px 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.chart-img { width: 100%; max-height: 250px; object-fit: contain; display: block; margin: 0 auto; }
+.section-title-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; margin-bottom: 3px; font-weight: 800; font-size: 8.5pt; color: #0f172a; }
+.print-btn-bar { text-align: right; margin-bottom: 8px; }
+.btn-print { background: #ea580c; color: #fff; border: none; padding: 6px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+.sign-box { border: 1px solid #94a3b8; height: 46px; text-align: center; vertical-align: bottom; padding: 3px; font-size: 7pt; color: #64748b; }
+@media print {
+  .print-btn-bar { display: none; }
+  body { padding: 0; }
+  .chart-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+
+  <div class="print-btn-bar">
+    <button onclick="window.print()" class="btn-print">
+      🖨️ สั่งพิมพ์เอกสาร A4 แนวนอน (PRINT / SAVE AS PDF)
+    </button>
+  </div>
+
+  <!-- HEADER BOX -->
+  <div class="header-box">
+    <table class="header-table" style="width:100%;">
+      <tr>
+        <td style="width:145px; text-align:center; vertical-align:middle; border-right:2px solid #0f172a; padding:4px;">
+          <div style="background:#253b1b; border-radius:6px; padding:4px 6px; display:inline-block; border:1px solid #3d6029; -webkit-print-color-adjust:exact; print-color-adjust:exact;">
+            <img src="data:image/png;base64,${MARINE_LOGO_B64}" style="max-height:40px; width:auto; display:block; margin:0 auto;" alt="Marine Logo">
+          </div>
+          <div style="font-size:7pt; font-weight:800; color:#0f172a; letter-spacing:0.5px; margin-top:3px; line-height:1.1;">RUNGSAPPATTANA<br><span style="font-size:6pt; color:#334155; font-weight:700;">(THAILAND)</span></div>
+        </td>
+        <td style="text-align:center; vertical-align:middle; border-right:2px solid #0f172a; padding:4px 10px;">
+          <div style="font-size:12pt; font-weight:900; color:#1e3a8a; letter-spacing:0.5px; line-height:1.2;">RUNGSAPPATTANA (THAILAND) CO., LTD.</div>
+          <div style="font-size:8pt; font-weight:700; color:#059669; letter-spacing:0.3px; margin-top:1px;">บริษัท รุ่งทรัพย์พัฒนา (ประเทศไทย) จำกัด • SCADA PROCESS HISTORIAN TREND REPORT</div>
+          <div style="font-size:9.5pt; font-weight:800; color:#0f172a; margin-top:2px;">${meta.name}</div>
+          <div style="font-size:6.5pt; color:#64748b; margin-top:1px;">${meta.desc} • SCADA Automation System By xDev.CO.LTD</div>
+        </td>
+        <td style="width:315px; vertical-align:top; padding:4px 6px;">
+          <table style="width:100%; border-collapse:collapse;">
+            <tr>
+              <td class="field-lbl">Date (วันที่) :</td>
+              <td class="field-val">${dateStr}</td>
+              <td class="field-lbl">Print Time :</td>
+              <td class="field-val" style="color:#0284c7;">${timeStr}</td>
+            </tr>
+            <tr>
+              <td class="field-lbl">Batch Ref. :</td>
+              <td class="field-val" style="color:#2563eb;">${meta.batch}</td>
+              <td class="field-lbl">Mode / Range :</td>
+              <td class="field-val" style="color:#9333ea;">${rangeHorizon}</td>
+            </tr>
+            <tr>
+              <td class="field-lbl">Time Horizon :</td>
+              <td colspan="3" class="field-val" style="color:#b91c1c; font-size:7.5pt; font-family:monospace;">${fromTime} → ${toTime}</td>
+            </tr>
+            <tr>
+              <td class="field-lbl">Stamp Setting :</td>
+              <td class="field-val" style="color:#0d9488;">${intervalDesc}</td>
+              <td class="field-lbl">Audit Points :</td>
+              <td class="field-val" style="color:#ea580c; font-weight:800;">${sampleIndices.length} / ${totalPoints}</td>
+            </tr>
+            ${noteBlock}
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  ${includeChart ? `
+  <!-- CHART IMAGE BOX -->
+  <div class="chart-box">
+    <img src="${chartImgUri}" class="chart-img" alt="Process Historian Trend Curve">
+  </div>
+  ` : ''}
+
+  ${includeStats ? `
+  <!-- STATISTICAL SUMMARY TABLE -->
+  <div class="section-title-bar">
+    <div>📊 STATISTICAL SUMMARY & PROCESS TOLERANCE ENVELOPE (สรุปค่าทางสถิติและเกณฑ์ควบคุม)</div>
+    <div style="font-size:7pt; color:#64748b; font-weight:600;">ENVELOPE TARGET & CCP CRITERIA COMPLIANCE</div>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:28%; text-align:left; padding-left:8px;">ปากกาวัด (Pen Sensor Tag)</th>
+        <th style="width:6%;">หน่วย</th>
+        <th style="width:14%;">เป้าหมาย (Target Envelope)</th>
+        <th style="width:8%;">ต่ำสุด (Min)</th>
+        <th style="width:8%;">สูงสุด (Max)</th>
+        <th style="width:8%;">เฉลี่ย (Mean)</th>
+        <th style="width:8%;">ค่าท้ายสุด</th>
+        <th style="width:10%;">เกณฑ์ (LL / HH)</th>
+        <th style="width:10%;">สถานะเกณฑ์</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${statRows.join('')}
+    </tbody>
+  </table>
+  ` : ''}
+
+  ${includeTable ? `
+  <!-- KEY SAMPLE DATA POINTS TABLE -->
+  <div class="section-title-bar" style="margin-top:6px;">
+    <div>⏱️ KEY AUDIT SAMPLES TIMELINE (ตัวอย่างข้อมูลบันทึกประวัติกระบวนการ)</div>
+    <div style="font-size:7pt; color:#64748b; font-weight:600;">SETTING: ${intervalDesc} • PULLED ${sampleIndices.length} OF ${totalPoints} LOGGED POINTS</div>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        ${sampleHeaders.map(h => '<th>' + h + '</th>').join('')}
+      </tr>
+    </thead>
+    <tbody>
+      ${sampleRowsHtml}
+    </tbody>
+  </table>
+  ` : ''}
+
+  ${includeSign ? `
+  <!-- SIGN-OFF FOOTER -->
+  <table class="sign-table" style="margin-top:8px;">
+    <tr>
+      <td class="sign-box" style="width:33.3%;">
+        <div>________________________________________</div>
+        <div style="font-weight:700; color:#1e293b; margin-top:2px;">ผู้บันทึกข้อมูล (SCADA Operator)</div>
+        <div style="font-size:6.5pt; color:#475569;">${opts.operatorNote ? opts.operatorNote : 'SCADA Operations Team'}</div>
+        <div>วันที่: ......./......./............ เวลา: ....................</div>
+      </td>
+      <td class="sign-box" style="width:33.3%;">
+        <div>________________________________________</div>
+        <div style="font-weight:700; color:#1e293b; margin-top:2px;">หัวหน้างานผลิต (Production Supervisor)</div>
+        <div>วันที่: ......./......./............ เวลา: ....................</div>
+      </td>
+      <td class="sign-box" style="width:33.3%;">
+        <div>________________________________________</div>
+        <div style="font-weight:700; color:#1e293b; margin-top:2px;">ผู้ตรวจสอบคุณภาพ (QA/QC Manager)</div>
+        <div>วันที่: ......./......./............ เวลา: ....................</div>
+      </td>
+    </tr>
+  </table>
+  ` : ''}
+
+  <script>
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        window.print();
+      }, 400);
+    });
+  </script>
+</body>
+</html>`;
+
+  const printWin = window.open('', '_blank');
+  if (printWin) {
+    printWin.document.open();
+    printWin.document.write(html);
+    printWin.document.close();
+  } else {
+    alert('เบราว์เซอร์บล็อกหน้าต่างใหม่ กรุณากดยอมรับ Pop-up เพื่อเปิดรายงาน PDF');
+  }
+};
+
 
 // =========================================================================
 // FEATURE 2, 4, 5: VSD ENERGY ANALYTICS, PREVENTIVE MAINTENANCE & FAULT PARETO
