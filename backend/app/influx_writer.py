@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from influxdb_client import InfluxDBClient, Point
 from influxdb_client.client.write_api import SYNCHRONOUS
 
@@ -250,22 +250,32 @@ class InfluxTelemetryWriter:
         try:
             tables = self.query_api.query(flux, org=INFLUXDB_ORG)
             data_by_time = {}
+            tz_bkk = timezone(timedelta(hours=7))
 
             for table in tables:
                 for record in table.records:
                     rec_time = record.get_time()
-                    t_str = rec_time.strftime(date_format)
+                    if rec_time.tzinfo is not None:
+                        rec_time_bkk = rec_time.astimezone(tz_bkk)
+                    else:
+                        rec_time_bkk = rec_time.replace(tzinfo=timezone.utc).astimezone(tz_bkk)
+
+                    t_str = rec_time_bkk.strftime(date_format)
                     f_name = record.get_field()
                     f_val = record.get_value()
 
-                    if t_str not in data_by_time:
-                        data_by_time[t_str] = {"_raw_time": rec_time}
-                    data_by_time[t_str][f_name] = round(f_val, 2) if f_val is not None else None
+                    time_key = rec_time_bkk.isoformat()
+                    if time_key not in data_by_time:
+                        data_by_time[time_key] = {
+                            "_raw_time": rec_time_bkk,
+                            "_label": t_str
+                        }
+                    data_by_time[time_key][f_name] = round(f_val, 2) if f_val is not None else None
 
             # Sort timestamps chronologically
             sorted_entries = sorted(data_by_time.items(), key=lambda item: item[1]["_raw_time"])
-            timestamps = [entry[0] for entry in sorted_entries]
-            full_timestamps = [entry[1]["_raw_time"].strftime("%Y-%m-%d %H:%M:%S") for entry in sorted_entries]
+            timestamps = [entry[1]["_label"] for entry in sorted_entries]
+            full_timestamps = [entry[1]["_raw_time"].strftime("%d/%m/%Y %H:%M:%S") for entry in sorted_entries]
 
             # Build pen arrays matching dataset order
             pen_arrays = []

@@ -762,7 +762,7 @@ const sectionRecorders = {
     canvasId: 'chartRecorderUht',
     statusId: 'recorder-uht-status',
     chart: null,
-    history: { times: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [], pen5: [] },
+    history: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [], pen5: [] },
     windowSec: 60,
     paused: false,
     mode: 'live',
@@ -773,7 +773,7 @@ const sectionRecorders = {
     canvasId: 'chartRecorderAtank',
     statusId: 'recorder-atank-status',
     chart: null,
-    history: { times: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [] },
+    history: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [] },
     windowSec: 60,
     paused: false,
     mode: 'live',
@@ -784,7 +784,7 @@ const sectionRecorders = {
     canvasId: 'chartRecorderCip',
     statusId: 'recorder-cip-status',
     chart: null,
-    history: { times: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [], pen5: [] },
+    history: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [], pen5: [] },
     windowSec: 60,
     paused: false,
     mode: 'live',
@@ -795,7 +795,7 @@ const sectionRecorders = {
     canvasId: 'chartRecorderProd',
     statusId: 'recorder-prod-status',
     chart: null,
-    history: { times: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [] },
+    history: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [] },
     windowSec: 60,
     paused: false,
     mode: 'live',
@@ -983,7 +983,19 @@ function getRecorderChartOptions(customYAxes) {
         borderColor: '#334155',
         borderWidth: 1,
         padding: 10,
-        displayColors: true
+        displayColors: true,
+        callbacks: {
+          title: function(tooltipItems) {
+            if (!tooltipItems || tooltipItems.length === 0) return '';
+            const item = tooltipItems[0];
+            const chart = item.chart;
+            const idx = item.dataIndex;
+            if (chart.data.$fullTimestamps && chart.data.$fullTimestamps[idx]) {
+              return chart.data.$fullTimestamps[idx];
+            }
+            return item.label || '';
+          }
+        }
       }
     },
     scales: {
@@ -1019,6 +1031,8 @@ async function loadHistoricalData(sec, range) {
 
     if (data.status === 'success' && data.timestamps && data.timestamps.length > 0) {
       rec.chart.data.labels = data.timestamps;
+      rec.chart.$fullTimestamps = data.full_timestamps || [];
+      rec.chart.data.$fullTimestamps = data.full_timestamps || [];
       data.pens.forEach((penData, idx) => {
         if (rec.chart.data.datasets[idx]) {
           rec.chart.data.datasets[idx].data = penData;
@@ -1555,6 +1569,8 @@ function pushAllSectionRecordersData(d) {
   if (!d) return;
   const now = new Date();
   const timeStr = now.toLocaleTimeString('th-TH', { hour12: false });
+  const pad = n => String(n).padStart(2, '0');
+  const fullTimeStr = `${pad(now.getDate())}/${pad(now.getMonth() + 1)}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
 
   // 1. UHT DATA
   const uhtRec = sectionRecorders.uht;
@@ -1580,6 +1596,8 @@ function pushAllSectionRecordersData(d) {
 
   if (!uhtRec.paused && uhtRec.mode === 'live') {
     uhtRec.history.times.push(timeStr);
+    if (!uhtRec.history.fullTimes) uhtRec.history.fullTimes = [];
+    uhtRec.history.fullTimes.push(fullTimeStr);
     uhtRec.history.pen0.push(u.tt01 || 0);
     uhtRec.history.pen1.push(u.tt02 || 0);
     uhtRec.history.pen2.push(u.tt04 || 0);
@@ -1609,6 +1627,8 @@ function pushAllSectionRecordersData(d) {
 
   if (!atkRec.paused && atkRec.mode === 'live') {
     atkRec.history.times.push(timeStr);
+    if (!atkRec.history.fullTimes) atkRec.history.fullTimes = [];
+    atkRec.history.fullTimes.push(fullTimeStr);
     atkRec.history.pen0.push(a.pt460 || 0);
     atkRec.history.pen1.push(a.tt460 || 0);
     atkRec.history.pen2.push(a.tt477 || 0);
@@ -1640,6 +1660,8 @@ function pushAllSectionRecordersData(d) {
 
   if (!cipRec.paused && cipRec.mode === 'live') {
     cipRec.history.times.push(timeStr);
+    if (!cipRec.history.fullTimes) cipRec.history.fullTimes = [];
+    cipRec.history.fullTimes.push(fullTimeStr);
     cipRec.history.pen0.push(c1.ct_r || 0);
     cipRec.history.pen1.push(c1.tt_r || 0);
     cipRec.history.pen2.push(c1.ft_s || 0);
@@ -1670,6 +1692,8 @@ function pushAllSectionRecordersData(d) {
 
   if (!prodRec.paused && prodRec.mode === 'live') {
     prodRec.history.times.push(timeStr);
+    if (!prodRec.history.fullTimes) prodRec.history.fullTimes = [];
+    prodRec.history.fullTimes.push(fullTimeStr);
     prodRec.history.pen0.push(p.pt_in || 0);
     prodRec.history.pen1.push(p.pt_out || 0);
     prodRec.history.pen2.push(dp);
@@ -1686,7 +1710,9 @@ function trimRecorderHistory(rec) {
   const maxPoints = 600; // keep up to 10 minutes max buffer
   if (rec.history.times.length > maxPoints) {
     for (const k in rec.history) {
-      rec.history[k].shift();
+      if (Array.isArray(rec.history[k])) {
+        rec.history[k].shift();
+      }
     }
   }
 }
@@ -1699,6 +1725,7 @@ function updateSingleSectionRecorder(sec) {
   const startIdx = Math.max(0, rec.history.times.length - pointsToShow);
 
   rec.chart.data.labels = rec.history.times.slice(startIdx);
+  rec.chart.data.$fullTimestamps = (rec.history.fullTimes || []).slice(startIdx);
   const numPens = rec.chart.data.datasets.length;
   for (let i = 0; i < numPens; i++) {
     const penKey = `pen${i}`;
@@ -2397,6 +2424,8 @@ async function loadHistoricalCustomRange(sec, fromTime, toTime, windowVal) {
 
     if (data.status === 'success' && data.timestamps && data.timestamps.length > 0) {
       rec.chart.data.labels = data.timestamps;
+      rec.chart.$fullTimestamps = data.full_timestamps || [];
+      rec.chart.data.$fullTimestamps = data.full_timestamps || [];
       data.pens.forEach((penData, idx) => {
         if (rec.chart.data.datasets[idx]) {
           rec.chart.data.datasets[idx].data = penData;
