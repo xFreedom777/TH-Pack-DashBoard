@@ -934,6 +934,7 @@ body {
 
 .meter-bar .fill.gold { background: var(--accent-gold); }
 .meter-bar .fill.cyan { background: var(--accent-cyan); }
+.meter-bar .fill.green { background: var(--accent-emerald); }
 
 /* ================= FIQCV08 SCADA PILL BADGES ================= */
 .meter-card-header {
@@ -1253,6 +1254,52 @@ body {
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+.recorder-circuit-selector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9));
+  padding: 3px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.1);
+}
+
+.recorder-circuit-selector .ctrl-label {
+  font-size: 11px;
+  color: #38bdf8;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.recorder-circuit-dropdown {
+  background: #0b1329;
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  color: #f8fafc;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.recorder-circuit-dropdown:hover,
+.recorder-circuit-dropdown:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+  background: #0f1c3f;
+}
+
+.recorder-circuit-dropdown option {
+  background: #0b1329;
+  color: #f8fafc;
+  padding: 6px;
 }
 
 .recorder-window-selector {

@@ -27,7 +27,7 @@ SECTION_CONFIG = {
             "PT460 Aseptic Press (bar)",
             "TT460 Sterile Temp (°C)",
             "TT477 Barrier Temp (°C)",
-            "LC Product Level (%)",
+            "LC Product Weight (kg)",
             "VSD09 Agitator Speed (%)"
         ]
     },
@@ -40,6 +40,26 @@ SECTION_CONFIG = {
             "L2 CT_R Return Cond (mS/cm)",
             "L2 TT_R Return Temp (°C)",
             "CIP Pumps Power (kW)"
+        ]
+    },
+    "cip_line1": {
+        "pens": ["c1_ct_r", "c1_tt_r", "c1_tt_s", "c1_ft_s", "c1_power"],
+        "labels": [
+            "L1 Return Cond (CT_R) (mS/cm)",
+            "L1 Return Temp (TT_R) (°C)",
+            "L1 Supply Temp (TT_S) (°C)",
+            "L1 Supply Flow (FT_S) (L/h)",
+            "VSD05 Pump Power (kW)"
+        ]
+    },
+    "cip_line2": {
+        "pens": ["c2_ct_r", "c2_tt_r", "c2_tt_s", "c2_ft_s", "c2_power"],
+        "labels": [
+            "L2 Return Cond (CT_R) (mS/cm)",
+            "L2 Return Temp (TT_R) (°C)",
+            "L2 Supply Temp (TT_S) (°C)",
+            "L2 Supply Flow (FT_S) (L/h)",
+            "VSD04 Pump Power (kW)"
         ]
     },
     "prod": {
@@ -128,9 +148,14 @@ class InfluxTelemetryWriter:
         p_cip = Point("process_telemetry").tag("section", "cip").time(now)
         p_cip.field("c1_ct_r", float(c1.get("ct_r") or 0.0))
         p_cip.field("c1_tt_r", float(c1.get("tt_r") or 0.0))
+        p_cip.field("c1_tt_s", float(c1.get("tt_s") or 0.0))
         p_cip.field("c1_ft_s", float(c1.get("ft_s") or 0.0))
+        p_cip.field("c1_power", float(vf.get("VSD05", {}).get("power_kw", 0.0) or 0.0))
         p_cip.field("c2_ct_r", float(c2.get("ct_r") or 0.0))
         p_cip.field("c2_tt_r", float(c2.get("tt_r") or 0.0))
+        p_cip.field("c2_tt_s", float(c2.get("tt_s") or 0.0))
+        p_cip.field("c2_ft_s", float(c2.get("ft_s") or 0.0))
+        p_cip.field("c2_power", float(vf.get("VSD04", {}).get("power_kw", 0.0) or 0.0))
         p_cip.field("cip_power", float(cip_pwr))
         points.append(p_cip)
 
@@ -238,10 +263,11 @@ class InfluxTelemetryWriter:
             date_format = preset["format"]
             range_clause = f'start: {start_range}'
 
+        influx_sec = "cip" if section in ("cip_line1", "cip_line2") else section
         flux = f'''
         from(bucket: "{INFLUXDB_BUCKET}")
           |> range({range_clause})
-          |> filter(fn: (r) => r._measurement == "process_telemetry" and r.section == "{section}")
+          |> filter(fn: (r) => r._measurement == "process_telemetry" and r.section == "{influx_sec}")
           |> filter(fn: (r) => {field_filter})
           |> aggregateWindow(every: {window_size}, fn: mean, createEmpty: false)
           |> yield(name: "downsampled")

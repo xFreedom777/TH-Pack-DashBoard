@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20261012_fiq04">
+  <link rel="stylesheet" href="style.css?v=20261012_v3">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
@@ -749,9 +749,9 @@
         <div class="instruments-grid">
           <div class="meter-card">
             <span class="meter-tag">LC (DB1301.DBD0)</span>
-            <div class="meter-name">Tank Product Level</div>
-            <div class="meter-val font-mono" id="atank-lc">0.00 <span class="unit">%</span></div>
-            <div class="meter-bar"><div class="fill" id="atank-lc-bar" style="width: 0%;"></div></div>
+            <div class="meter-name">Tank Product Weight</div>
+            <div class="meter-val font-mono highlight-green" id="atank-lc">0.0 <span class="unit">kg</span></div>
+            <div class="meter-bar"><div class="fill green" id="atank-lc-bar" style="width: 0%;"></div></div>
           </div>
 
           <div class="meter-card">
@@ -785,7 +785,7 @@
                 <h3 class="recorder-title">ATANK STERILITY & BARRIER PROCESS RECORDER</h3>
                 <span class="recorder-status-tag" id="recorder-atank-status">LIVE STREAMING</span>
               </div>
-              <p class="recorder-sub">บันทึกตัวแปรเฉพาะถังปลอดเชื้อ ATANK: แรงดันม่านลมปลอดเชื้อ PT460, อุณหภูมิฆ่าเชื้อ TT460/TT477 และระดับผลิตภัณฑ์</p>
+              <p class="recorder-sub">บันทึกตัวแปรเฉพาะถังปลอดเชื้อ ATANK: แรงดันม่านลมปลอดเชื้อ PT460, อุณหภูมิฆ่าเชื้อ TT460/TT477 และน้ำหนักผลิตภัณฑ์ (Load Cell 0 - 28,000 kg)</p>
             </div>
             
             <div class="recorder-controls">
@@ -851,10 +851,10 @@
             <div class="pen-chip" data-section="atank" data-pen="3">
               <span class="pen-color-dot" style="background:#10b981; box-shadow:0 0 8px #10b981;"></span>
               <div class="pen-meta">
-                <span class="pen-tag">PEN 4: LC PRODUCT LEVEL</span>
-                <span class="pen-val font-mono" id="atank-pen-lc">-- %</span>
+                <span class="pen-tag">PEN 4: LC PRODUCT WEIGHT</span>
+                <span class="pen-val font-mono" id="atank-pen-lc">-- kg</span>
               </div>
-              <span class="pen-limit">Tank Level</span>
+              <span class="pen-limit">Range: 0 - 28,000 kg</span>
             </div>
 
             <div class="pen-chip" data-section="atank" data-pen="4">
@@ -987,13 +987,23 @@
             <div class="recorder-title-wrap">
               <div class="recorder-title-row">
                 <span class="pulse-indicator"></span>
-                <h3 class="recorder-title">CIP DUAL-LINE CHEMICAL & THERMAL RECORDER</h3>
+                <h3 class="recorder-title" id="cip-recorder-title">CIP DUAL-LINE CHEMICAL & THERMAL RECORDER</h3>
                 <span class="recorder-status-tag" id="recorder-cip-status">LIVE STREAMING</span>
               </div>
-              <p class="recorder-sub">บันทึกตัวแปรเฉพาะระบบล้าง CIP: ค่า Conductivity (ความเข้มข้นน้ำยา), อุณหภูมิ และอัตราการไหล Line 1 & Line 2</p>
+              <p class="recorder-sub" id="cip-recorder-sub">บันทึกตัวแปรเฉพาะระบบล้าง CIP: ค่า Conductivity (ความเข้มข้นน้ำยา), อุณหภูมิ และอัตราการไหล Line 1 & Line 2</p>
             </div>
             
             <div class="recorder-controls">
+              <!-- CIP Circuit Selector Dropdown -->
+              <div class="recorder-circuit-selector">
+                <span class="ctrl-label">🔀 วงล้าง CIP:</span>
+                <select id="cip-circuit-select" class="recorder-circuit-dropdown" title="เลือกแสดงผลแยกตาม Circuit หรือดูทั้ง 2 สาย">
+                  <option value="all" selected>⚡ รวม 2 สาย (Dual Combined)</option>
+                  <option value="cip_line1">💧 Circuit 1 [DB1801] (Line 1)</option>
+                  <option value="cip_line2">🧼 Circuit 2 [DB1802] (Line 2)</option>
+                </select>
+              </div>
+
               <div class="recorder-window-selector">
                 <span class="ctrl-label">โหมด:</span>
                 <button class="win-btn active" data-section="cip" data-window="60" data-mode="live">Live 60s</button>
@@ -1012,7 +1022,7 @@
               <button class="ctrl-btn btn-export" data-section="cip" id="btn-export-cip" title="ส่งออกข้อมูลเป็น CSV/Excel">
                 📥 ส่งออก CSV
               </button>
-              <button class="ctrl-btn btn-step-report" onclick="openStepReportModal('cip_line1')" title="ออกรายงาน Step Log พร้อมตราสัญลักษณ์">
+              <button class="ctrl-btn btn-step-report" id="btn-cip-step-report" onclick="openStepReportModal('cip_line1')" title="ออกรายงาน Step Log พร้อมตราสัญลักษณ์">
                 📑 ออกรายงาน Step Log (PDF)
               </button>
               <button class="ctrl-btn btn-limits" data-section="cip" id="btn-limits-cip" title="ดู/ตั้งค่าเกณฑ์ Alarm Limit">
@@ -1024,8 +1034,8 @@
             </div>
           </div>
 
-          <!-- CIP PEN CHIPS -->
-          <div class="pen-legend-grid">
+          <!-- CIP PEN CHIPS: DUAL COMBINED (ALL) -->
+          <div class="pen-legend-grid" id="cip-pen-grid-all">
             <div class="pen-chip" data-section="cip" data-pen="0">
               <span class="pen-color-dot" style="background:#8b5cf6; box-shadow:0 0 8px #8b5cf6;"></span>
               <div class="pen-meta">
@@ -1078,6 +1088,102 @@
                 <span class="pen-val font-mono" id="cip-pen-power">-- kW</span>
               </div>
               <span class="pen-limit">VSD04 + VSD05</span>
+            </div>
+          </div>
+
+          <!-- CIP PEN CHIPS: CIRCUIT 1 (DB1801) -->
+          <div class="pen-legend-grid" id="cip-pen-grid-c1" style="display:none;">
+            <div class="pen-chip" data-section="cip_line1" data-pen="0">
+              <span class="pen-color-dot" style="background:#8b5cf6; box-shadow:0 0 8px #8b5cf6;"></span>
+              <div class="pen-meta">
+                <span class="pen-tag">PEN 1: C1 RETURN COND (CT_R)</span>
+                <span class="pen-val font-mono" id="cip-c1-pen-ctr">-- mS/cm</span>
+              </div>
+              <span class="pen-limit">Return Conductivity</span>
+            </div>
+
+            <div class="pen-chip" data-section="cip_line1" data-pen="1">
+              <span class="pen-color-dot" style="background:#ef4444; box-shadow:0 0 8px #ef4444;"></span>
+              <div class="pen-meta">
+                <span class="pen-tag">PEN 2: C1 RETURN TEMP (TT_R)</span>
+                <span class="pen-val font-mono" id="cip-c1-pen-ttr">-- °C</span>
+              </div>
+              <span class="pen-limit">Return Temperature</span>
+            </div>
+
+            <div class="pen-chip" data-section="cip_line1" data-pen="2">
+              <span class="pen-color-dot" style="background:#06b6d4; box-shadow:0 0 8px #06b6d4;"></span>
+              <div class="pen-meta">
+                <span class="pen-tag">PEN 3: C1 SUPPLY TEMP (TT_S)</span>
+                <span class="pen-val font-mono" id="cip-c1-pen-tts">-- °C</span>
+              </div>
+              <span class="pen-limit">Supply Temperature</span>
+            </div>
+
+            <div class="pen-chip" data-section="cip_line1" data-pen="3">
+              <span class="pen-color-dot" style="background:#10b981; box-shadow:0 0 8px #10b981;"></span>
+              <div class="pen-meta">
+                <span class="pen-tag">PEN 4: C1 SUPPLY FLOW (FT_S)</span>
+                <span class="pen-val font-mono" id="cip-c1-pen-fts">-- L/h</span>
+              </div>
+              <span class="pen-limit">Supply Flow Rate</span>
+            </div>
+
+            <div class="pen-chip" data-section="cip_line1" data-pen="4">
+              <span class="pen-color-dot" style="background:#f59e0b; box-shadow:0 0 8px #f59e0b;"></span>
+              <div class="pen-meta">
+                <span class="pen-tag">PEN 5: VSD05 PUMP POWER</span>
+                <span class="pen-val font-mono" id="cip-c1-pen-power">-- kW</span>
+              </div>
+              <span class="pen-limit">Supply Pump (7.5 kW)</span>
+            </div>
+          </div>
+
+          <!-- CIP PEN CHIPS: CIRCUIT 2 (DB1802) -->
+          <div class="pen-legend-grid" id="cip-pen-grid-c2" style="display:none;">
+            <div class="pen-chip" data-section="cip_line2" data-pen="0">
+              <span class="pen-color-dot" style="background:#ec4899; box-shadow:0 0 8px #ec4899;"></span>
+              <div class="pen-meta">
+                <span class="pen-tag">PEN 1: C2 RETURN COND (CT_R)</span>
+                <span class="pen-val font-mono" id="cip-c2-pen-ctr">-- mS/cm</span>
+              </div>
+              <span class="pen-limit">Return Conductivity</span>
+            </div>
+
+            <div class="pen-chip" data-section="cip_line2" data-pen="1">
+              <span class="pen-color-dot" style="background:#ef4444; box-shadow:0 0 8px #ef4444;"></span>
+              <div class="pen-meta">
+                <span class="pen-tag">PEN 2: C2 RETURN TEMP (TT_R)</span>
+                <span class="pen-val font-mono" id="cip-c2-pen-ttr">-- °C</span>
+              </div>
+              <span class="pen-limit">Return Temperature</span>
+            </div>
+
+            <div class="pen-chip" data-section="cip_line2" data-pen="2">
+              <span class="pen-color-dot" style="background:#06b6d4; box-shadow:0 0 8px #06b6d4;"></span>
+              <div class="pen-meta">
+                <span class="pen-tag">PEN 3: C2 SUPPLY TEMP (TT_S)</span>
+                <span class="pen-val font-mono" id="cip-c2-pen-tts">-- °C</span>
+              </div>
+              <span class="pen-limit">Supply Temperature</span>
+            </div>
+
+            <div class="pen-chip" data-section="cip_line2" data-pen="3">
+              <span class="pen-color-dot" style="background:#10b981; box-shadow:0 0 8px #10b981;"></span>
+              <div class="pen-meta">
+                <span class="pen-tag">PEN 4: C2 SUPPLY FLOW (FT_S)</span>
+                <span class="pen-val font-mono" id="cip-c2-pen-fts">-- L/h</span>
+              </div>
+              <span class="pen-limit">Supply Flow Rate</span>
+            </div>
+
+            <div class="pen-chip" data-section="cip_line2" data-pen="4">
+              <span class="pen-color-dot" style="background:#f59e0b; box-shadow:0 0 8px #f59e0b;"></span>
+              <div class="pen-meta">
+                <span class="pen-tag">PEN 5: VSD04 PUMP POWER</span>
+                <span class="pen-val font-mono" id="cip-c2-pen-power">-- kW</span>
+              </div>
+              <span class="pen-limit">Supply Pump (7.5 kW)</span>
             </div>
           </div>
 
@@ -1424,7 +1530,7 @@
             <div class="vsd-chart-card pareto-table-card">
               <div class="vsd-chart-header">
                 <span class="chart-title">📋 บันทึกประวัติการทริปและแก้ไข (Recent VSD Fault Incidents)</span>
-                <button class="action-btn-sm" onclick="seedDemoVsdFaults()">🔄 รีเฟรชข้อมูล</button>
+                <button class="action-btn-sm" onclick="refreshVsdPareto()">🔄 รีเฟรชข้อมูล</button>
               </div>
               <div class="table-responsive small-table">
                 <table class="vsd-table compact">
@@ -1627,7 +1733,9 @@
             <select class="export-select" id="hist-section-select">
               <option value="uht">🔥 UHT Sterilizer [DB1200]</option>
               <option value="atank">🛡️ Aseptic Tank ATANK [DB1301]</option>
-              <option value="cip">🧼 CIP Systems [Line 1 & 2]</option>
+              <option value="cip">🧼 CIP Systems [Line 1 & 2 Combined]</option>
+              <option value="cip_line1">💧 CIP Circuit 1 [DB1801]</option>
+              <option value="cip_line2">🧼 CIP Circuit 2 [DB1802]</option>
               <option value="prod">🚚 Production Supply & Filter [DB1100]</option>
             </select>
           </div>
@@ -1686,6 +1794,6 @@
     </footer>
   </div>
 
-  <script src="app.js?v=20261012_1410"></script>
+  <script src="app.js?v=20261012_v3"></script>
 </body>
 </html>

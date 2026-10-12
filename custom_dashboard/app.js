@@ -784,7 +784,11 @@ const sectionRecorders = {
     canvasId: 'chartRecorderCip',
     statusId: 'recorder-cip-status',
     chart: null,
+    currentCircuit: 'all',
     history: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [], pen5: [] },
+    allHistory: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [], pen5: [] },
+    c1History: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [] },
+    c2History: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [] },
     windowSec: 60,
     paused: false,
     mode: 'live',
@@ -803,6 +807,129 @@ const sectionRecorders = {
     penVisibility: [true, true, true, true, true]
   }
 };
+
+// ================= CIP CIRCUIT CONFIGURATIONS & SWITCHING =================
+const CIP_CONFIGS = {
+  all: {
+    title: 'CIP DUAL-LINE CHEMICAL & THERMAL RECORDER',
+    sub: 'บันทึกตัวแปรเฉพาะระบบล้าง CIP: ค่า Conductivity (ความเข้มข้นน้ำยา), อุณหภูมิ และอัตราการไหล Line 1 & Line 2',
+    reportTarget: 'cip_line1',
+    reportTitle: '📑 ออกรายงาน Step Log Line 1 [DB1801]',
+    gridId: 'cip-pen-grid-all',
+    datasets: [
+      { label: 'L1 CT_R Return Cond (mS/cm)', data: [], borderColor: '#8b5cf6', backgroundColor: 'rgba(139, 92, 246, 0.08)', borderWidth: 2.2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yCond' },
+      { label: 'L1 TT_R Return Temp (°C)', data: [], borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
+      { label: 'L1 FT_S Supply Flow (L/h)', data: [], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.08)', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yFlow' },
+      { label: 'L2 CT_R Return Cond (mS/cm)', data: [], borderColor: '#ec4899', backgroundColor: 'rgba(236, 72, 153, 0.08)', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yCond' },
+      { label: 'L2 TT_R Return Temp (°C)', data: [], borderColor: '#06b6d4', backgroundColor: 'rgba(6, 182, 212, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
+      { label: 'CIP Pumps Power (kW)', data: [], borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yPower' }
+    ],
+    scales: {
+      yCond: { min: 0, max: 80, title: 'Cond (mS/cm)', color: '#8b5cf6', position: 'left' },
+      yTemp: { min: 0, max: 100, title: 'Temp (°C)', color: '#ef4444', position: 'right' },
+      yFlow: { min: 0, max: 25000, title: 'Flow (L/h)', color: '#10b981', position: 'right', display: false },
+      yPower: { min: 0, max: 25, title: 'Power (kW)', color: '#f59e0b', position: 'left', display: false }
+    }
+  },
+  cip_line1: {
+    title: 'CIP CIRCUIT 1 [DB1801] CHEMICAL & THERMAL RECORDER',
+    sub: 'บันทึกตัวแปรเฉพาะวงล้าง Circuit 1: Conductivity ขากลับ, อุณหภูมิ Supply/Return, Flow Supply และปั๊มจ่าย VSD05 (7.5 kW)',
+    reportTarget: 'cip_line1',
+    reportTitle: '📑 ออกรายงาน Step Log Circuit 1 [DB1801]',
+    gridId: 'cip-pen-grid-c1',
+    datasets: [
+      { label: 'C1 Return Cond (CT_R) (mS/cm)', data: [], borderColor: '#8b5cf6', backgroundColor: 'rgba(139, 92, 246, 0.08)', borderWidth: 2.2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yCond' },
+      { label: 'C1 Return Temp (TT_R) (°C)', data: [], borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
+      { label: 'C1 Supply Temp (TT_S) (°C)', data: [], borderColor: '#06b6d4', backgroundColor: 'rgba(6, 182, 212, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
+      { label: 'C1 Supply Flow (FT_S) (L/h)', data: [], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.08)', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yFlow' },
+      { label: 'VSD05 Pump Power (kW)', data: [], borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yPower' }
+    ],
+    scales: {
+      yCond: { min: 0, max: 80, title: 'Cond (mS/cm)', color: '#8b5cf6', position: 'left' },
+      yTemp: { min: 0, max: 100, title: 'Temp (°C)', color: '#ef4444', position: 'right' },
+      yFlow: { min: 0, max: 25000, title: 'Flow (L/h)', color: '#10b981', position: 'right', display: false },
+      yPower: { min: 0, max: 15, title: 'VSD05 (kW)', color: '#f59e0b', position: 'left', display: false }
+    }
+  },
+  cip_line2: {
+    title: 'CIP CIRCUIT 2 [DB1802] CHEMICAL & THERMAL RECORDER',
+    sub: 'บันทึกตัวแปรเฉพาะวงล้าง Circuit 2: Conductivity ขากลับ, อุณหภูมิ Supply/Return, Flow Supply และปั๊มจ่าย VSD04 (7.5 kW)',
+    reportTarget: 'cip_line2',
+    reportTitle: '📑 ออกรายงาน Step Log Circuit 2 [DB1802]',
+    gridId: 'cip-pen-grid-c2',
+    datasets: [
+      { label: 'C2 Return Cond (CT_R) (mS/cm)', data: [], borderColor: '#ec4899', backgroundColor: 'rgba(236, 72, 153, 0.08)', borderWidth: 2.2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yCond' },
+      { label: 'C2 Return Temp (TT_R) (°C)', data: [], borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
+      { label: 'C2 Supply Temp (TT_S) (°C)', data: [], borderColor: '#06b6d4', backgroundColor: 'rgba(6, 182, 212, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
+      { label: 'C2 Supply Flow (FT_S) (L/h)', data: [], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.08)', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yFlow' },
+      { label: 'VSD04 Pump Power (kW)', data: [], borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yPower' }
+    ],
+    scales: {
+      yCond: { min: 0, max: 80, title: 'Cond (mS/cm)', color: '#ec4899', position: 'left' },
+      yTemp: { min: 0, max: 100, title: 'Temp (°C)', color: '#ef4444', position: 'right' },
+      yFlow: { min: 0, max: 25000, title: 'Flow (L/h)', color: '#10b981', position: 'right', display: false },
+      yPower: { min: 0, max: 15, title: 'VSD04 (kW)', color: '#f59e0b', position: 'left', display: false }
+    }
+  }
+};
+
+function switchCipCircuit(circuitId) {
+  const rec = sectionRecorders.cip;
+  if (!rec) return;
+  const cfg = CIP_CONFIGS[circuitId] || CIP_CONFIGS.all;
+  rec.currentCircuit = circuitId;
+
+  // 1. Update Title & Subtitle
+  const titleEl = document.getElementById('cip-recorder-title');
+  const subEl = document.getElementById('cip-recorder-sub');
+  if (titleEl) titleEl.textContent = cfg.title;
+  if (subEl) subEl.textContent = cfg.sub;
+
+  // 2. Update Step Report button
+  const reportBtn = document.getElementById('btn-cip-step-report');
+  if (reportBtn) {
+    reportBtn.setAttribute('onclick', `openStepReportModal('${cfg.reportTarget}')`);
+    reportBtn.setAttribute('title', cfg.reportTitle);
+  }
+
+  // 3. Switch Pen Chips Grid
+  ['cip-pen-grid-all', 'cip-pen-grid-c1', 'cip-pen-grid-c2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = (id === cfg.gridId) ? 'grid' : 'none';
+  });
+
+  // 4. Update Chart Datasets & Scales
+  if (rec.chart) {
+    rec.chart.data.datasets = cfg.datasets.map(d => ({ ...d, data: [] }));
+    rec.penVisibility = cfg.datasets.map(() => true);
+
+    const newOptions = getRecorderChartOptions(cfg.scales);
+    rec.chart.options.scales = newOptions.scales;
+
+    if (rec.mode === 'live') {
+      let activeHist = rec.allHistory;
+      if (circuitId === 'cip_line1') activeHist = rec.c1History;
+      else if (circuitId === 'cip_line2') activeHist = rec.c2History;
+      rec.history = activeHist;
+
+      const pointsToShow = rec.windowSec;
+      const startIdx = Math.max(0, rec.history.times.length - pointsToShow);
+      rec.chart.data.labels = rec.history.times.slice(startIdx);
+      rec.chart.data.$fullTimestamps = (rec.history.fullTimes || []).slice(startIdx);
+      for (let i = 0; i < rec.chart.data.datasets.length; i++) {
+        const penKey = `pen${i}`;
+        rec.chart.data.datasets[i].data = (rec.history[penKey] || []).slice(startIdx);
+      }
+      rec.chart.update();
+    } else {
+      if (rec.historyRange === 'custom' && rec.customFrom && rec.customTo) {
+        loadHistoricalCustomRange('cip', rec.customFrom, rec.customTo);
+      } else {
+        loadHistoricalData('cip', rec.historyRange || '1d');
+      }
+    }
+  }
+}
 
 function initRecorderForSection(sec) {
   if (sec === 'uht' && !sectionRecorders.uht.chart) initUhtRecorder();
@@ -883,14 +1010,14 @@ function initAtankRecorder() {
         { label: 'PT460 Aseptic Press (bar)', data: [], borderColor: '#06b6d4', backgroundColor: 'rgba(6, 182, 212, 0.08)', borderWidth: 2.2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yPress' },
         { label: 'TT460 Sterile Temp (°C)', data: [], borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.08)', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
         { label: 'TT477 Barrier Temp (°C)', data: [], borderColor: '#a855f7', backgroundColor: 'rgba(168, 85, 247, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
-        { label: 'LC Product Level (%)', data: [], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.08)', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yLevel' },
+        { label: 'LC Product Weight (kg)', data: [], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.08)', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yWeight' },
         { label: 'VSD09 Agitator Speed (%)', data: [], borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'ySpeed' }
       ]
     },
     options: getRecorderChartOptions({
       yPress: { min: 0, max: 4.0, title: 'Press (bar)', color: '#06b6d4', position: 'left' },
       yTemp: { min: 0, max: 160, title: 'Temp (°C)', color: '#ef4444', position: 'right' },
-      yLevel: { min: 0, max: 100, title: 'Level (%)', color: '#10b981', position: 'left' },
+      yWeight: { min: 0, max: 28000, title: 'Weight (kg)', color: '#10b981', position: 'left', drawGrid: false },
       ySpeed: { min: 0, max: 100, title: 'Speed (%)', color: '#f59e0b', position: 'right', display: false }
     })
   });
@@ -902,25 +1029,16 @@ function initCipRecorder() {
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
 
+  const curMode = sectionRecorders.cip.currentCircuit || 'all';
+  const cfg = CIP_CONFIGS[curMode] || CIP_CONFIGS.all;
+
   sectionRecorders.cip.chart = new Chart(ctx, {
     type: 'line',
     data: {
       labels: [],
-      datasets: [
-        { label: 'L1 CT_R Return Cond (mS/cm)', data: [], borderColor: '#8b5cf6', backgroundColor: 'rgba(139, 92, 246, 0.08)', borderWidth: 2.2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yCond' },
-        { label: 'L1 TT_R Return Temp (°C)', data: [], borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
-        { label: 'L1 FT_S Supply Flow (L/h)', data: [], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.08)', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yFlow' },
-        { label: 'L2 CT_R Return Cond (mS/cm)', data: [], borderColor: '#ec4899', backgroundColor: 'rgba(236, 72, 153, 0.08)', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yCond' },
-        { label: 'L2 TT_R Return Temp (°C)', data: [], borderColor: '#06b6d4', backgroundColor: 'rgba(6, 182, 212, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
-        { label: 'CIP Pumps Power (kW)', data: [], borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yPower' }
-      ]
+      datasets: cfg.datasets.map(d => ({ ...d, data: [] }))
     },
-    options: getRecorderChartOptions({
-      yCond: { min: 0, max: 80, title: 'Cond (mS/cm)', color: '#8b5cf6', position: 'left' },
-      yTemp: { min: 0, max: 100, title: 'Temp (°C)', color: '#ef4444', position: 'right' },
-      yFlow: { min: 0, max: 25000, title: 'Flow (L/h)', color: '#10b981', position: 'right', display: false },
-      yPower: { min: 0, max: 25, title: 'Power (kW)', color: '#f59e0b', position: 'left', display: false }
-    })
+    options: getRecorderChartOptions(cfg.scales)
   });
 }
 
@@ -963,8 +1081,8 @@ function getRecorderChartOptions(customYAxes) {
       title: { display: true, text: conf.title, color: conf.color, font: { size: 10, weight: 'bold' } },
       ticks: { color: conf.color, font: { family: 'JetBrains Mono', size: 10 } },
       grid: {
-        color: conf.position === 'left' ? 'rgba(255, 255, 255, 0.04)' : undefined,
-        drawOnChartArea: conf.position === 'left'
+        color: conf.drawGrid !== false && conf.position === 'left' ? 'rgba(255, 255, 255, 0.04)' : undefined,
+        drawOnChartArea: conf.drawGrid !== false && conf.position === 'left'
       }
     };
   }
@@ -1010,10 +1128,17 @@ function getRecorderChartOptions(customYAxes) {
 
 // ================= HISTORICAL DATA & SECTION RECORDER CONTROLS =================
 async function loadHistoricalData(sec, range) {
-  const rec = sectionRecorders[sec];
+  const rec = (sec === 'cip_line1' || sec === 'cip_line2') ? sectionRecorders.cip : sectionRecorders[sec];
   if (!rec) return;
-  if (!rec.chart) initRecorderForSection(sec);
+  if (!rec.chart) initRecorderForSection(sec === 'cip_line1' || sec === 'cip_line2' ? 'cip' : sec);
   if (!rec.chart) return;
+
+  let querySec = sec;
+  if (sec === 'cip') {
+    if (rec.currentCircuit === 'cip_line1' || rec.currentCircuit === 'cip_line2') {
+      querySec = rec.currentCircuit;
+    }
+  }
 
   const statusTag = document.getElementById(rec.statusId);
   if (statusTag) {
@@ -1025,7 +1150,7 @@ async function loadHistoricalData(sec, range) {
 
   try {
     const host = window.location.hostname || '127.0.0.1';
-    const res = await fetch(`http://${host}:8000/api/v1/telemetry/history?section=${sec}&range=${range}`);
+    const res = await fetch(`http://${host}:8000/api/v1/telemetry/history?section=${querySec}&range=${range}`);
     if (!res.ok) throw new Error(`HTTP error ${res.status}`);
     const data = await res.json();
 
@@ -1155,6 +1280,11 @@ function setupSectionRecorderControls() {
       if (rec.mode === 'history') {
         loadHistoricalData(sec, rec.historyRange || '1d');
       } else {
+        if (sec === 'cip') {
+          for (const k in rec.allHistory) rec.allHistory[k] = [];
+          for (const k in rec.c1History) rec.c1History[k] = [];
+          for (const k in rec.c2History) rec.c2History[k] = [];
+        }
         for (const k in rec.history) {
           rec.history[k] = [];
         }
@@ -1162,6 +1292,14 @@ function setupSectionRecorderControls() {
       }
     });
   });
+
+  // CIP Circuit dropdown selector
+  const cipCircuitSelect = document.getElementById('cip-circuit-select');
+  if (cipCircuitSelect) {
+    cipCircuitSelect.addEventListener('change', (e) => {
+      switchCipCircuit(e.target.value);
+    });
+  }
 
   // Export CSV buttons - open resolution picker modal
   document.querySelectorAll('.btn-export').forEach(btn => {
@@ -1201,9 +1339,10 @@ function setupSectionRecorderControls() {
     chip.addEventListener('click', () => {
       const sec = chip.getAttribute('data-section');
       const penIdx = parseInt(chip.getAttribute('data-pen'));
-      if (!sec || !sectionRecorders[sec] || isNaN(penIdx)) return;
-      const rec = sectionRecorders[sec];
-      if (!rec.chart) return;
+      if (!sec || isNaN(penIdx)) return;
+      const targetSec = (sec === 'cip_line1' || sec === 'cip_line2') ? 'cip' : sec;
+      const rec = sectionRecorders[targetSec];
+      if (!rec || !rec.chart) return;
 
       rec.penVisibility[penIdx] = !rec.penVisibility[penIdx];
       chip.classList.toggle('disabled', !rec.penVisibility[penIdx]);
@@ -1218,7 +1357,12 @@ let currentExportSection = 'uht';
 let currentExportBtn = null;
 
 function openExportModal(sec, btn) {
-  currentExportSection = sec;
+  let effectiveSec = sec;
+  if (sec === 'cip') {
+    const cur = sectionRecorders.cip?.currentCircuit;
+    if (cur === 'cip_line1' || cur === 'cip_line2') effectiveSec = cur;
+  }
+  currentExportSection = effectiveSec;
   currentExportBtn = btn;
 
   const overlay = document.getElementById('export-modal-overlay');
@@ -1230,12 +1374,14 @@ function openExportModal(sec, btn) {
   const secTitles = {
     uht: 'UHT STERILIZER PROCESS (DB1200)',
     atank: 'ASEPTIC TANK ATANK (DB1301)',
-    cip: 'CIP SYSTEMS LINE 1 & 2',
+    cip: 'CIP SYSTEMS LINE 1 & 2 (COMBINED)',
+    cip_line1: 'CIP CIRCUIT 1 [DB1801] (LINE 1)',
+    cip_line2: 'CIP CIRCUIT 2 [DB1802] (LINE 2)',
     prod: 'PRODUCTION SUPPLY & FILTRATION'
   };
-  if (badgeEl) badgeEl.textContent = secTitles[sec] || sec.toUpperCase();
+  if (badgeEl) badgeEl.textContent = secTitles[effectiveSec] || effectiveSec.toUpperCase();
 
-  const rec = sectionRecorders[sec];
+  const rec = (effectiveSec === 'cip_line1' || effectiveSec === 'cip_line2') ? sectionRecorders.cip : sectionRecorders[effectiveSec];
   if (rec && rec.mode === 'history' && rec.historyRange) {
     if (rangeSelect) rangeSelect.value = rec.historyRange;
     if (rec.historyRange === '1y') freqSelect.value = '1h';
@@ -1265,7 +1411,7 @@ function updateExportEstimate() {
 
   let rangeSec = 60;
   if (range === 'current') {
-    const rec = sectionRecorders[currentExportSection];
+    const rec = (currentExportSection === 'cip_line1' || currentExportSection === 'cip_line2') ? sectionRecorders.cip : sectionRecorders[currentExportSection];
     if (rec && rec.mode === 'history') {
       const map = { '1d': 86400, '7d': 604800, '30d': 2592000, '1y': 31536000 };
       rangeSec = map[rec.historyRange] || 86400;
@@ -1307,7 +1453,7 @@ async function executeExportWithResolution() {
   }
 
   try {
-    const rec = sectionRecorders[sec];
+    const rec = (sec === 'cip_line1' || sec === 'cip_line2') ? sectionRecorders.cip : sectionRecorders[sec];
     let timestamps = [];
     let datasetsData = [];
     let labelsList = [];
@@ -1316,6 +1462,8 @@ async function executeExportWithResolution() {
       uht: 'UHT_Thermal_Flow_Recorder',
       atank: 'ATANK_Aseptic_Recorder',
       cip: 'CIP_Systems_Recorder',
+      cip_line1: 'CIP_Circuit1_DB1801_Recorder',
+      cip_line2: 'CIP_Circuit2_DB1802_Recorder',
       prod: 'Prod_Supply_Recorder'
     };
 
@@ -1451,7 +1599,7 @@ const PEN_ALARM_LIMITS = {
     { pen: 0, tag: 'PT460 Aseptic Pressure', unit: 'bar', target: '2.0 - 2.5', ll: 1.8, l: 1.95, h: 2.65, hh: 2.9, ccp: true },
     { pen: 1, tag: 'TT460 Sterile Temp', unit: '°C', target: 'Sterile: >135 / Stor: <28', ll: null, l: 20.0, h: 32.0, hh: 145.0, ccp: true },
     { pen: 2, tag: 'TT477 Barrier Temp', unit: '°C', target: '> 121.0', ll: 115.0, l: 120.0, h: 145.0, hh: 150.0, ccp: false },
-    { pen: 3, tag: 'LC Product Level', unit: '%', target: '20.0 - 90.0', ll: 10.0, l: 15.0, h: 92.0, hh: 98.0, ccp: false },
+    { pen: 3, tag: 'LC Product Weight', unit: 'kg', target: '2,000 - 26,000', ll: 1000, l: 2000, h: 26500, hh: 27500, ccp: false },
     { pen: 4, tag: 'VSD09 Agitator Speed', unit: '%', target: '50.0 - 90.0', ll: 30.0, l: 45.0, h: 95.0, hh: 100.0, ccp: false }
   ],
   cip: [
@@ -1461,6 +1609,20 @@ const PEN_ALARM_LIMITS = {
     { pen: 3, tag: 'L2 CT_R Return Cond', unit: 'mS/cm', target: 'Caustic: 35-55 / Rinse: <2', ll: 0.5, l: 1.0, h: 60.0, hh: 70.0, ccp: true },
     { pen: 4, tag: 'L2 TT_R Return Temp', unit: '°C', target: '> 75.0', ll: 65.0, l: 72.0, h: 92.0, hh: 98.0, ccp: true },
     { pen: 5, tag: 'CIP Pumps Power', unit: 'kW', target: '< 24.0', ll: null, l: null, h: 22.0, hh: 25.0, ccp: false }
+  ],
+  cip_line1: [
+    { pen: 0, tag: 'C1 Return Cond (CT_R)', unit: 'mS/cm', target: 'Caustic: 35-55 / Rinse: <2', ll: 0.5, l: 1.0, h: 60.0, hh: 70.0, ccp: true },
+    { pen: 1, tag: 'C1 Return Temp (TT_R)', unit: '°C', target: '> 75.0', ll: 65.0, l: 72.0, h: 92.0, hh: 98.0, ccp: true },
+    { pen: 2, tag: 'C1 Supply Temp (TT_S)', unit: '°C', target: '75.0 - 85.0', ll: 65.0, l: 72.0, h: 90.0, hh: 95.0, ccp: false },
+    { pen: 3, tag: 'C1 Supply Flow (FT_S)', unit: 'L/h', target: '> 15000', ll: 10000, l: 12000, h: 22000, hh: 25000, ccp: false },
+    { pen: 4, tag: 'VSD05 Pump Power', unit: 'kW', target: '< 7.5', ll: null, l: null, h: 7.0, hh: 8.0, ccp: false }
+  ],
+  cip_line2: [
+    { pen: 0, tag: 'C2 Return Cond (CT_R)', unit: 'mS/cm', target: 'Caustic: 35-55 / Rinse: <2', ll: 0.5, l: 1.0, h: 60.0, hh: 70.0, ccp: true },
+    { pen: 1, tag: 'C2 Return Temp (TT_R)', unit: '°C', target: '> 75.0', ll: 65.0, l: 72.0, h: 92.0, hh: 98.0, ccp: true },
+    { pen: 2, tag: 'C2 Supply Temp (TT_S)', unit: '°C', target: '75.0 - 85.0', ll: 65.0, l: 72.0, h: 90.0, hh: 95.0, ccp: false },
+    { pen: 3, tag: 'C2 Supply Flow (FT_S)', unit: 'L/h', target: '> 15000', ll: 10000, l: 12000, h: 22000, hh: 25000, ccp: false },
+    { pen: 4, tag: 'VSD04 Pump Power', unit: 'kW', target: '< 7.5', ll: null, l: null, h: 7.0, hh: 8.0, ccp: false }
   ],
   prod: [
     { pen: 0, tag: 'PT_IN Filter Inlet', unit: 'bar', target: '3.0 - 4.5', ll: 2.0, l: 2.5, h: 4.8, hh: 5.5, ccp: false },
@@ -1475,17 +1637,19 @@ function evaluatePenAlarm(conf, val) {
   if (val === null || val === undefined || isNaN(val)) {
     return { status: 'NORMAL', text: `Target: ${conf.target} ${conf.unit}`, badgeClass: 'badge-ok', chipClass: '' };
   }
+  const formattedVal = conf.unit === 'kg' ? val.toLocaleString('en-US', { maximumFractionDigits: 1 }) : val.toFixed(1);
+  const fmtLim = lim => lim !== null ? (conf.unit === 'kg' ? Number(lim).toLocaleString('en-US') : lim) : '';
   if (conf.hh !== null && val >= conf.hh) {
-    return { status: 'CRITICAL', text: `🚨 CRITICAL (HH): ${val.toFixed(1)} ≥ ${conf.hh}`, badgeClass: 'badge-crit', chipClass: 'alarm-critical' };
+    return { status: 'CRITICAL', text: `🚨 CRITICAL (HH): ${formattedVal} ≥ ${fmtLim(conf.hh)}`, badgeClass: 'badge-crit', chipClass: 'alarm-critical' };
   }
   if (conf.ll !== null && val <= conf.ll) {
-    return { status: 'CRITICAL', text: `🚨 CRITICAL (LL): ${val.toFixed(1)} ≤ ${conf.ll}`, badgeClass: 'badge-crit', chipClass: 'alarm-critical' };
+    return { status: 'CRITICAL', text: `🚨 CRITICAL (LL): ${formattedVal} ≤ ${fmtLim(conf.ll)}`, badgeClass: 'badge-crit', chipClass: 'alarm-critical' };
   }
   if (conf.h !== null && val >= conf.h) {
-    return { status: 'WARNING', text: `⚠️ HIGH (H): ${val.toFixed(1)} ≥ ${conf.h}`, badgeClass: 'badge-warn', chipClass: 'alarm-warning' };
+    return { status: 'WARNING', text: `⚠️ HIGH (H): ${formattedVal} ≥ ${fmtLim(conf.h)}`, badgeClass: 'badge-warn', chipClass: 'alarm-warning' };
   }
   if (conf.l !== null && val <= conf.l) {
-    return { status: 'WARNING', text: `⚠️ LOW (L): ${val.toFixed(1)} ≤ ${conf.l}`, badgeClass: 'badge-warn', chipClass: 'alarm-warning' };
+    return { status: 'WARNING', text: `⚠️ LOW (L): ${formattedVal} ≤ ${fmtLim(conf.l)}`, badgeClass: 'badge-warn', chipClass: 'alarm-warning' };
   }
   return { status: 'NORMAL', text: `Target: ${conf.target} ${conf.unit}`, badgeClass: 'badge-ok', chipClass: '' };
 }
@@ -1512,6 +1676,12 @@ function updatePenChipAlert(sec, penIdx, val) {
 }
 
 function openLimitsModal(sec) {
+  let effectiveSec = sec;
+  if (sec === 'cip') {
+    const cur = sectionRecorders.cip?.currentCircuit;
+    if (cur === 'cip_line1' || cur === 'cip_line2') effectiveSec = cur;
+  }
+
   const overlay = document.getElementById('limits-modal-overlay');
   const titleEl = document.getElementById('limits-modal-title');
   const tbody = document.getElementById('limits-table-body');
@@ -1520,15 +1690,17 @@ function openLimitsModal(sec) {
   const secNames = {
     uht: 'UHT STERILIZER PROCESS (DB1200)',
     atank: 'ASEPTIC TANK ATANK (DB1301)',
-    cip: 'CIP SYSTEMS LINE 1 & 2',
+    cip: 'CIP SYSTEMS LINE 1 & 2 (COMBINED)',
+    cip_line1: 'CIP CIRCUIT 1 [DB1801] (LINE 1)',
+    cip_line2: 'CIP CIRCUIT 2 [DB1802] (LINE 2)',
     prod: 'PRODUCTION SUPPLY & FILTRATION'
   };
   if (titleEl) {
-    titleEl.textContent = `ALARM LIMIT CONFIGURATION: ${secNames[sec] || sec.toUpperCase()}`;
+    titleEl.textContent = `ALARM LIMIT CONFIGURATION: ${secNames[effectiveSec] || effectiveSec.toUpperCase()}`;
   }
 
-  const confList = PEN_ALARM_LIMITS[sec] || [];
-  const rec = sectionRecorders[sec];
+  const confList = PEN_ALARM_LIMITS[effectiveSec] || PEN_ALARM_LIMITS[sec] || [];
+  const rec = (effectiveSec === 'cip_line1' || effectiveSec === 'cip_line2') ? sectionRecorders.cip : sectionRecorders[effectiveSec];
 
   tbody.innerHTML = confList.map(conf => {
     let curVal = '--';
@@ -1536,21 +1708,27 @@ function openLimitsModal(sec) {
       const dataArr = rec.chart.data.datasets[conf.pen].data;
       if (dataArr && dataArr.length > 0) {
         const last = dataArr[dataArr.length - 1];
-        if (last !== null && last !== undefined) curVal = Number(last).toFixed(1);
+        if (last !== null && last !== undefined) {
+          curVal = conf.unit === 'kg'
+            ? Number(last).toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+            : Number(last).toFixed(1);
+        }
       }
     }
-    const evalResult = evaluatePenAlarm(conf, curVal !== '--' ? parseFloat(curVal) : null);
+    const evalResult = evaluatePenAlarm(conf, curVal !== '--' ? parseFloat(String(curVal).replace(/,/g, '')) : null);
     const badgeClass = evalResult.status === 'CRITICAL' ? 'crit' : (evalResult.status === 'WARNING' ? 'warn' : 'ok');
+
+    const fmtLimit = lim => lim !== null ? (conf.unit === 'kg' ? Number(lim).toLocaleString('en-US') : lim) : '-';
 
     return `
       <tr>
         <td><strong>${conf.tag}</strong> ${conf.ccp ? '<span style="color:#ef4444; font-size:10px; font-weight:700;">[CCP]</span>' : ''}</td>
         <td class="font-mono">${conf.unit}</td>
         <td class="font-mono" style="font-weight:700; color:#38bdf8;">${curVal}</td>
-        <td class="font-mono" style="color:#ef4444;">${conf.ll !== null ? conf.ll : '-'}</td>
-        <td class="font-mono" style="color:#fbbf24;">${conf.l !== null ? conf.l : '-'}</td>
-        <td class="font-mono" style="color:#fbbf24;">${conf.h !== null ? conf.h : '-'}</td>
-        <td class="font-mono" style="color:#ef4444;">${conf.hh !== null ? conf.hh : '-'}</td>
+        <td class="font-mono" style="color:#ef4444;">${fmtLimit(conf.ll)}</td>
+        <td class="font-mono" style="color:#fbbf24;">${fmtLimit(conf.l)}</td>
+        <td class="font-mono" style="color:#fbbf24;">${fmtLimit(conf.h)}</td>
+        <td class="font-mono" style="color:#ef4444;">${fmtLimit(conf.hh)}</td>
         <td><span class="limits-status-badge ${badgeClass}">${evalResult.status}</span></td>
       </tr>
     `;
@@ -1615,7 +1793,7 @@ function pushAllSectionRecordersData(d) {
   setText('atank-pen-pt', `${(a.pt460 || 0).toFixed(2)} bar`);
   setText('atank-pen-tt460', `${(a.tt460 || 0).toFixed(1)} °C`);
   setText('atank-pen-tt477', `${(a.tt477 || 0).toFixed(1)} °C`);
-  setText('atank-pen-lc', `${(a.lc || 0).toFixed(1)} %`);
+  setText('atank-pen-lc', `${(a.lc || 0).toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} kg`);
   setText('atank-pen-vsd', `${(vsd09.curspeed_pct || 0).toFixed(0)} %`);
 
   // Update ATANK Alarm Alerts on Chips
@@ -1641,8 +1819,11 @@ function pushAllSectionRecordersData(d) {
   const cipRec = sectionRecorders.cip;
   const c1 = d.cip_line1 || {};
   const c2 = d.cip_line2 || {};
-  const cipPower = (vf.VSD04?.power_kw || 0) + (vf.VSD05?.power_kw || 0);
+  const c1Power = vf.VSD05?.power_kw || 0;
+  const c2Power = vf.VSD04?.power_kw || 0;
+  const cipPower = c1Power + c2Power;
 
+  // 3a. Update ALL Pen Chips
   setText('cip-pen-ct1', `${(c1.ct_r || 0).toFixed(2)} mS/cm`);
   setText('cip-pen-tt1', `${(c1.tt_r || 0).toFixed(1)} °C`);
   setText('cip-pen-ft1', `${(c1.ft_s || 0).toFixed(0)} L/h`);
@@ -1650,7 +1831,6 @@ function pushAllSectionRecordersData(d) {
   setText('cip-pen-tt2', `${(c2.tt_r || 0).toFixed(1)} °C`);
   setText('cip-pen-power', `${cipPower.toFixed(1)} kW`);
 
-  // Update CIP Alarm Alerts on Chips
   updatePenChipAlert('cip', 0, c1.ct_r);
   updatePenChipAlert('cip', 1, c1.tt_r);
   updatePenChipAlert('cip', 2, c1.ft_s);
@@ -1658,17 +1838,74 @@ function pushAllSectionRecordersData(d) {
   updatePenChipAlert('cip', 4, c2.tt_r);
   updatePenChipAlert('cip', 5, cipPower);
 
+  // 3b. Update Circuit 1 Dedicated Chips
+  setText('cip-c1-pen-ctr', `${(c1.ct_r || 0).toFixed(2)} mS/cm`);
+  setText('cip-c1-pen-ttr', `${(c1.tt_r || 0).toFixed(1)} °C`);
+  setText('cip-c1-pen-tts', `${(c1.tt_s || 0).toFixed(1)} °C`);
+  setText('cip-c1-pen-fts', `${(c1.ft_s || 0).toFixed(0)} L/h`);
+  setText('cip-c1-pen-power', `${c1Power.toFixed(2)} kW`);
+
+  updatePenChipAlert('cip_line1', 0, c1.ct_r);
+  updatePenChipAlert('cip_line1', 1, c1.tt_r);
+  updatePenChipAlert('cip_line1', 2, c1.tt_s);
+  updatePenChipAlert('cip_line1', 3, c1.ft_s);
+  updatePenChipAlert('cip_line1', 4, c1Power);
+
+  // 3c. Update Circuit 2 Dedicated Chips
+  setText('cip-c2-pen-ctr', `${(c2.ct_r || 0).toFixed(2)} mS/cm`);
+  setText('cip-c2-pen-ttr', `${(c2.tt_r || 0).toFixed(1)} °C`);
+  setText('cip-c2-pen-tts', `${(c2.tt_s || 0).toFixed(1)} °C`);
+  setText('cip-c2-pen-fts', `${(c2.ft_s || 0).toFixed(0)} L/h`);
+  setText('cip-c2-pen-power', `${c2Power.toFixed(2)} kW`);
+
+  updatePenChipAlert('cip_line2', 0, c2.ct_r);
+  updatePenChipAlert('cip_line2', 1, c2.tt_r);
+  updatePenChipAlert('cip_line2', 2, c2.tt_s);
+  updatePenChipAlert('cip_line2', 3, c2.ft_s);
+  updatePenChipAlert('cip_line2', 4, c2Power);
+
   if (!cipRec.paused && cipRec.mode === 'live') {
-    cipRec.history.times.push(timeStr);
-    if (!cipRec.history.fullTimes) cipRec.history.fullTimes = [];
-    cipRec.history.fullTimes.push(fullTimeStr);
-    cipRec.history.pen0.push(c1.ct_r || 0);
-    cipRec.history.pen1.push(c1.tt_r || 0);
-    cipRec.history.pen2.push(c1.ft_s || 0);
-    cipRec.history.pen3.push(c2.ct_r || 0);
-    cipRec.history.pen4.push(c2.tt_r || 0);
-    cipRec.history.pen5.push(cipPower);
-    trimRecorderHistory(cipRec);
+    // 1) All History
+    cipRec.allHistory.times.push(timeStr);
+    if (!cipRec.allHistory.fullTimes) cipRec.allHistory.fullTimes = [];
+    cipRec.allHistory.fullTimes.push(fullTimeStr);
+    cipRec.allHistory.pen0.push(c1.ct_r || 0);
+    cipRec.allHistory.pen1.push(c1.tt_r || 0);
+    cipRec.allHistory.pen2.push(c1.ft_s || 0);
+    cipRec.allHistory.pen3.push(c2.ct_r || 0);
+    cipRec.allHistory.pen4.push(c2.tt_r || 0);
+    cipRec.allHistory.pen5.push(cipPower);
+    trimRecorderHistory({ history: cipRec.allHistory });
+
+    // 2) Circuit 1 History
+    cipRec.c1History.times.push(timeStr);
+    if (!cipRec.c1History.fullTimes) cipRec.c1History.fullTimes = [];
+    cipRec.c1History.fullTimes.push(fullTimeStr);
+    cipRec.c1History.pen0.push(c1.ct_r || 0);
+    cipRec.c1History.pen1.push(c1.tt_r || 0);
+    cipRec.c1History.pen2.push(c1.tt_s || 0);
+    cipRec.c1History.pen3.push(c1.ft_s || 0);
+    cipRec.c1History.pen4.push(c1Power);
+    trimRecorderHistory({ history: cipRec.c1History });
+
+    // 3) Circuit 2 History
+    cipRec.c2History.times.push(timeStr);
+    if (!cipRec.c2History.fullTimes) cipRec.c2History.fullTimes = [];
+    cipRec.c2History.fullTimes.push(fullTimeStr);
+    cipRec.c2History.pen0.push(c2.ct_r || 0);
+    cipRec.c2History.pen1.push(c2.tt_r || 0);
+    cipRec.c2History.pen2.push(c2.tt_s || 0);
+    cipRec.c2History.pen3.push(c2.ft_s || 0);
+    cipRec.c2History.pen4.push(c2Power);
+    trimRecorderHistory({ history: cipRec.c2History });
+
+    if (cipRec.currentCircuit === 'cip_line1') {
+      cipRec.history = cipRec.c1History;
+    } else if (cipRec.currentCircuit === 'cip_line2') {
+      cipRec.history = cipRec.c2History;
+    } else {
+      cipRec.history = cipRec.allHistory;
+    }
   }
 
   // 4. PROD DATA
@@ -2156,12 +2393,33 @@ function applyLiveTelemetry(d) {
     setText('atank-timer-val', `${a.step_timer}s`);
     setText('atank-sp-val', `${a.step_setpoint}s`);
 
-    setText('atank-lc', `${a.lc.toFixed(2)} %`);
+    const lcVal = a.lc !== undefined && a.lc !== null ? a.lc : 0;
+    setText('atank-lc', `${lcVal.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} kg`);
+    const lcBar = document.getElementById('atank-lc-bar');
+    if (lcBar) {
+      const lcPct = Math.min(Math.max((lcVal / 28000) * 100, 0), 100);
+      lcBar.style.width = `${lcPct}%`;
+    }
+
     setText('atank-pt', `${a.pt460.toFixed(2)} bar`);
     setText('kpi-atank-pt', `${a.pt460.toFixed(2)} bar`);
+    const ptBar = document.getElementById('atank-pt-bar');
+    if (ptBar) {
+      ptBar.style.width = `${Math.min(Math.max((a.pt460 / 4.0) * 100, 0), 100)}%`;
+    }
+
     setText('atank-tt460', `${a.tt460.toFixed(1)} °C`);
     setText('kpi-sterile-temp', `${a.tt460.toFixed(1)} °C`);
+    const tt460Bar = document.getElementById('atank-tt460-bar');
+    if (tt460Bar) {
+      tt460Bar.style.width = `${Math.min(Math.max((a.tt460 / 150) * 100, 0), 100)}%`;
+    }
+
     setText('atank-tt477', `${a.tt477.toFixed(1)} °C`);
+    const tt477Bar = document.getElementById('atank-tt477-bar');
+    if (tt477Bar) {
+      tt477Bar.style.width = `${Math.min(Math.max((a.tt477 / 150) * 100, 0), 100)}%`;
+    }
 
     const sterileBadge = document.getElementById('kpi-sterile-badge');
     if (sterileBadge) {
@@ -2924,17 +3182,14 @@ function renderVsdParetoUI(paretoData) {
   }
 }
 
-window.seedDemoVsdFaults = async function() {
+window.refreshVsdPareto = async function() {
   const host = window.location.hostname || '127.0.0.1';
   try {
-    const res = await fetch(`http://${host}:8000/api/v1/vsd/fault/seed_demo`, { method: 'POST' });
-    const json = await res.json();
-    alert('✅ อัพเดทข้อมูลตัวอย่างประวัติการทริปเรียบร้อยแล้ว');
     const paretoRes = await fetch(`http://${host}:8000/api/v1/vsd/fault_pareto`);
     const paretoData = await paretoRes.json();
     renderVsdParetoUI(paretoData);
   } catch (err) {
-    alert('เชื่อมต่อเซิร์ฟเวอร์ล้มเหลว: ' + err.message);
+    console.warn('Failed to refresh Pareto data:', err);
   }
 };
 

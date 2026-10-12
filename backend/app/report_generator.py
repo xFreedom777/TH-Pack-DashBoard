@@ -67,7 +67,7 @@ def generate_step_report_html(section: str, batch_id: str, date_str: str, steps:
     elif section == "atank":
         col1_header = "Sterile Temp (°C)"
         col2_header = "Pressure (bar)"
-        col3_header = "Level LC (%)"
+        col3_header = "Weight LC (kg)"
     else:  # CIP
         col1_header = "Return Temp (°C)"
         col2_header = "Conductivity (mS/cm)"
@@ -103,7 +103,7 @@ def generate_step_report_html(section: str, batch_id: str, date_str: str, steps:
         elif section == "atank":
             v1 = f"{s.get('temp_primary_avg', 0.0):.1f}°C" if s.get('temp_primary_avg') is not None else "—"
             v2 = f"{s.get('pressure_avg', 0.0):.2f}" if s.get('pressure_avg') is not None else "—"
-            v3 = f"{s.get('level_avg', 0.0):.1f}%" if s.get('level_avg') is not None else "—"
+            v3 = f"{s.get('level_avg', 0.0):.0f} kg" if s.get('level_avg') is not None else "—"
         else:
             v1 = f"{s.get('temp_primary_avg', 0.0):.1f}°C" if s.get('temp_primary_avg') is not None else "—"
             v2 = f"{s.get('conductivity_avg', 0.0):.2f}" if s.get('conductivity_avg') is not None else "—"
