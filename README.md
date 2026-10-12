@@ -144,7 +144,23 @@ graph TD
 
 ---
 
-## 📅 บันทึกความคืบหน้าการพัฒนา (Development Progress Log: 11 ตุลาคม 2026)
+## 📅 บันทึกความคืบหน้าการพัฒนา (Development Progress Logs)
+
+### 📌 วันที่ 12 ตุลาคม 2026 (Production Commissioning & Operational Analytics Suite)
+
+| ลำดับ | รายการพัฒนา / Feature | สถานะ | รายละเอียดการดำเนินงาน |
+| :---: | :--- | :---: | :--- |
+| **1** | **UHT Deep Analytics Suite (Coconut Water Production)** | ✅ เสร็จสมบูรณ์ | ปรับแต่งกระบวนการผลิตสำหรับ **น้ำมะพร้าวแท้ 100% (UHT Coconut Water 250ml)** พร้อมสร้างแผงมอนิเตอร์ลูปควบคุมความร้อน DB331 (CV49FIC01, CV50FIC01, CV64FIC01, FIQCV08) แสดงสถานะ SV, PV, OV และ Tracking Error |
+| **2** | **Food Safety & CCP/F₀ Compliance Engine** | ✅ เสร็จสมบูรณ์ | ติดตั้งตัวชี้วัดความปลอดภัยอาหาร: **CCP TT01 Compliance Rate (100% Audit Ready, Critical Limit 135.0°C)**, คำนวณค่าการฆ่าเชื้อสะสม **F₀ Commercial Sterility (Holding Time 16s, Target F₀ ≥ 3.0 min)**, ต้นทุนพลังงานจำเพาะ **SEC KPI (kWh/1,000L)**, และสมดุลผลผลิตสะสม (Liter Totalizer) |
+| **3** | **ATANK Load Cell Weight Calibration (0 – 28,000 kg)** | ✅ เสร็จสมบูรณ์ | ปรับแก้หน่วยวัดและสเกลถังเก็บพักปลอดเชื้อ Aseptic Tank (DB1301) จาก % เป็นน้ำหนักจริง **Kg (0 – 28,000 kg)** ครอบคลุมทั้งมิเตอร์หน้า HMI, สเกลแกน Y กราฟบันทึก Real-time Process Recorder, InfluxDB Tags, และหัวตารางรายงานทางการ BMR Step Log Report |
+| **4** | **CIP Dual-Line Interactive Circuit Switching** | ✅ เสร็จสมบูรณ์ | เพิ่ม Dropdown ควบคุมบนกราฟ CIP Recorder ให้เลือกสลับดูข้อมูลเจาะจงวงล้างได้ทันที: **Combined Dual-Line**, **Circuit 1 [DB1801] (ปั๊ม VSD05 7.5 kW)**, หรือ **Circuit 2 [DB1802] (ปั๊ม VSD04 7.5 kW)** พร้อมสลับชุด Pen, สีเส้น, สเกลแกน และปุ่มพิมพ์รายงาน Step Log ให้ตรงตามวงล้างอัตโนมัติ |
+| **5** | **Strict Timezone Synchronization (+07:00 Asia/Bangkok)** | ✅ เสร็จสมบูรณ์ | บังคับใช้และบันทึกคอนฟิก Timezone ประเทศไทย (+07:00) ถาวรทั้งในระดับ Global MySQL (`/etc/mysql/conf.d/timezone.cnf`), Docker Environment, Python Backend, และ Tooltip กราฟ Historian แสดงวัน/เดือน/ปี และเวลาตามเวลาหน้างานจริง |
+| **6** | **Clean Production Readiness & Demo Purge** | ✅ เสร็จสมบูรณ์ | ปลดระวางและลบ Endpoint จำลองข้อมูลทั้งหมด (`/api/v1/process_logs/seed_demo`, `/api/v1/vsd/fault/seed_demo`) ออกจากระบบอย่างถาวร ปรับปุ่มรีเฟรชบนตาราง Pareto ให้อ่านเฉพาะประวัติจริง ป้องกันข้อมูลตัวอย่างปะปนกับสายการผลิตจริง 100% |
+| **7** | **CSS Layout Isolation & Modal Guard** | ✅ เสร็จสมบูรณ์ | ปรับปรุงโครงสร้าง CSS ของตัวเลือกวงล้างและการตัดต่อคลาส จัดการกักบริเวณ Popup/Modal ไม่ให้หลุดร่วงลงมากองท้ายหน้าจอ เพิ่ม Asset Cache Buster ป้องกันปัญหาค้างแคชในเบราว์เซอร์ |
+
+---
+
+### 📌 วันที่ 11 ตุลาคม 2026 (System Foundation & Core Infrastructure)
 
 | ลำดับ | รายการพัฒนา / Feature | สถานะ | รายละเอียดการดำเนินงาน |
 | :---: | :--- | :---: | :--- |
@@ -152,7 +168,7 @@ graph TD
 | **2** | **Step Transition Engine (`step_tracker.py`)** | ✅ เสร็จสมบูรณ์ | เชื่อมต่อเข้ากับ Background PLC Polling Loop ตรวจจับ Step เปลี่ยนค่าแบบ Real-time และบันทึกลงฐานข้อมูลอัตโนมัติ |
 | **3** | **ATANK Step List 0–128 (TIA Portal Text List)** | ✅ เสร็จสมบูรณ์ | ปรับปรุงพจนานุกรมขั้นตอน A_TANK_STEP ครบ 100% ตามหน้างานจริง (Step 24/26 Condensate Drain, Step 28 Ready Production, Step 30 Production, Step 66 Plant Cleaning ฯลฯ) |
 | **4** | **Official A4 BMR Report Generator** | ✅ เสร็จสมบูรณ์ | สร้างระบบรายงานมาตรฐาน A4 Portrait พร้อมฝัง Base64 ตราสัญลักษณ์ **marine (มารีน)** เต็มใบขอบมน, ตารางข้อมูล Step, และช่องลงนาม 3 ฝ่าย (Operator, QC, ผจก.ผลิต) |
-| **5** | | ✅ เสร็จสมบูรณ์ | ปรับเปลี่ยนชื่อโรงงานหน้างานจริง** ทั้งในหัวเอกสารและแถบหลักแดชบอร์ด |
+| **5** | **RUNGSAPPATTANA Branding** | ✅ เสร็จสมบูรณ์ | ปรับเปลี่ยนชื่อโรงงานหน้างานจริงทั้งในหัวเอกสารและแถบหลักแดชบอร์ด |
 | **6** | **From-To Date & Time Filter (Historian & Reports)** | ✅ เสร็จสมบูรณ์ | เพิ่มกล่องเลือกวัน-เวลาเริ่มต้น (From) และสิ้นสุด (To) ในตัวบันทึกกราฟและหน้าต่างออกรายงาน Step Log พร้อมปรับ Sampling Resolution |
 | **7** | **Overview Date Picker & Strict FAULT NO DATA** | ✅ เสร็จสมบูรณ์ | เพิ่มตัวกรองเลือกวันที่ในหน้า Overview พร้อมตั้งเงื่อนไขวันเริ่มติดตั้งจริง (10 ต.ค. 2026) หากเลือกวันก่อนหน้านี้จะแสดง **`FAULT: NO DATA`** โปร่งใส ไม่มีการปั้นข้อมูล |
 | **8** | **Decoupled Worker & Watchdog Auto-Recover** | ✅ เสร็จสมบูรณ์ | แยก Ingestion Worker (`telemetry_worker.py`) ออกจาก FastAPI พร้อมระบบ Watchdog Supervisor ตรวจจับ Heartbeat และกู้ชีพโพรเซสกลับคืนทันทีหากล้มเหลว รองรับความเสถียรเกรดอุตสาหกรรม (OT High Availability) |
