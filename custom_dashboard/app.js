@@ -655,7 +655,7 @@ function initCharts() {
   charts.power = new Chart(ctxPower, {
     type: 'doughnut',
     data: {
-      labels: ['VSD01 (Booster 15kW)', 'VSD02 (Feed 7.5kW)', 'VSD03 (PID Supply 4kW)', 'VSD04 (CIP L2 5.5kW)', 'VSD05 (CIP L1 7.5kW)', 'VSD06 (Return 4kW)', 'VSD08 (P101 3kW)', 'VSD09 (Agitator 3kW)'],
+      labels: ['VSD01 (Booster 15kW)', 'VSD02 (Feed 7.5kW)', 'VSD03 (PID Supply 4kW)', 'VSD04 (CIP L2 5.5kW)', 'VSD05 (CIP L1 5.5kW)', 'VSD06 (Return 4kW)', 'VSD08 (P101 3kW)', 'VSD09 (Agitator 3kW)'],
       datasets: [{
         data: p.powerShare,
         backgroundColor: [
@@ -833,7 +833,7 @@ const CIP_CONFIGS = {
   },
   cip_line1: {
     title: 'CIP CIRCUIT 1 [DB1801] CHEMICAL & THERMAL RECORDER',
-    sub: 'บันทึกตัวแปรเฉพาะวงล้าง Circuit 1: Conductivity ขากลับ, อุณหภูมิ Supply/Return, Flow Supply และปั๊มจ่าย VSD05 (7.5 kW)',
+    sub: 'บันทึกตัวแปรเฉพาะวงล้าง Circuit 1: Conductivity ขากลับ, อุณหภูมิ Supply/Return, Flow Supply และปั๊มจ่าย VSD05 (5.5 kW)',
     reportTarget: 'cip_line1',
     reportTitle: '📑 ออกรายงาน Step Log Circuit 1 [DB1801]',
     gridId: 'cip-pen-grid-c1',
@@ -1617,7 +1617,7 @@ const PEN_ALARM_LIMITS = {
     { pen: 1, tag: 'C1 Return Temp (TT_R)', unit: '°C', target: '> 75.0', ll: 65.0, l: 72.0, h: 92.0, hh: 98.0, ccp: true },
     { pen: 2, tag: 'C1 Supply Temp (TT_S)', unit: '°C', target: '75.0 - 85.0', ll: 65.0, l: 72.0, h: 90.0, hh: 95.0, ccp: false },
     { pen: 3, tag: 'C1 Supply Flow (FT_S)', unit: 'L/h', target: '> 15000', ll: 10000, l: 12000, h: 22000, hh: 25000, ccp: false },
-    { pen: 4, tag: 'VSD05 Pump Power', unit: 'kW', target: '< 7.5', ll: null, l: null, h: 7.0, hh: 8.0, ccp: false }
+    { pen: 4, tag: 'VSD05 Pump Power', unit: 'kW', target: '< 5.5', ll: null, l: null, h: 5.0, hh: 5.8, ccp: false }
   ],
   cip_line2: [
     { pen: 0, tag: 'C2 Return Cond (CT_R)', unit: 'mS/cm', target: 'Caustic: 35-55 / Rinse: <2', ll: 0.5, l: 1.0, h: 60.0, hh: 70.0, ccp: true },
@@ -2064,7 +2064,7 @@ function renderDriveBayCards(vf) {
     { key: 'VSD03', tag: 'VSD03', name: 'UHT PUMP SUPPLY (PID)', section: 'UHT STERILIZER', rated: '4.0 kW', group: 'uht' },
     { key: 'VSD06', tag: 'VSD06', name: 'UHT PUMP RETURN', section: 'UHT STERILIZER', rated: '4.0 kW', group: 'uht' },
     { key: 'VSD04', tag: 'VSD04', name: 'CIP L2 SUPPLY PUMP', section: 'CIP SYSTEMS', rated: '5.5 kW', group: 'cip' },
-    { key: 'VSD05', tag: 'VSD05', name: 'CIP L1 SUPPLY PUMP', section: 'CIP SYSTEMS', rated: '7.5 kW', group: 'cip' },
+    { key: 'VSD05', tag: 'VSD05', name: 'CIP L1 SUPPLY PUMP', section: 'CIP SYSTEMS', rated: '5.5 kW', group: 'cip' },
     { key: 'VSD08', tag: 'VSD08', name: 'PROD P101 SUPPLY PUMP', section: 'PROD SUPPLY', rated: '3.0 kW', group: 'tank' },
     { key: 'VSD09', tag: 'VSD09', name: 'ATANK ASEPTIC AGITATOR', section: 'ASEPTIC TANK', rated: '3.0 kW', group: 'tank' }
   ];

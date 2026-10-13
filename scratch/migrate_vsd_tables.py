@@ -64,7 +64,7 @@ VALUES
 ('VSD02', 'UHT PUMP_FEED', 'UHT', 7.5, 48600, 13.50, 0.0, 2000.0, 2000.0, 'Level 2: Grease Bearings & Check Alignment', 99.32, 'GOOD'),
 ('VSD03', 'UHT PUMP_SUPPLY (PID)', 'UHT', 4.0, 36000, 10.00, 0.0, 2000.0, 2000.0, 'Level 2: Inspect Mechanical Seal & Coupling', 99.50, 'GOOD'),
 ('VSD04', 'CIP L1 P_S Supply', 'CIP 1', 5.5, 21600, 6.00, 0.0, 2000.0, 2000.0, 'Level 2: Grease Bearings & Check Impeller', 99.70, 'GOOD'),
-('VSD05', 'CIP L2 P_S Supply', 'CIP 2', 7.5, 14400, 4.00, 0.0, 2000.0, 2000.0, 'Level 2: Grease Bearings & Check Impeller', 99.80, 'GOOD'),
+('VSD05', 'CIP L2 P_S Supply', 'CIP 2', 5.5, 14400, 4.00, 0.0, 2000.0, 2000.0, 'Level 2: Grease Bearings & Check Impeller', 99.80, 'GOOD'),
 ('VSD06', 'UHT PUMP_RETURN', 'UHT', 4.0, 43200, 12.00, 0.0, 2000.0, 2000.0, 'Level 2: Inspect Mechanical Seal & Coupling', 99.40, 'GOOD'),
 ('VSD08', 'Prod Supply P101', 'Prod Supply', 3.0, 18000, 5.00, 0.0, 2000.0, 2000.0, 'Level 2: Grease Motor Bearings & Seals', 99.75, 'GOOD'),
 ('VSD09', 'ATANK Agitator', 'ATANK', 3.0, 57600, 16.00, 0.0, 2000.0, 2000.0, 'Level 2: Inspect Agitator Gearbox & Oil', 99.20, 'GOOD')

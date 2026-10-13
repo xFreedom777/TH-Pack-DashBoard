@@ -222,6 +222,8 @@ VSD_NAMEPLATE = {
     "VSD02": {"v": 400.0, "a": 16.5, "kw": 7.5, "hz": 50.0, "rpm": 1455, "pu_kw": 11.0},
     "VSD03": {"v": 400.0, "a": 8.8, "kw": 4.0, "hz": 50.0, "rpm": 1455, "pu_kw": 5.5},
     "VSD04": {"v": 400.0, "a": 12.5, "kw": 5.5, "hz": 50.0, "rpm": 1455, "pu_kw": 7.5},
+    # VSD05: same motor as VSD04 (site confirmed); TIA online not yet possible to verify
+    "VSD05": {"v": 400.0, "a": 12.5, "kw": 5.5, "hz": 50.0, "rpm": 1455, "pu_kw": 7.5},
     "VSD06": {"v": 400.0, "a": 8.8, "kw": 4.0, "hz": 50.0, "rpm": 1455, "pu_kw": None},
     "VSD08": {"v": 400.0, "a": 6.3, "kw": 3.0, "hz": 50.0, "rpm": 2895, "pu_kw": 4.0},
     "VSD09": {"v": 400.0, "a": 7.3, "kw": 3.0, "hz": 50.0, "rpm": 1425, "pu_kw": None},
@@ -505,7 +507,7 @@ class MasterPlantReader:
                 ("VSD02", 34, "UHT PUMP_FEED", 7.5, "UHT"),
                 ("VSD03", 68, "UHT PUMP_SUPPLY (PID)", 4.0, "UHT"),
                 ("VSD04", 102, "CIP L2 P_S Supply", 5.5, "CIP 2"),
-                ("VSD05", 136, "CIP L1 P_S Supply", 7.5, "CIP 1"),
+                ("VSD05", 136, "CIP L1 P_S Supply", 5.5, "CIP 1"),
                 ("VSD06", 170, "UHT PUMP_RETURN", 4.0, "UHT"),
                 ("VSD08", 238, "Prod Supply P101", 3.0, "Prod Supply"),
                 ("VSD09", 272, "ATANK Agitator", 3.0, "ATANK")
