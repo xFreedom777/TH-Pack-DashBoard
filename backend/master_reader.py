@@ -214,15 +214,27 @@ PROD_SUPPLY_STATUS = {
     9999: "HOLD"
 }
 
-def calc_g120c(act_pct, is_running, rated_kw, v_base=380.0):
+# Motor nameplate per drive, taken from TIA Portal G120C parameters:
+# p0304 rated voltage [V], p0305 rated current [A], p0307 rated power [kW],
+# p0310 rated frequency [Hz], p0311 rated speed [rpm], r0206 power unit rating [kW]
+# None = not yet verified from TIA (falls back to estimate).
+VSD_NAMEPLATE = {
+    "VSD02": {"v": 400.0, "a": 16.5, "kw": 7.5, "hz": 50.0, "rpm": 1455, "pu_kw": 11.0},
+    "VSD03": {"v": 400.0, "a": 8.8, "kw": 4.0, "hz": 50.0, "rpm": 1455, "pu_kw": 5.5},
+    "VSD04": {"v": 400.0, "a": 12.5, "kw": 5.5, "hz": 50.0, "rpm": 1455, "pu_kw": 7.5},
+    "VSD06": {"v": 400.0, "a": 8.8, "kw": 4.0, "hz": 50.0, "rpm": 1455, "pu_kw": None},
+}
+
+def calc_g120c(act_pct, is_running, rated_kw, v_base=380.0, i_rated=None, f_rated=50.0):
     if not is_running or act_pct <= 0.0:
         return {"freq_hz": 0.0, "voltage_v": 0.0, "power_kw": 0.0, "current_a": 0.0, "pf": 0.0}
     
     ratio = min(max(act_pct / 100.0, 0.0), 1.0)
-    freq_hz = round(ratio * 50.0, 2)
+    freq_hz = round(ratio * f_rated, 2)
     voltage_v = round(ratio * v_base, 1)
     power_kw = round(rated_kw * (0.08 + 0.92 * (ratio ** 3)), 2)
-    i_rated = (rated_kw * 1000.0) / (math.sqrt(3) * v_base * 0.85 * 0.91)
+    if not i_rated:
+        i_rated = (rated_kw * 1000.0) / (math.sqrt(3) * v_base * 0.85 * 0.91)
     i_mag = 0.30 * i_rated
     current_a = round(math.sqrt((i_mag ** 2) + ((i_rated * (ratio ** 2)) ** 2)), 2)
     pf = round(0.40 + 0.45 * ratio, 2)
@@ -488,11 +500,11 @@ class MasterPlantReader:
             d371 = self.client.db_read(371, 0, 306)
             vsd_configs = [
                 ("VSD01", 0, "UHT PUMP_BOOST", 15.0, "UHT"),
-                ("VSD02", 34, "UHT PUMP_FEED", 11.0, "UHT"),
-                ("VSD03", 68, "UHT PUMP_SUPPLY (PID)", 5.5, "UHT"),
-                ("VSD04", 102, "CIP L2 P_S Supply", 7.5, "CIP 2"),
+                ("VSD02", 34, "UHT PUMP_FEED", 7.5, "UHT"),
+                ("VSD03", 68, "UHT PUMP_SUPPLY (PID)", 4.0, "UHT"),
+                ("VSD04", 102, "CIP L2 P_S Supply", 5.5, "CIP 2"),
                 ("VSD05", 136, "CIP L1 P_S Supply", 7.5, "CIP 1"),
-                ("VSD06", 170, "UHT PUMP_RETURN", 5.5, "UHT"),
+                ("VSD06", 170, "UHT PUMP_RETURN", 4.0, "UHT"),
                 ("VSD08", 238, "Prod Supply P101", 4.0, "Prod Supply"),
                 ("VSD09", 272, "ATANK Agitator", 4.0, "ATANK")
             ]
@@ -509,7 +521,12 @@ class MasterPlantReader:
                 curspeed = get_real(d371, offset + 10)
                 curpower_drv = get_real(d371, offset + 14)
 
-                calc = calc_g120c(curspeed if running else 0.0, running, kw_rated)
+                np_ = VSD_NAMEPLATE.get(tag)
+                if np_:
+                    calc = calc_g120c(curspeed if running else 0.0, running, np_["kw"],
+                                      v_base=np_["v"], i_rated=np_["a"], f_rated=np_["hz"])
+                else:
+                    calc = calc_g120c(curspeed if running else 0.0, running, kw_rated)
                 actual_kw = curpower_drv if curpower_drv > 0.05 else calc["power_kw"]
 
                 res["vsd_fleet"][tag] = {
