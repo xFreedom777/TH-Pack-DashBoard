@@ -655,7 +655,7 @@ function initCharts() {
   charts.power = new Chart(ctxPower, {
     type: 'doughnut',
     data: {
-      labels: ['VSD01 (Booster 15kW)', 'VSD02 (Feed 7.5kW)', 'VSD03 (PID Supply 4kW)', 'VSD04 (CIP L2 5.5kW)', 'VSD05 (CIP L1 7.5kW)', 'VSD06 (Return 4kW)', 'VSD08 (P101 3kW)', 'VSD09 (Agitator 4kW)'],
+      labels: ['VSD01 (Booster 15kW)', 'VSD02 (Feed 7.5kW)', 'VSD03 (PID Supply 4kW)', 'VSD04 (CIP L2 5.5kW)', 'VSD05 (CIP L1 7.5kW)', 'VSD06 (Return 4kW)', 'VSD08 (P101 3kW)', 'VSD09 (Agitator 3kW)'],
       datasets: [{
         data: p.powerShare,
         backgroundColor: [
@@ -2066,7 +2066,7 @@ function renderDriveBayCards(vf) {
     { key: 'VSD04', tag: 'VSD04', name: 'CIP L2 SUPPLY PUMP', section: 'CIP SYSTEMS', rated: '5.5 kW', group: 'cip' },
     { key: 'VSD05', tag: 'VSD05', name: 'CIP L1 SUPPLY PUMP', section: 'CIP SYSTEMS', rated: '7.5 kW', group: 'cip' },
     { key: 'VSD08', tag: 'VSD08', name: 'PROD P101 SUPPLY PUMP', section: 'PROD SUPPLY', rated: '3.0 kW', group: 'tank' },
-    { key: 'VSD09', tag: 'VSD09', name: 'ATANK ASEPTIC AGITATOR', section: 'ASEPTIC TANK', rated: '4.0 kW', group: 'tank' }
+    { key: 'VSD09', tag: 'VSD09', name: 'ATANK ASEPTIC AGITATOR', section: 'ASEPTIC TANK', rated: '3.0 kW', group: 'tank' }
   ];
 
   const filtered = (activeDriveFilter === 'all') 

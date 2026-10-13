@@ -224,6 +224,7 @@ VSD_NAMEPLATE = {
     "VSD04": {"v": 400.0, "a": 12.5, "kw": 5.5, "hz": 50.0, "rpm": 1455, "pu_kw": 7.5},
     "VSD06": {"v": 400.0, "a": 8.8, "kw": 4.0, "hz": 50.0, "rpm": 1455, "pu_kw": None},
     "VSD08": {"v": 400.0, "a": 6.3, "kw": 3.0, "hz": 50.0, "rpm": 2895, "pu_kw": 4.0},
+    "VSD09": {"v": 400.0, "a": 7.3, "kw": 3.0, "hz": 50.0, "rpm": 1425, "pu_kw": None},
 }
 
 def calc_g120c(act_pct, is_running, rated_kw, v_base=380.0, i_rated=None, f_rated=50.0):
@@ -507,7 +508,7 @@ class MasterPlantReader:
                 ("VSD05", 136, "CIP L1 P_S Supply", 7.5, "CIP 1"),
                 ("VSD06", 170, "UHT PUMP_RETURN", 4.0, "UHT"),
                 ("VSD08", 238, "Prod Supply P101", 3.0, "Prod Supply"),
-                ("VSD09", 272, "ATANK Agitator", 4.0, "ATANK")
+                ("VSD09", 272, "ATANK Agitator", 3.0, "ATANK")
             ]
 
             total_kw = 0.0
