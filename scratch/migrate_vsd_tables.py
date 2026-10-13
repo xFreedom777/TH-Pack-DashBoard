@@ -66,7 +66,7 @@ VALUES
 ('VSD04', 'CIP L1 P_S Supply', 'CIP 1', 5.5, 21600, 6.00, 0.0, 2000.0, 2000.0, 'Level 2: Grease Bearings & Check Impeller', 99.70, 'GOOD'),
 ('VSD05', 'CIP L2 P_S Supply', 'CIP 2', 7.5, 14400, 4.00, 0.0, 2000.0, 2000.0, 'Level 2: Grease Bearings & Check Impeller', 99.80, 'GOOD'),
 ('VSD06', 'UHT PUMP_RETURN', 'UHT', 4.0, 43200, 12.00, 0.0, 2000.0, 2000.0, 'Level 2: Inspect Mechanical Seal & Coupling', 99.40, 'GOOD'),
-('VSD08', 'Prod Supply P101', 'Prod Supply', 4.0, 18000, 5.00, 0.0, 2000.0, 2000.0, 'Level 2: Grease Motor Bearings & Seals', 99.75, 'GOOD'),
+('VSD08', 'Prod Supply P101', 'Prod Supply', 3.0, 18000, 5.00, 0.0, 2000.0, 2000.0, 'Level 2: Grease Motor Bearings & Seals', 99.75, 'GOOD'),
 ('VSD09', 'ATANK Agitator', 'ATANK', 4.0, 57600, 16.00, 0.0, 2000.0, 2000.0, 'Level 2: Inspect Agitator Gearbox & Oil', 99.20, 'GOOD')
 ON DUPLICATE KEY UPDATE vsd_name=VALUES(vsd_name);
 """

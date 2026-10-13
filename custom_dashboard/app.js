@@ -655,7 +655,7 @@ function initCharts() {
   charts.power = new Chart(ctxPower, {
     type: 'doughnut',
     data: {
-      labels: ['VSD01 (Booster 15kW)', 'VSD02 (Feed 7.5kW)', 'VSD03 (PID Supply 4kW)', 'VSD04 (CIP L2 5.5kW)', 'VSD05 (CIP L1 7.5kW)', 'VSD06 (Return 4kW)', 'VSD08 (P101 4kW)', 'VSD09 (Agitator 4kW)'],
+      labels: ['VSD01 (Booster 15kW)', 'VSD02 (Feed 7.5kW)', 'VSD03 (PID Supply 4kW)', 'VSD04 (CIP L2 5.5kW)', 'VSD05 (CIP L1 7.5kW)', 'VSD06 (Return 4kW)', 'VSD08 (P101 3kW)', 'VSD09 (Agitator 4kW)'],
       datasets: [{
         data: p.powerShare,
         backgroundColor: [
@@ -1630,7 +1630,7 @@ const PEN_ALARM_LIMITS = {
     { pen: 0, tag: 'PT_IN Filter Inlet', unit: 'bar', target: '3.0 - 4.5', ll: 2.0, l: 2.5, h: 4.8, hh: 5.5, ccp: false },
     { pen: 1, tag: 'PT_OUT Filter Outlet', unit: 'bar', target: '2.5 - 4.0', ll: 1.8, l: 2.2, h: 4.5, hh: 5.2, ccp: false },
     { pen: 2, tag: 'ΔP Diff Press', unit: 'bar', target: '< 0.5', ll: null, l: null, h: 0.8, hh: 1.2, ccp: true },
-    { pen: 3, tag: 'P101 Power', unit: 'kW', target: '< 8.0', ll: null, l: null, h: 7.5, hh: 8.5, ccp: false },
+    { pen: 3, tag: 'P101 Power', unit: 'kW', target: '< 3.0', ll: null, l: null, h: 2.8, hh: 3.2, ccp: false },
     { pen: 4, tag: 'P101 Running Speed', unit: '%', target: '70.0 - 95.0', ll: 40.0, l: 60.0, h: 98.0, hh: 100.0, ccp: false }
   ]
 };
@@ -2065,7 +2065,7 @@ function renderDriveBayCards(vf) {
     { key: 'VSD06', tag: 'VSD06', name: 'UHT PUMP RETURN', section: 'UHT STERILIZER', rated: '4.0 kW', group: 'uht' },
     { key: 'VSD04', tag: 'VSD04', name: 'CIP L2 SUPPLY PUMP', section: 'CIP SYSTEMS', rated: '5.5 kW', group: 'cip' },
     { key: 'VSD05', tag: 'VSD05', name: 'CIP L1 SUPPLY PUMP', section: 'CIP SYSTEMS', rated: '7.5 kW', group: 'cip' },
-    { key: 'VSD08', tag: 'VSD08', name: 'PROD P101 SUPPLY PUMP', section: 'PROD SUPPLY', rated: '4.0 kW', group: 'tank' },
+    { key: 'VSD08', tag: 'VSD08', name: 'PROD P101 SUPPLY PUMP', section: 'PROD SUPPLY', rated: '3.0 kW', group: 'tank' },
     { key: 'VSD09', tag: 'VSD09', name: 'ATANK ASEPTIC AGITATOR', section: 'ASEPTIC TANK', rated: '4.0 kW', group: 'tank' }
   ];
 
