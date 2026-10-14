@@ -358,7 +358,9 @@ def get_process_step_report(
     date_filter: Optional[str] = Query(None, description="Date filter YYYY-MM-DD"),
     from_time: Optional[str] = Query(None, description="From datetime YYYY-MM-DDTHH:MM"),
     to_time: Optional[str] = Query(None, description="To datetime YYYY-MM-DDTHH:MM"),
-    batch_id: Optional[str] = Query(None, description="Batch reference filter")
+    batch_id: Optional[str] = Query(None, description="Batch reference filter"),
+    route: Optional[str] = Query(None, description="Filter by Route, e.g. Filler Machine, Prepare Chemical, Aseptic Tank"),
+    exclude_standby: bool = Query(False, description="Exclude Step 0 (System Standby)")
 ):
     """
     Generates an official A4 Portrait HTML/PDF Print report with Start/Stop time stamps,
@@ -366,6 +368,13 @@ def get_process_step_report(
     """
     where_clauses = ["section = %s"]
     params = [section]
+
+    if route and route.strip() and route.strip().lower() != 'all':
+        where_clauses.append("sku_name LIKE %s")
+        params.append(f"%{route.strip()}%")
+
+    if exclude_standby:
+        where_clauses.append("step_int > 0")
 
     if from_time and to_time:
         where_clauses.append("start_time BETWEEN %s AND %s")
@@ -399,6 +408,13 @@ def get_process_step_report(
     
     # If no data found for today, check without date filter to provide the latest records
     if not rows:
+        fb_where = ["section = %s"]
+        fb_params = [section]
+        if route and route.strip() and route.strip().lower() != 'all':
+            fb_where.append("sku_name LIKE %s")
+            fb_params.append(f"%{route.strip()}%")
+        if exclude_standby:
+            fb_where.append("step_int > 0")
         fallback_sql = f"""
         SELECT id, section, batch_id, sku_id, sku_name, step_int, step_desc, step_setpoint,
                start_time, stop_time, duration_sec, duration_formatted, status, validation_result,
@@ -406,11 +422,11 @@ def get_process_step_report(
                temp_secondary_avg, pressure_avg, flow_avg, conductivity_avg, level_avg,
                operator_name, created_at
         FROM process_step_logs
-        WHERE section = %s
+        WHERE {" AND ".join(fb_where)}
         ORDER BY id DESC
         LIMIT 25
         """
-        rows = list(reversed(fetch_all(fallback_sql, (section,))))
+        rows = list(reversed(fetch_all(fallback_sql, tuple(fb_params))))
 
     if from_time and to_time:
         target_date = f"{from_time.replace('T', ' ')} ถึง {to_time.replace('T', ' ')}"
@@ -418,12 +434,17 @@ def get_process_step_report(
         target_date = date_filter or datetime.now().strftime("%d/%m/%Y")
     target_batch = batch_id or (rows[0]["batch_id"] if rows else "P" + datetime.now().strftime("%y%m%d") + "-01")
 
+    report_meta = {"batch_id": target_batch}
+    if route and route.strip() and route.strip().lower() != 'all':
+        report_meta["route_desc"] = route.strip()
+        report_meta["route_name"] = route.strip()
+
     html_content = generate_step_report_html(
         section=section,
         batch_id=target_batch,
         date_str=target_date,
         steps=rows,
-        meta={"batch_id": target_batch}
+        meta=report_meta
     )
     return HTMLResponse(content=html_content, status_code=200)
 

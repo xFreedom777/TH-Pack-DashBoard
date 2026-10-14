@@ -897,6 +897,12 @@ function switchCipCircuit(circuitId) {
   const cfg = CIP_CONFIGS[circuitId] || CIP_CONFIGS.all;
   rec.currentCircuit = circuitId;
 
+  // Update dropdown value if exists
+  const circuitSelect = document.getElementById('cip-circuit-select');
+  if (circuitSelect && circuitSelect.value !== circuitId) {
+    circuitSelect.value = circuitId;
+  }
+
   // 1. Update Title & Subtitle
   const titleEl = document.getElementById('cip-recorder-title');
   const subEl = document.getElementById('cip-recorder-sub');
@@ -1694,21 +1700,33 @@ const PEN_ALARM_LIMITS = {
     { pen: 5, tag: 'L2 TT_R Return Temp', unit: '°C', target: 'Dynamic SP: 80.0 / 63.0°C', ll: 65.0, l: 72.0, h: 92.0, hh: 98.0, ccp: true },
     { pen: 6, tag: 'L2 TT_S Supply Temp', unit: '°C', target: '75.0 - 85.0', ll: 65.0, l: 72.0, h: 90.0, hh: 95.0, ccp: false },
     { pen: 7, tag: 'L2 FT_S Supply Flow', unit: 'L/h', target: 'SP: 14,000 L/h', ll: 10000, l: 12000, h: 22000, hh: 25000, ccp: false },
-    { pen: 8, tag: 'CIP Pumps Power', unit: 'kW', target: '< 24.0', ll: null, l: null, h: 22.0, hh: 25.0, ccp: false }
+    { pen: 8, tag: 'CIP Pumps Power', unit: 'kW', target: '< 24.0', ll: null, l: null, h: 22.0, hh: 25.0, ccp: false },
+    { pen: 9, tag: 'SP: L1 Return Cond', unit: 'mS/cm', target: 'Dynamic SP', ll: null, l: null, h: null, hh: null, ccp: false },
+    { pen: 10, tag: 'SP: L1 Temp', unit: '°C', target: 'Dynamic SP', ll: null, l: null, h: null, hh: null, ccp: false },
+    { pen: 11, tag: 'SP: L1 Supply Flow', unit: 'L/h', target: 'SP: 13,000 L/h', ll: null, l: null, h: null, hh: null, ccp: false },
+    { pen: 12, tag: 'SP: L2 Return Cond', unit: 'mS/cm', target: 'Dynamic SP', ll: null, l: null, h: null, hh: null, ccp: false },
+    { pen: 13, tag: 'SP: L2 Temp', unit: '°C', target: 'Dynamic SP', ll: null, l: null, h: null, hh: null, ccp: false },
+    { pen: 14, tag: 'SP: L2 Supply Flow', unit: 'L/h', target: 'SP: 14,000 L/h', ll: null, l: null, h: null, hh: null, ccp: false }
   ],
   cip_line1: [
     { pen: 0, tag: 'C1 Return Cond (CT_R)', unit: 'mS/cm', target: 'Dynamic SP: 60.0 / 12.0 / 2.0 mS', ll: 0.5, l: 1.0, h: 60.0, hh: 70.0, ccp: true },
     { pen: 1, tag: 'C1 Return Temp (TT_R)', unit: '°C', target: 'Dynamic SP: 80.0 / 60.0°C', ll: 65.0, l: 72.0, h: 92.0, hh: 98.0, ccp: true },
     { pen: 2, tag: 'C1 Supply Temp (TT_S)', unit: '°C', target: '75.0 - 85.0', ll: 65.0, l: 72.0, h: 90.0, hh: 95.0, ccp: false },
     { pen: 3, tag: 'C1 Supply Flow (FT_S)', unit: 'L/h', target: 'SP: 13,000 L/h', ll: 10000, l: 12000, h: 22000, hh: 25000, ccp: false },
-    { pen: 4, tag: 'VSD05 Pump Power', unit: 'kW', target: '< 5.5', ll: null, l: null, h: 5.0, hh: 5.8, ccp: false }
+    { pen: 4, tag: 'VSD05 Pump Power', unit: 'kW', target: '< 5.5', ll: null, l: null, h: 5.0, hh: 5.8, ccp: false },
+    { pen: 5, tag: 'SP: C1 Return Cond', unit: 'mS/cm', target: 'Dynamic SP: 60.0 / 12.0 / 2.0 mS', ll: null, l: null, h: null, hh: null, ccp: false },
+    { pen: 6, tag: 'SP: C1 Temp', unit: '°C', target: 'Dynamic SP: 80.0 / 60.0°C', ll: null, l: null, h: null, hh: null, ccp: false },
+    { pen: 7, tag: 'SP: C1 Supply Flow', unit: 'L/h', target: 'SP: 13,000 L/h', ll: null, l: null, h: null, hh: null, ccp: false }
   ],
   cip_line2: [
     { pen: 0, tag: 'C2 Return Cond (CT_R)', unit: 'mS/cm', target: 'Dynamic SP: 60.0 / 15.0 / 2.0 mS', ll: 0.5, l: 1.0, h: 60.0, hh: 70.0, ccp: true },
     { pen: 1, tag: 'C2 Return Temp (TT_R)', unit: '°C', target: 'Dynamic SP: 80.0 / 63.0°C', ll: 65.0, l: 72.0, h: 92.0, hh: 98.0, ccp: true },
     { pen: 2, tag: 'C2 Supply Temp (TT_S)', unit: '°C', target: '75.0 - 85.0', ll: 65.0, l: 72.0, h: 90.0, hh: 95.0, ccp: false },
     { pen: 3, tag: 'C2 Supply Flow (FT_S)', unit: 'L/h', target: 'SP: 14,000 L/h', ll: 10000, l: 12000, h: 22000, hh: 25000, ccp: false },
-    { pen: 4, tag: 'VSD04 Pump Power', unit: 'kW', target: '< 5.5', ll: null, l: null, h: 5.0, hh: 5.8, ccp: false }
+    { pen: 4, tag: 'VSD04 Pump Power', unit: 'kW', target: '< 5.5', ll: null, l: null, h: 5.0, hh: 5.8, ccp: false },
+    { pen: 5, tag: 'SP: C2 Return Cond', unit: 'mS/cm', target: 'Dynamic SP: 60.0 / 15.0 / 2.0 mS', ll: null, l: null, h: null, hh: null, ccp: false },
+    { pen: 6, tag: 'SP: C2 Temp', unit: '°C', target: 'Dynamic SP: 80.0 / 63.0°C', ll: null, l: null, h: null, hh: null, ccp: false },
+    { pen: 7, tag: 'SP: C2 Supply Flow', unit: 'L/h', target: 'SP: 14,000 L/h', ll: null, l: null, h: null, hh: null, ccp: false }
   ],
   prod: [
     { pen: 0, tag: 'PT_IN Filter Inlet', unit: 'bar', target: 'SP: 2.00 bar (DB331)', ll: 1.0, l: 1.5, h: 4.8, hh: 5.5, ccp: false },
@@ -2806,6 +2824,34 @@ function setText(id, text) {
 // =========================================================
 // STEP REPORT MODAL LOGIC (OFFICIAL A4 PDF EXPORT)
 // =========================================================
+const CIP_REPORT_ROUTES = {
+  cip_line1: [
+    { value: 'all', label: '🎯 ทั้งหมดใน Circuit 1 (All Routes)' },
+    { value: 'Filler Machine', label: '🎯 Filler Machine' },
+    { value: 'Prepare Chemical', label: '🧪 Prepare Chemical' }
+  ],
+  cip_line2: [
+    { value: 'all', label: '🎯 ทั้งหมดใน Circuit 2 (All Routes)' },
+    { value: 'Aseptic Tank', label: '🛡️ Aseptic Tank' }
+  ]
+};
+
+window.updateStepReportRouteOptions = function() {
+  const sec = document.getElementById('step-report-section-select')?.value;
+  const routeGroup = document.getElementById('step-report-route-group');
+  const routeSelect = document.getElementById('step-report-route-select');
+  if (!routeGroup || !routeSelect) return;
+  
+  if (sec === 'cip_line1' || sec === 'cip_line2') {
+    routeGroup.style.display = 'block';
+    const routes = CIP_REPORT_ROUTES[sec] || [];
+    routeSelect.innerHTML = routes.map(r => `<option value="${r.value}">${r.label}</option>`).join('');
+  } else {
+    routeGroup.style.display = 'none';
+    routeSelect.innerHTML = '<option value="all">N/A</option>';
+  }
+};
+
 window.openStepReportModal = function(section) {
   const modal = document.getElementById('step-report-modal-overlay');
   if (!modal) return;
@@ -2814,6 +2860,15 @@ window.openStepReportModal = function(section) {
   if (secSelect && section) {
     secSelect.value = section;
   }
+  
+  // Ensure change listener is attached once
+  if (secSelect && !secSelect.dataset.routeListenerAttached) {
+    secSelect.addEventListener('change', window.updateStepReportRouteOptions);
+    secSelect.dataset.routeListenerAttached = 'true';
+  }
+  
+  // Update routes for selected section
+  window.updateStepReportRouteOptions();
   
   const pad = (n) => String(n).padStart(2, '0');
   const fromInput = document.getElementById('step-report-from-input');
@@ -2842,6 +2897,8 @@ window.openStepReportDocument = function() {
   const fromVal = document.getElementById('step-report-from-input')?.value || '';
   const toVal = document.getElementById('step-report-to-input')?.value || '';
   const batchVal = document.getElementById('step-report-batch-input')?.value.trim() || '';
+  const routeVal = document.getElementById('step-report-route-select')?.value || 'all';
+  const excludeStandby = document.getElementById('step-report-exclude-standby')?.checked;
   
   let url = `http://${window.location.hostname || '127.0.0.1'}:8000/api/v1/process_logs/report?section=${encodeURIComponent(sec)}`;
   if (fromVal) {
@@ -2853,6 +2910,12 @@ window.openStepReportDocument = function() {
   if (batchVal) {
     url += `&batch_id=${encodeURIComponent(batchVal)}`;
   }
+  if (routeVal && routeVal !== 'all') {
+    url += `&route=${encodeURIComponent(routeVal)}`;
+  }
+  if (excludeStandby) {
+    url += `&exclude_standby=true`;
+  }
   
   // Open in new tab/window for instant print
   window.open(url, '_blank', 'noopener,noreferrer');
@@ -2863,10 +2926,22 @@ window.openStepReportDocument = function() {
 // HISTORIAN CUSTOM DATE-TIME RANGE (FROM - TO) LOGIC
 // =========================================================
 async function loadHistoricalCustomRange(sec, fromTime, toTime, windowVal) {
-  const rec = sectionRecorders[sec];
+  const isCip = (sec === 'cip' || sec === 'cip_line1' || sec === 'cip_line2');
+  const recKey = isCip ? 'cip' : sec;
+  const rec = sectionRecorders[recKey];
   if (!rec) return;
-  if (!rec.chart) initRecorderForSection(sec);
+  if (!rec.chart) initRecorderForSection(recKey);
   if (!rec.chart) return;
+
+  if (isCip) {
+    const targetCircuit = (sec === 'cip_line1' || sec === 'cip_line2') ? sec : 'all';
+    switchCipCircuit(targetCircuit);
+  }
+
+  rec.mode = 'history';
+  rec.historyRange = 'custom';
+  rec.customFrom = fromTime;
+  rec.customTo = toTime;
 
   const statusTag = document.getElementById(rec.statusId);
   if (statusTag) {
@@ -2969,7 +3044,9 @@ window.applyHistorianCustomRange = async function() {
     return;
   }
 
-  const rec = sectionRecorders[sec];
+  const isCip = (sec === 'cip' || sec === 'cip_line1' || sec === 'cip_line2');
+  const recKey = isCip ? 'cip' : sec;
+  const rec = sectionRecorders[recKey];
   if (rec) {
     rec.mode = 'history';
     rec.historyRange = 'custom';
@@ -2977,7 +3054,7 @@ window.applyHistorianCustomRange = async function() {
     rec.customTo = toVal;
     
     // Highlight the custom range button in the section's control bar
-    const container = document.querySelector(`.recorder-card [data-section="${sec}"]`)?.closest('.recorder-card');
+    const container = document.querySelector(`.recorder-card [data-section="${recKey}"]`)?.closest('.recorder-card');
     if (container) {
       container.querySelectorAll('.win-btn').forEach(b => b.classList.remove('active'));
       container.querySelector('.btn-custom-range')?.classList.add('active');
@@ -3018,7 +3095,9 @@ window.exportHistorianCsvCustomRange = async function() {
     const secTitles = {
       uht: 'UHT_Sterilizer_Process',
       atank: 'Aseptic_Tank_ATANK',
-      cip: 'CIP_Systems',
+      cip: 'CIP_Systems_Dual',
+      cip_line1: 'CIP_Circuit1_DB1801',
+      cip_line2: 'CIP_Circuit2_DB1802',
       prod: 'Production_Duplex_Filter'
     };
 
@@ -3518,6 +3597,12 @@ window.executeConfiguredTrendPdf = async function() {
         return;
       }
       await loadHistoricalCustomRange(sec, fromVal, toVal, '');
+    } else {
+      if (sec === 'cip_line1' || sec === 'cip_line2') {
+        switchCipCircuit(sec);
+      } else if (sec === 'cip') {
+        switchCipCircuit('all');
+      }
     }
 
     generateTrendPdfDocument(sec, {
@@ -3556,9 +3641,15 @@ window.executeConfiguredTrendCsv = async function() {
       return;
     }
     await loadHistoricalCustomRange(sec, fromVal, toVal, '');
+  } else {
+    if (sec === 'cip_line1' || sec === 'cip_line2') {
+      switchCipCircuit(sec);
+    } else if (sec === 'cip') {
+      switchCipCircuit('all');
+    }
   }
 
-  const effectiveSec = (sec === 'cip_line1' || sec === 'cip_line2') ? sec : sec;
+  const effectiveSec = sec;
   const rec = (sec === 'cip_line1' || sec === 'cip_line2') ? sectionRecorders.cip : sectionRecorders[sec];
   if (!rec || !rec.chart) {
     alert('ไม่พบข้อมูลกราฟสำหรับหมวดนี้');
@@ -3641,7 +3732,7 @@ window.generateTrendPdfDocument = function(section, options) {
   const includeSign = opts.includeSign !== false;
 
   let effectiveSec = section;
-  if (section === 'cip') {
+  if (section === 'cip' && opts.scope === 'current') {
     const cur = sectionRecorders.cip?.currentCircuit;
     if (cur === 'cip_line1' || cur === 'cip_line2') effectiveSec = cur;
   }
@@ -3800,9 +3891,11 @@ window.generateTrendPdfDocument = function(section, options) {
     return '<tr style="background:' + bg + ';">' + cols.join('') + '</tr>';
   }).join('');
 
-  const rangeHorizon = rec.mode === 'live' 
-    ? ('Live Streaming (' + (rec.windowSec || 60) + ' วินาที)')
-    : (rec.historyRange === 'custom' ? 'ช่วงกำหนดเอง (From-To)' : ('ย้อนหลัง ' + (rec.historyRange || '1 วัน')));
+  const rangeHorizon = (opts.scope === 'custom' || rec.historyRange === 'custom')
+    ? 'ช่วงกำหนดเอง (From-To)'
+    : (rec.mode === 'live' 
+        ? ('Live Streaming (' + (rec.windowSec || 60) + ' วินาที)')
+        : ('ย้อนหลัง ' + (rec.historyRange || '1 วัน')));
 
   const noteBlock = opts.operatorNote ? `<tr><td class="field-lbl">Operator Note :</td><td colspan="3" class="field-val" style="color:#0f172a; font-weight:600;">${opts.operatorNote}</td></tr>` : '';
 

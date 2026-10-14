@@ -219,26 +219,44 @@ PROD_SUPPLY_STATUS = {
 # p0310 rated frequency [Hz], p0311 rated speed [rpm], r0206 power unit rating [kW]
 # None = not yet verified from TIA (falls back to estimate).
 VSD_NAMEPLATE = {
+    # VSD01: V/A/Hz/rpm/kW from site motor plate; pu_kw from TIA catalog (G120C PN IP20 15.0kW FA)
+    "VSD01": {"v": 400.0, "a": 27.0, "kw": 15.0, "hz": 50.0, "rpm": 1455, "pu_kw": 15.0},
     "VSD02": {"v": 400.0, "a": 16.5, "kw": 7.5, "hz": 50.0, "rpm": 1455, "pu_kw": 11.0},
     "VSD03": {"v": 400.0, "a": 8.8, "kw": 4.0, "hz": 50.0, "rpm": 1455, "pu_kw": 5.5},
     "VSD04": {"v": 400.0, "a": 12.5, "kw": 5.5, "hz": 50.0, "rpm": 1455, "pu_kw": 7.5},
-    "VSD06": {"v": 400.0, "a": 8.8, "kw": 4.0, "hz": 50.0, "rpm": 1455, "pu_kw": None},
+    # VSD05: same motor as VSD04 (site confirmed); drive verified in TIA (G120C PN IP20 7.5kW FA)
+    # Calibrated to BOP reading 2026-10-14 @ 51.9% / 26 Hz / 781 rpm: 244.2 V, 6.09 A
+    # (PLC only sends Telegram 1 -> V/A are estimates; i_mag = magnetizing frac of rated A, v_exp = V/f curve exponent)
+    "VSD05": {"v": 400.0, "a": 12.5, "kw": 5.5, "hz": 50.0, "rpm": 1455, "pu_kw": 7.5,  # 6SL3210-1KE21-7AF1
+              "i_mag": 0.42, "v_exp": 0.75},
+    "VSD06": {"v": 400.0, "a": 8.8, "kw": 4.0, "hz": 50.0, "rpm": 1455, "pu_kw": 5.5},  # 6SL3210-1KE21-3UF1
     "VSD08": {"v": 400.0, "a": 6.3, "kw": 3.0, "hz": 50.0, "rpm": 2895, "pu_kw": 4.0},
-    "VSD09": {"v": 400.0, "a": 7.3, "kw": 3.0, "hz": 50.0, "rpm": 1425, "pu_kw": None},
+    "VSD09": {"v": 400.0, "a": 7.3, "kw": 3.0, "hz": 50.0, "rpm": 1425, "pu_kw": 4.0},  # 6SL3210-1KE18-8AF1
 }
 
-def calc_g120c(act_pct, is_running, rated_kw, v_base=380.0, i_rated=None, f_rated=50.0):
+def calc_g120c(act_pct, is_running, rated_kw, v_base=380.0, i_rated=None, f_rated=50.0,
+               i_mag_frac=None, v_exp=None):
     if not is_running or act_pct <= 0.0:
         return {"freq_hz": 0.0, "voltage_v": 0.0, "power_kw": 0.0, "current_a": 0.0, "pf": 0.0}
     
     ratio = min(max(act_pct / 100.0, 0.0), 1.0)
     freq_hz = round(ratio * f_rated, 2)
-    voltage_v = round(ratio * v_base, 1)
+    if v_exp:
+        # Calibrated V/f curve: matches measured voltage at partial speed, reaches v_base at 100%
+        voltage_v = round(v_base * (ratio ** v_exp), 1)
+    else:
+        voltage_v = round(ratio * v_base, 1)
     power_kw = round(rated_kw * (0.08 + 0.92 * (ratio ** 3)), 2)
     if not i_rated:
         i_rated = (rated_kw * 1000.0) / (math.sqrt(3) * v_base * 0.85 * 0.91)
-    i_mag = 0.30 * i_rated
-    current_a = round(math.sqrt((i_mag ** 2) + ((i_rated * (ratio ** 2)) ** 2)), 2)
+    if i_mag_frac:
+        # Calibrated: magnetizing + torque component, equals i_rated at 100% speed
+        i_mag = i_mag_frac * i_rated
+        i_load_full = math.sqrt(max(i_rated ** 2 - i_mag ** 2, 0.0))
+        current_a = round(math.sqrt((i_mag ** 2) + ((i_load_full * (ratio ** 2)) ** 2)), 2)
+    else:
+        i_mag = 0.30 * i_rated
+        current_a = round(math.sqrt((i_mag ** 2) + ((i_rated * (ratio ** 2)) ** 2)), 2)
     pf = round(0.40 + 0.45 * ratio, 2)
     
     return {
@@ -306,6 +324,25 @@ class MasterPlantReader:
             uht_step_int = get_int(d1200_steps, 0)
             uht_step_desc, uht_sp = UHT_STEPS.get(uht_step_int, (f"Step {uht_step_int}", 0))
             uht_timer = get_int(d1200, 48)
+
+            # Read DB1101 Recipe Temperature Setpoints
+            sp_htc, sp_ctc, sp_ph01, sp_ph02, sp_c01, sp_c02 = 136.0, 25.0, 90.0, 90.0, 25.0, 25.0
+            try:
+                d1101 = self.client.db_read(1101, 0, 400)
+                act_base = 0
+                for r in range(4):
+                    base = r * 100
+                    if get_bool(d1101, base + 24, 0):
+                        act_base = base
+                        break
+                sp_htc = round(get_real(d1101, act_base + 0), 1)
+                sp_ctc = round(get_real(d1101, act_base + 4), 1)
+                sp_ph01 = round(get_real(d1101, act_base + 8), 1)
+                sp_ph02 = round(get_real(d1101, act_base + 12), 1)
+                sp_c01 = round(get_real(d1101, act_base + 16), 1)
+                sp_c02 = round(get_real(d1101, act_base + 20), 1)
+            except Exception as e_d1101:
+                pass
 
             # Read DB331 Control Loops (FIQCV08, CV64FIC01, CV49FIC01, CV50FIC01, FIQ04)
             fiqcv08_pv = round(get_real(d1200, 4), 2)
@@ -376,6 +413,8 @@ class MasterPlantReader:
                 "tt04": round(get_real(d1200, 20), 2),
                 "tt05": round(get_real(d1200, 24), 2),
                 "tt06": round(get_real(d1200, 28), 2),
+                "tt42": round(get_real(d1200, 24), 2),
+                "tt44": round(get_real(d1200, 28), 2),
                 "tt07": round(get_real(d1200, 32), 2),
                 "ct": round(get_real(d1200, 36), 3),
                 "ft04fiq": fiq04_pv if fiq04_pv > 0 else round(get_real(d1200, 50), 1),
@@ -386,6 +425,12 @@ class MasterPlantReader:
                 "step_desc": uht_step_desc,
                 "step_timer": uht_timer,
                 "step_setpoint": uht_sp,
+                "sp_htc": sp_htc,
+                "sp_ctc": sp_ctc,
+                "sp_ph01": sp_ph01,
+                "sp_ph02": sp_ph02,
+                "sp_c01": sp_c01,
+                "sp_c02": sp_c02,
                 "hotwater_mode": get_int(d1200, 44),
                 "cooling_mode": get_int(d1200, 46),
                 "analytics": {
@@ -412,8 +457,42 @@ class MasterPlantReader:
             atk_step_int = get_int(d1301_step, 0)
             atk_step_desc, atk_sp = ATANK_STEPS.get(atk_step_int, (f"Step {atk_step_int}", 0))
 
+            # Read ATANK Setpoint Arrays SP_PT (386.0) and SP_TT (414.0)
+            sp_pt = [1.5, 0.5, 2.5, 1.5, 0.0, 0.0, 0.0]
+            sp_tt = [125.0, 80.0, 30.0, 50.0, 0.0, 0.0, 0.0]
+            try:
+                d1301_sp = self.client.db_read(1301, 386, 56)
+                sp_pt = [round(get_real(d1301_sp, i * 4), 2) for i in range(7)]
+                sp_tt = [round(get_real(d1301_sp, 28 + i * 4), 1) for i in range(7)]
+            except Exception as e_atk_sp:
+                pass
+
+            lc_val = round(get_real(d1301, 0), 2)
+
+            # Dynamic Active Setpoint based on ATANK Step (Option 1)
+            # Step 18: Sterile Timer -> 125.0 °C / 1.50 bar
+            # Step 20, 22: Cool Down -> 80.0 °C / 0.50 bar
+            # Step 28, 30: Production -> 30.0 °C / 1.50 bar
+            # Step 50, 52: Plant Cooldown End -> 50.0 °C / 0.50 bar
+            if atk_step_int == 18 or (atk_step_int >= 2 and atk_step_int < 20):
+                active_sp_tt = sp_tt[0]  # 125.0 °C (Sterili)
+                active_sp_pt = sp_pt[0]  # 1.50 bar (Pressure Build)
+            elif atk_step_int in [20, 21, 22, 23, 24, 25, 26, 27]:
+                active_sp_tt = sp_tt[1]  # 80.0 °C (Cool Down)
+                active_sp_pt = sp_pt[1]  # 0.50 bar (Pressure Drain)
+            elif atk_step_int in [28, 29, 30]:
+                active_sp_tt = sp_tt[2]  # 30.0 °C (Production)
+                active_sp_pt = sp_pt[3]  # 1.50 bar (Pressure Production)
+            elif atk_step_int in [50, 51, 52, 53]:
+                active_sp_tt = sp_tt[3]  # 50.0 °C (Cool Down To End Process)
+                active_sp_pt = sp_pt[1]  # 0.50 bar (Pressure Drain)
+            else:
+                # Default for standby / off: if tank contains product, production SP, else sterile SP
+                active_sp_tt = sp_tt[2] if lc_val > 1000 else sp_tt[0]
+                active_sp_pt = sp_pt[3] if lc_val > 1000 else sp_pt[0]
+
             res["atank"] = {
-                "lc": round(get_real(d1301, 0), 2),
+                "lc": lc_val,
                 "tt460": round(get_real(d1301, 4), 2),
                 "tt477": round(get_real(d1301, 8), 2),
                 "pt460": round(get_real(d1301, 12), 3),
@@ -421,6 +500,16 @@ class MasterPlantReader:
                 "step_desc": atk_step_desc,
                 "step_timer": get_int(d1301, 20),
                 "step_setpoint": atk_sp,
+                "sp_tt": active_sp_tt,
+                "sp_pt": active_sp_pt,
+                "sp_tt_sterile": sp_tt[0],
+                "sp_tt_cooldown": sp_tt[1],
+                "sp_tt_prod": sp_tt[2],
+                "sp_tt_end": sp_tt[3],
+                "sp_pt_build": sp_pt[0],
+                "sp_pt_drain": sp_pt[1],
+                "sp_pt_flush": sp_pt[2],
+                "sp_pt_prod": sp_pt[3],
                 "ycip": get_bool(d1301, 18, 0),
                 "ypressure": get_bool(d1301, 18, 1)
             }
@@ -434,6 +523,70 @@ class MasterPlantReader:
             cip1_route_desc = CIP_ROUTE_01.get(cip1_route_int, "None" if cip1_route_int == 0 else f"Route {cip1_route_int}")
             cip1_prog_int = get_int(d1801, 46)
             cip1_prog_desc = CIP_PROGRAM_P.get(cip1_prog_int, "Off" if cip1_prog_int == 0 else f"Program {cip1_prog_int}")
+
+            # Read DB1801 CIP Circuit 1 Setpoints (Offsets 74.0 to 158.0)
+            sp_ct = 2.0
+            sp_tt = 85.0
+            sp_ft = 500.0
+            sp_wa_tt = 80.0
+            sp_cas_tt = 80.0
+            sp_cas_ct_ok = 60.0
+            sp_cas_ct_recovery = 12.0
+            sp_cas_ct_drain = 10.0
+            sp_cas_ct_prepare = 70.0
+            sp_ac_tt = 60.0
+            sp_ac_ct_ok = 60.0
+            sp_ac_ct_recovery = 15.0
+            sp_ac_ct_drain = 10.0
+            sp_ac_ct_prepare = 70.0
+            sp_wa_ct = 2.0
+            sp_flowrate = 13000.0
+
+            try:
+                d1801_sp = self.client.db_read(1801, 74, 88)
+                sp_ct = round(get_real(d1801_sp, 0), 2)
+                sp_tt = round(get_real(d1801_sp, 4), 2)
+                sp_ft = round(get_real(d1801_sp, 8), 2)
+                sp_wa_tt = round(get_real(d1801_sp, 12), 2)
+                sp_cas_tt = round(get_real(d1801_sp, 16), 2)
+                sp_cas_ct_ok = round(get_real(d1801_sp, 20), 2)
+                sp_cas_ct_recovery = round(get_real(d1801_sp, 24), 2)
+                sp_cas_ct_drain = round(get_real(d1801_sp, 28), 2)
+                sp_cas_ct_prepare = round(get_real(d1801_sp, 32), 2)
+                sp_ac_tt = round(get_real(d1801_sp, 36), 2)
+                sp_ac_ct_ok = round(get_real(d1801_sp, 40), 2)
+                sp_ac_ct_recovery = round(get_real(d1801_sp, 44), 2)
+                sp_ac_ct_drain = round(get_real(d1801_sp, 48), 2)
+                sp_ac_ct_prepare = round(get_real(d1801_sp, 52), 2)
+                sp_wa_ct = round(get_real(d1801_sp, 76), 2)
+                sp_flowrate = round(get_real(d1801_sp, 84), 2)
+            except Exception as e_cip1_sp:
+                pass
+
+            # Dynamic Active Setpoint for CIP Line 1 based on Step
+            if 12 <= cip1_step_int <= 16 or cip1_step_int in [76, 78, 80]:
+                active_cip1_ct = sp_cas_ct_ok
+                active_cip1_tt = sp_cas_tt
+            elif cip1_step_int == 18:
+                active_cip1_ct = sp_cas_ct_recovery
+                active_cip1_tt = sp_cas_tt
+            elif 28 <= cip1_step_int <= 32 or cip1_step_int in [84, 86, 88]:
+                active_cip1_ct = sp_ac_ct_ok
+                active_cip1_tt = sp_ac_tt
+            elif cip1_step_int == 34:
+                active_cip1_ct = sp_ac_ct_recovery
+                active_cip1_tt = sp_ac_tt
+            elif 36 <= cip1_step_int <= 42 or cip1_step_int in [68, 70, 72]:
+                active_cip1_ct = sp_wa_ct
+                active_cip1_tt = sp_wa_tt
+            elif (4 <= cip1_step_int <= 8) or (20 <= cip1_step_int <= 24) or (44 <= cip1_step_int <= 48):
+                active_cip1_ct = sp_wa_ct
+                active_cip1_tt = sp_tt if sp_tt > 0 else sp_wa_tt
+            else:
+                active_cip1_ct = sp_ct if sp_ct > 0 else sp_wa_ct
+                active_cip1_tt = sp_tt if sp_tt > 0 else sp_wa_tt
+
+            active_cip1_ft = sp_flowrate if sp_flowrate > 0 else 13000.0
 
             res["cip_line1"] = {
                 "ct_r": round(get_real(d1801, 4), 3),
@@ -450,7 +603,16 @@ class MasterPlantReader:
                 "step_int": cip1_step_int,
                 "step_desc": cip1_desc,
                 "step_timer": get_int(d1801, 50),
-                "step_setpoint": cip1_sp
+                "step_setpoint": cip1_sp,
+                "sp_ct": active_cip1_ct,
+                "sp_tt": active_cip1_tt,
+                "sp_ft": active_cip1_ft,
+                "sp_cas_ct_ok": sp_cas_ct_ok,
+                "sp_cas_tt": sp_cas_tt,
+                "sp_ac_ct_ok": sp_ac_ct_ok,
+                "sp_ac_tt": sp_ac_tt,
+                "sp_wa_ct": sp_wa_ct,
+                "sp_wa_tt": sp_wa_tt
             }
 
             # 4. READ DB1802 (CIP CIRCUIT 2)
@@ -462,6 +624,68 @@ class MasterPlantReader:
             cip2_route_desc = CIP_ROUTE_02.get(cip2_route_int, "None" if cip2_route_int == 0 else f"Route {cip2_route_int}")
             cip2_prog_int = get_int(d1802, 46)
             cip2_prog_desc = CIP_PROGRAM.get(cip2_prog_int, "Off" if cip2_prog_int == 0 else f"Program {cip2_prog_int}")
+
+            # Read DB1802 CIP Circuit 2 Setpoints (Offsets 74.0 to 158.0)
+            sp_ct_2 = 2.0
+            sp_tt_2 = 80.0
+            sp_ft_2 = 500.0
+            sp_wa_tt_2 = 80.0
+            sp_cas_tt_2 = 80.0
+            sp_cas_ct_ok_2 = 60.0
+            sp_cas_ct_recovery_2 = 12.0
+            sp_cas_ct_drain_2 = 10.0
+            sp_cas_ct_prepare_2 = 110.0
+            sp_ac_tt_2 = 63.0
+            sp_ac_ct_ok_2 = 60.0
+            sp_ac_ct_recovery_2 = 15.0
+            sp_ac_ct_drain_2 = 10.0
+            sp_ac_ct_prepare_2 = 500.0
+            sp_wa_ct_2 = 2.0
+            sp_flowrate_2 = 14000.0
+            try:
+                d1802_sp = self.client.db_read(1802, 74, 88)
+                sp_ct_2 = round(get_real(d1802_sp, 0), 2)
+                sp_tt_2 = round(get_real(d1802_sp, 4), 1)
+                sp_ft_2 = round(get_real(d1802_sp, 8), 1)
+                sp_wa_tt_2 = round(get_real(d1802_sp, 12), 1)
+                sp_cas_tt_2 = round(get_real(d1802_sp, 16), 1)
+                sp_cas_ct_ok_2 = round(get_real(d1802_sp, 20), 2)
+                sp_cas_ct_recovery_2 = round(get_real(d1802_sp, 24), 2)
+                sp_cas_ct_drain_2 = round(get_real(d1802_sp, 28), 2)
+                sp_cas_ct_prepare_2 = round(get_real(d1802_sp, 32), 2)
+                sp_ac_tt_2 = round(get_real(d1802_sp, 36), 1)
+                sp_ac_ct_ok_2 = round(get_real(d1802_sp, 40), 2)
+                sp_ac_ct_recovery_2 = round(get_real(d1802_sp, 44), 2)
+                sp_ac_ct_drain_2 = round(get_real(d1802_sp, 48), 2)
+                sp_ac_ct_prepare_2 = round(get_real(d1802_sp, 52), 2)
+                sp_wa_ct_2 = round(get_real(d1802_sp, 76), 2)
+                sp_flowrate_2 = round(get_real(d1802_sp, 84), 0)
+            except Exception as e:
+                pass
+
+            # Evaluate dynamic setpoints for CIP Circuit 2 based on current Step/Program
+            active_cip2_ct = sp_ct_2
+            active_cip2_tt = sp_tt_2
+            active_cip2_ft = sp_flowrate_2 if sp_flowrate_2 > 0 else 14000.0
+
+            if cip2_step_int in [12, 14, 16] or (cip2_prog_int == 91 and cip2_step_int > 0):
+                active_cip2_ct = sp_cas_ct_ok_2
+                active_cip2_tt = sp_cas_tt_2
+            elif cip2_step_int == 18:
+                active_cip2_ct = sp_cas_ct_recovery_2
+                active_cip2_tt = sp_cas_tt_2
+            elif cip2_step_int in [28, 30, 32] or (cip2_prog_int == 93 and cip2_step_int > 0):
+                active_cip2_ct = sp_ac_ct_ok_2
+                active_cip2_tt = sp_ac_tt_2
+            elif cip2_step_int == 34:
+                active_cip2_ct = sp_ac_ct_recovery_2
+                active_cip2_tt = sp_ac_tt_2
+            elif cip2_step_int in [4, 6, 8, 20, 22, 24, 44, 46, 48]:
+                active_cip2_ct = sp_wa_ct_2
+                active_cip2_tt = sp_wa_tt_2 if cip2_step_int not in [4, 6, 8] else 30.0
+            elif cip2_step_int == 0:
+                active_cip2_ct = sp_ct_2
+                active_cip2_tt = sp_tt_2
 
             res["cip_line2"] = {
                 "ct_r": round(get_real(d1802, 4), 3),
@@ -478,7 +702,16 @@ class MasterPlantReader:
                 "step_int": cip2_step_int,
                 "step_desc": cip2_desc,
                 "step_timer": get_int(d1802, 50),
-                "step_setpoint": cip2_sp
+                "step_setpoint": cip2_sp,
+                "sp_ct": active_cip2_ct,
+                "sp_tt": active_cip2_tt,
+                "sp_ft": active_cip2_ft,
+                "sp_cas_ct_ok": sp_cas_ct_ok_2,
+                "sp_cas_tt": sp_cas_tt_2,
+                "sp_ac_ct_ok": sp_ac_ct_ok_2,
+                "sp_ac_tt": sp_ac_tt_2,
+                "sp_wa_ct": sp_wa_ct_2,
+                "sp_wa_tt": sp_wa_tt_2
             }
 
             # 5. READ DB1100 (PRODUCTION SUPPLY)
@@ -486,6 +719,16 @@ class MasterPlantReader:
             d1100_stat = self.client.db_read(1100, 216, 2)
             xstat = get_int(d1100_stat, 0)
             stat_name = PROD_SUPPLY_STATUS.get(xstat, f"Code {xstat}")
+
+            # Read DB331 PID Setpoint for Pump Supply (PT_IN SV at Offset 1402.0, OV at Offset 1414.0)
+            sp_pt_in = 2.0
+            pid_ov = 100.0
+            try:
+                d331 = self.client.db_read(331, 1400, 20)
+                sp_pt_in = round(get_real(d331, 2), 2)
+                pid_ov = round(get_real(d331, 14), 1)
+            except Exception as e:
+                pass
 
             res["prod_supply"] = {
                 "pt_in": round(get_real(d1100, 6), 2),
@@ -495,7 +738,9 @@ class MasterPlantReader:
                 "step_timer": get_int(d1100, 20),
                 "p101_cmd": get_bool(d1100, 18, 3),
                 "status_code": xstat,
-                "status_name": stat_name
+                "status_name": stat_name,
+                "sp_pt_in": sp_pt_in,
+                "pid_ov": pid_ov
             }
 
             # 6. READ DB371 (VSD INVERTER FLEET)
@@ -505,7 +750,7 @@ class MasterPlantReader:
                 ("VSD02", 34, "UHT PUMP_FEED", 7.5, "UHT"),
                 ("VSD03", 68, "UHT PUMP_SUPPLY (PID)", 4.0, "UHT"),
                 ("VSD04", 102, "CIP L2 P_S Supply", 5.5, "CIP 2"),
-                ("VSD05", 136, "CIP L1 P_S Supply", 7.5, "CIP 1"),
+                ("VSD05", 136, "CIP L1 P_S Supply", 5.5, "CIP 1"),
                 ("VSD06", 170, "UHT PUMP_RETURN", 4.0, "UHT"),
                 ("VSD08", 238, "Prod Supply P101", 3.0, "Prod Supply"),
                 ("VSD09", 272, "ATANK Agitator", 3.0, "ATANK")
@@ -526,7 +771,8 @@ class MasterPlantReader:
                 np_ = VSD_NAMEPLATE.get(tag)
                 if np_:
                     calc = calc_g120c(curspeed if running else 0.0, running, np_["kw"],
-                                      v_base=np_["v"], i_rated=np_["a"], f_rated=np_["hz"])
+                                      v_base=np_["v"], i_rated=np_["a"], f_rated=np_["hz"],
+                                      i_mag_frac=np_.get("i_mag"), v_exp=np_.get("v_exp"))
                 else:
                     calc = calc_g120c(curspeed if running else 0.0, running, kw_rated)
                 actual_kw = curpower_drv if curpower_drv > 0.05 else calc["power_kw"]
