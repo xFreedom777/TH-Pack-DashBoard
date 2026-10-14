@@ -11,65 +11,116 @@ INFLUXDB_BUCKET = os.getenv("INFLUXDB_BUCKET", "telemetry")
 # Section pen field configurations
 SECTION_CONFIG = {
     "uht": {
-        "pens": ["tt01", "tt02", "tt04", "ft04fiq", "lt", "uht_power"],
+        "pens": [
+            "tt01", "tt02", "tt04", "ft04fiq", "lt", "uht_power", "tt05", "tt06",
+            "tt03", "tt07", "ct",
+            "sp_htc", "sp_ph01", "sp_c01", "sp_c02", "sp_ph02", "sp_ctc",
+            "fiq04_sv", "fiqcv08_sv"
+        ],
         "labels": [
             "TT01 Holding Temp (°C)",
             "TT02 Pre-Heat 1 (°C)",
             "TT04 Inlet Temp (°C)",
             "FIQ04 Inlet Flow (M4) (L/h)",
             "FIQCV08 Add Water (Liter)",
-            "UHT VSDs Power (kW)"
+            "UHT VSDs Power (kW)",
+            "TT42 (TT05) Outlet HC (°C)",
+            "TT44 (TT06) Sec 11 HC (°C)",
+            "TT03 Pre-Heat 2 (°C)",
+            "TT07 Outlet Temp (°C)",
+            "CT Conductivity (mS/cm)",
+            "SP: TT01 Holding (136°C)",
+            "SP: TT02 Pre-Heat 1 (90°C)",
+            "SP: TT42 Outlet HC (25°C)",
+            "SP: TT44 Sec 11 HC (25°C)",
+            "SP: TT03 Pre-Heat 2 (90°C)",
+            "SP: TT07 Outlet (25°C)",
+            "SP: FIQ04 Inlet Flow (L/h)",
+            "SP: FIQCV08 Add Water (Liter)"
         ]
     },
     "atank": {
-        "pens": ["pt460", "tt460", "tt477", "lc", "vsd09_speed"],
+        "pens": [
+            "pt460", "tt460", "tt477", "lc", "vsd09_speed",
+            "sp_pt", "sp_tt"
+        ],
         "labels": [
             "PT460 Aseptic Press (bar)",
             "TT460 Sterile Temp (°C)",
             "TT477 Barrier Temp (°C)",
             "LC Product Weight (kg)",
-            "VSD09 Agitator Speed (%)"
+            "VSD09 Agitator Speed (%)",
+            "SP: PT460 Press (bar)",
+            "SP: TT460/TT477 Temp (°C)"
         ]
     },
     "cip": {
-        "pens": ["c1_ct_r", "c1_tt_r", "c1_ft_s", "c2_ct_r", "c2_tt_r", "cip_power"],
-        "labels": [
-            "L1 CT_R Return Cond (mS/cm)",
-            "L1 TT_R Return Temp (°C)",
-            "L1 FT_S Supply Flow (L/h)",
-            "L2 CT_R Return Cond (mS/cm)",
-            "L2 TT_R Return Temp (°C)",
-            "CIP Pumps Power (kW)"
-        ]
-    },
-    "cip_line1": {
-        "pens": ["c1_ct_r", "c1_tt_r", "c1_tt_s", "c1_ft_s", "c1_power"],
+        "pens": [
+            "c1_ct_r", "c1_tt_r", "c1_tt_s", "c1_ft_s",
+            "c2_ct_r", "c2_tt_r", "c2_tt_s", "c2_ft_s",
+            "cip_power",
+            "c1_sp_ct", "c1_sp_tt", "c1_sp_ft",
+            "c2_sp_ct", "c2_sp_tt", "c2_sp_ft"
+        ],
         "labels": [
             "L1 Return Cond (CT_R) (mS/cm)",
             "L1 Return Temp (TT_R) (°C)",
             "L1 Supply Temp (TT_S) (°C)",
             "L1 Supply Flow (FT_S) (L/h)",
-            "VSD05 Pump Power (kW)"
-        ]
-    },
-    "cip_line2": {
-        "pens": ["c2_ct_r", "c2_tt_r", "c2_tt_s", "c2_ft_s", "c2_power"],
-        "labels": [
             "L2 Return Cond (CT_R) (mS/cm)",
             "L2 Return Temp (TT_R) (°C)",
             "L2 Supply Temp (TT_S) (°C)",
             "L2 Supply Flow (FT_S) (L/h)",
-            "VSD04 Pump Power (kW)"
+            "CIP Pumps Power (kW)",
+            "SP: L1 Return Cond (mS/cm)",
+            "SP: L1 Temp (°C)",
+            "SP: L1 Supply Flow (L/h)",
+            "SP: L2 Return Cond (mS/cm)",
+            "SP: L2 Temp (°C)",
+            "SP: L2 Supply Flow (L/h)"
+        ]
+    },
+    "cip_line1": {
+        "pens": [
+            "c1_ct_r", "c1_tt_r", "c1_tt_s", "c1_ft_s", "c1_power",
+            "c1_sp_ct", "c1_sp_tt", "c1_sp_ft"
+        ],
+        "labels": [
+            "C1 Return Cond (CT_R) (mS/cm)",
+            "C1 Return Temp (TT_R) (°C)",
+            "C1 Supply Temp (TT_S) (°C)",
+            "C1 Supply Flow (FT_S) (L/h)",
+            "VSD05 Pump Power (kW)",
+            "SP: C1 Return Cond (mS/cm)",
+            "SP: C1 Temp (°C)",
+            "SP: C1 Supply Flow (L/h)"
+        ]
+    },
+    "cip_line2": {
+        "pens": [
+            "c2_ct_r", "c2_tt_r", "c2_tt_s", "c2_ft_s", "c2_power",
+            "c2_sp_ct", "c2_sp_tt", "c2_sp_ft"
+        ],
+        "labels": [
+            "C2 Return Cond (CT_R) (mS/cm)",
+            "C2 Return Temp (TT_R) (°C)",
+            "C2 Supply Temp (TT_S) (°C)",
+            "C2 Supply Flow (FT_S) (L/h)",
+            "VSD04 Pump Power (kW)",
+            "SP: C2 Return Cond (mS/cm)",
+            "SP: C2 Temp (°C)",
+            "SP: C2 Supply Flow (L/h)"
         ]
     },
     "prod": {
-        "pens": ["pt_in", "pt_out", "dp", "p101_power", "p101_speed"],
+        "pens": ["pt_in", "pt_out", "dp", "p101_power", "p101_speed", "sp_pt_in"],
         "labels": [
             "PT_IN Filter Inlet (bar)",
             "PT_OUT Filter Outlet (bar)",
             "ΔP Diff Press (bar)",
             "P101 Power (kW)",
-            "P101 Running Speed (%)"
+            "P101 Running Speed (%)",
+            "SP: PT_IN Inlet (bar)"
         ]
     }
 }
@@ -122,7 +173,9 @@ class InfluxTelemetryWriter:
         u = telemetry.get("uht") or {}
         uht_pwr = sum(float(vf.get(k, {}).get("power_kw", 0.0) or 0.0) for k in ["VSD01", "VSD02", "VSD03", "VSD06"])
         p_uht = Point("process_telemetry").tag("section", "uht").time(now)
-        for f in ["tt01", "tt02", "tt03", "tt04", "tt05", "tt06", "tt07", "ct", "lt", "ft04fiq"]:
+        for f in ["tt01", "tt02", "tt03", "tt04", "tt05", "tt06", "tt07", "ct", "lt", "ft04fiq",
+                  "sp_htc", "sp_ph01", "sp_c01", "sp_c02", "sp_ph02", "sp_ctc",
+                  "fiq04_sv", "fiqcv08_sv"]:
             val = u.get(f)
             if isinstance(val, (int, float)):
                 p_uht.field(f, float(val))
@@ -134,7 +187,7 @@ class InfluxTelemetryWriter:
         vsd09 = vf.get("VSD09") or {}
         vsd09_spd = float(vsd09.get("curspeed_pct") or vsd09.get("speed_pct") or 0.0)
         p_atk = Point("process_telemetry").tag("section", "atank").time(now)
-        for f in ["pt460", "tt460", "tt477", "lc"]:
+        for f in ["pt460", "tt460", "tt477", "lc", "sp_pt", "sp_tt"]:
             val = a.get(f)
             if isinstance(val, (int, float)):
                 p_atk.field(f, float(val))
@@ -151,11 +204,17 @@ class InfluxTelemetryWriter:
         p_cip.field("c1_tt_s", float(c1.get("tt_s") or 0.0))
         p_cip.field("c1_ft_s", float(c1.get("ft_s") or 0.0))
         p_cip.field("c1_power", float(vf.get("VSD05", {}).get("power_kw", 0.0) or 0.0))
+        p_cip.field("c1_sp_ct", float(c1.get("sp_ct") or 0.0))
+        p_cip.field("c1_sp_tt", float(c1.get("sp_tt") or 0.0))
+        p_cip.field("c1_sp_ft", float(c1.get("sp_ft") or 0.0))
         p_cip.field("c2_ct_r", float(c2.get("ct_r") or 0.0))
         p_cip.field("c2_tt_r", float(c2.get("tt_r") or 0.0))
         p_cip.field("c2_tt_s", float(c2.get("tt_s") or 0.0))
         p_cip.field("c2_ft_s", float(c2.get("ft_s") or 0.0))
         p_cip.field("c2_power", float(vf.get("VSD04", {}).get("power_kw", 0.0) or 0.0))
+        p_cip.field("c2_sp_ct", float(c2.get("sp_ct") or 0.0))
+        p_cip.field("c2_sp_tt", float(c2.get("sp_tt") or 0.0))
+        p_cip.field("c2_sp_ft", float(c2.get("sp_ft") or 0.0))
         p_cip.field("cip_power", float(cip_pwr))
         points.append(p_cip)
 
@@ -171,6 +230,8 @@ class InfluxTelemetryWriter:
         p_prod.field("dp", dp)
         p_prod.field("p101_power", float(vsd08.get("power_kw") or 0.0))
         p_prod.field("p101_speed", float(vsd08.get("curspeed_pct") or vsd08.get("speed_pct") or 0.0))
+        p_prod.field("sp_pt_in", float(p.get("sp_pt_in") or 2.0))
+        p_prod.field("pid_ov", float(p.get("pid_ov") or 0.0))
         points.append(p_prod)
 
         # 5. Executive KPIs

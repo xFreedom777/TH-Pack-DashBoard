@@ -386,8 +386,8 @@
           <div class="temp-chip"><span class="chip-label">TT02 (Pre-heat 1)</span><span class="chip-val font-mono" id="uht-tt02-chip">34.9°C</span></div>
           <div class="temp-chip"><span class="chip-label">TT03 (Pre-heat 2)</span><span class="chip-val font-mono" id="uht-tt03-chip">32.9°C</span></div>
           <div class="temp-chip"><span class="chip-label">TT04 (Inlet)</span><span class="chip-val font-mono" id="uht-tt04-chip">20.7°C</span></div>
-          <div class="temp-chip"><span class="chip-label">TT05 (Cooling 1)</span><span class="chip-val font-mono" id="uht-tt05-chip">33.1°C</span></div>
-          <div class="temp-chip"><span class="chip-label">TT06 (Cooling 2)</span><span class="chip-val font-mono" id="uht-tt06-chip">34.9°C</span></div>
+          <div class="temp-chip"><span class="chip-label">TT05 (TT42 Cooling 1)</span><span class="chip-val font-mono" id="uht-tt05-chip">33.1°C</span></div>
+          <div class="temp-chip"><span class="chip-label">TT06 (TT44 Cooling 2)</span><span class="chip-val font-mono" id="uht-tt06-chip">34.9°C</span></div>
           <div class="temp-chip"><span class="chip-label">TT07 (Outlet)</span><span class="chip-val font-mono" id="uht-tt07-chip">35.0°C</span></div>
         </div>
 
@@ -473,7 +473,7 @@
                 <span class="pen-tag">PEN 4: FIQ04 INLET FLOW (M4)</span>
                 <span class="pen-val font-mono" id="uht-pen-flow">-- L/h</span>
               </div>
-              <span class="pen-limit">SV: 7000 L/h</span>
+              <span class="pen-limit" id="uht-pen-flow-limit">SV: 10000 L/h</span>
             </div>
 
             <div class="pen-chip" data-section="uht" data-pen="4">
@@ -482,7 +482,7 @@
                 <span class="pen-tag">PEN 5: FIQCV08 ADD WATER</span>
                 <span class="pen-val font-mono" id="uht-pen-lt">-- Liter</span>
               </div>
-              <span class="pen-limit">SV: 50.00 Liter</span>
+              <span class="pen-limit" id="uht-pen-lt-limit">SV: 50.00 Liter</span>
             </div>
 
             <div class="pen-chip" data-section="uht" data-pen="5">
@@ -492,6 +492,51 @@
                 <span class="pen-val font-mono" id="uht-pen-power">-- kW</span>
               </div>
               <span class="pen-limit">4 Drives Combined</span>
+            </div>
+
+            <div class="pen-chip" data-section="uht" data-pen="6">
+              <span class="pen-color-dot" style="background:#ec4899; box-shadow:0 0 8px #ec4899;"></span>
+              <div class="pen-meta">
+                <span class="pen-tag">PEN 7: TT42 (TT05) OUTLET HC</span>
+                <span class="pen-val font-mono" id="uht-pen-tt42">-- °C</span>
+              </div>
+              <span class="pen-limit">Target: 75.0 - 85.0°C</span>
+            </div>
+
+            <div class="pen-chip" data-section="uht" data-pen="7">
+              <span class="pen-color-dot" style="background:#14b8a6; box-shadow:0 0 8px #14b8a6;"></span>
+              <div class="pen-meta">
+                <span class="pen-tag">PEN 8: TT44 (TT06) SEC 11 HC</span>
+                <span class="pen-val font-mono" id="uht-pen-tt44">-- °C</span>
+              </div>
+              <span class="pen-limit">Target: 75.0 - 85.0°C</span>
+            </div>
+
+            <div class="pen-chip" data-section="uht" data-pen="8">
+              <span class="pen-color-dot" style="background:#f97316; box-shadow:0 0 8px #f97316;"></span>
+              <div class="pen-meta">
+                <span class="pen-tag">PEN 9: TT03 PRE-HEAT 2</span>
+                <span class="pen-val font-mono" id="uht-pen-tt03">-- °C</span>
+              </div>
+              <span class="pen-limit">Target: 80.0 - 90.0°C</span>
+            </div>
+
+            <div class="pen-chip" data-section="uht" data-pen="9">
+              <span class="pen-color-dot" style="background:#84cc16; box-shadow:0 0 8px #84cc16;"></span>
+              <div class="pen-meta">
+                <span class="pen-tag">PEN 10: TT07 OUTLET TEMP</span>
+                <span class="pen-val font-mono" id="uht-pen-tt07">-- °C</span>
+              </div>
+              <span class="pen-limit">Target: 20.0 - 30.0°C</span>
+            </div>
+
+            <div class="pen-chip" data-section="uht" data-pen="10">
+              <span class="pen-color-dot" style="background:#a855f7; box-shadow:0 0 8px #a855f7;"></span>
+              <div class="pen-meta">
+                <span class="pen-tag">PEN 11: CT CONDUCTIVITY</span>
+                <span class="pen-val font-mono" id="uht-pen-ct">-- mS/cm</span>
+              </div>
+              <span class="pen-limit">Target: 0.0 - 30.0 mS/cm</span>
             </div>
           </div>
 
@@ -835,7 +880,7 @@
                 <span class="pen-tag">PEN 1: PT460 ASEPTIC PRESS</span>
                 <span class="pen-val font-mono" id="atank-pen-pt">-- bar</span>
               </div>
-              <span class="pen-limit">Barrier: 1.5 - 2.5 bar</span>
+              <span class="pen-limit" id="atank-pen-pt-limit">SP: 1.50 bar</span>
             </div>
 
             <div class="pen-chip" data-section="atank" data-pen="1">
@@ -844,7 +889,7 @@
                 <span class="pen-tag">PEN 2: TT460 STERILE TEMP</span>
                 <span class="pen-val font-mono" id="atank-pen-tt460">-- °C</span>
               </div>
-              <span class="pen-limit">Sterile Envelop &ge; 130°C</span>
+              <span class="pen-limit" id="atank-pen-tt460-limit">SP: 125.0 °C</span>
             </div>
 
             <div class="pen-chip" data-section="atank" data-pen="2">
@@ -947,7 +992,7 @@
               <div class="metric-item"><span>Flow Supply:</span> <strong id="cip1-fts" class="font-mono">6.3 L/h</strong></div>
             </div>
             <div class="line-pump-box">
-              <span>Supply Pump: <strong>VSD05 (7.5 kW)</strong></span>
+              <span>Supply Pump: <strong>VSD05 (5.5 kW)</strong></span>
               <span id="cip1-vsd-status" class="status-stop">STOPPED (0.00 kW)</span>
             </div>
           </div>
@@ -1053,7 +1098,7 @@
                 <span class="pen-tag">PEN 1: L1 RETURN COND (CT_R)</span>
                 <span class="pen-val font-mono" id="cip-pen-ct1">-- mS/cm</span>
               </div>
-              <span class="pen-limit">Line 1 Conductivity</span>
+              <span class="pen-limit" id="cip-pen-ct1-limit">SP: 2.00 mS/cm</span>
             </div>
 
             <div class="pen-chip" data-section="cip" data-pen="1">
@@ -1062,40 +1107,67 @@
                 <span class="pen-tag">PEN 2: L1 RETURN TEMP (TT_R)</span>
                 <span class="pen-val font-mono" id="cip-pen-tt1">-- °C</span>
               </div>
-              <span class="pen-limit">Line 1 Return Temp</span>
+              <span class="pen-limit" id="cip-pen-tt1-limit">SP: 80.0 °C</span>
             </div>
 
             <div class="pen-chip" data-section="cip" data-pen="2">
-              <span class="pen-color-dot" style="background:#10b981; box-shadow:0 0 8px #10b981;"></span>
+              <span class="pen-color-dot" style="background:#f97316; box-shadow:0 0 8px #f97316;"></span>
               <div class="pen-meta">
-                <span class="pen-tag">PEN 3: L1 SUPPLY FLOW (FT_S)</span>
-                <span class="pen-val font-mono" id="cip-pen-ft1">-- L/h</span>
+                <span class="pen-tag">PEN 3: L1 SUPPLY TEMP (TT_S)</span>
+                <span class="pen-val font-mono" id="cip-pen-tts1">-- °C</span>
               </div>
-              <span class="pen-limit">Line 1 Flow</span>
+              <span class="pen-limit" id="cip-pen-tts1-limit">Supply Temperature</span>
             </div>
 
             <div class="pen-chip" data-section="cip" data-pen="3">
-              <span class="pen-color-dot" style="background:#ec4899; box-shadow:0 0 8px #ec4899;"></span>
+              <span class="pen-color-dot" style="background:#10b981; box-shadow:0 0 8px #10b981;"></span>
               <div class="pen-meta">
-                <span class="pen-tag">PEN 4: L2 RETURN COND (CT_R)</span>
-                <span class="pen-val font-mono" id="cip-pen-ct2">-- mS/cm</span>
+                <span class="pen-tag">PEN 4: L1 SUPPLY FLOW (FT_S)</span>
+                <span class="pen-val font-mono" id="cip-pen-ft1">-- L/h</span>
               </div>
-              <span class="pen-limit">Line 2 Conductivity</span>
+              <span class="pen-limit" id="cip-pen-ft1-limit">SP: 13,000 L/h</span>
             </div>
 
             <div class="pen-chip" data-section="cip" data-pen="4">
-              <span class="pen-color-dot" style="background:#06b6d4; box-shadow:0 0 8px #06b6d4;"></span>
+              <span class="pen-color-dot" style="background:#ec4899; box-shadow:0 0 8px #ec4899;"></span>
               <div class="pen-meta">
-                <span class="pen-tag">PEN 5: L2 RETURN TEMP (TT_R)</span>
-                <span class="pen-val font-mono" id="cip-pen-tt2">-- °C</span>
+                <span class="pen-tag">PEN 5: L2 RETURN COND (CT_R)</span>
+                <span class="pen-val font-mono" id="cip-pen-ct2">-- mS/cm</span>
               </div>
-              <span class="pen-limit">Line 2 Return Temp</span>
+              <span class="pen-limit" id="cip-pen-ct2-limit">SP: 2.00 mS/cm</span>
             </div>
 
             <div class="pen-chip" data-section="cip" data-pen="5">
+              <span class="pen-color-dot" style="background:#dc2626; box-shadow:0 0 8px #dc2626;"></span>
+              <div class="pen-meta">
+                <span class="pen-tag">PEN 6: L2 RETURN TEMP (TT_R)</span>
+                <span class="pen-val font-mono" id="cip-pen-tt2">-- °C</span>
+              </div>
+              <span class="pen-limit" id="cip-pen-tt2-limit">SP: 80.0 °C</span>
+            </div>
+
+            <div class="pen-chip" data-section="cip" data-pen="6">
+              <span class="pen-color-dot" style="background:#06b6d4; box-shadow:0 0 8px #06b6d4;"></span>
+              <div class="pen-meta">
+                <span class="pen-tag">PEN 7: L2 SUPPLY TEMP (TT_S)</span>
+                <span class="pen-val font-mono" id="cip-pen-tts2">-- °C</span>
+              </div>
+              <span class="pen-limit" id="cip-pen-tts2-limit">Supply Temperature</span>
+            </div>
+
+            <div class="pen-chip" data-section="cip" data-pen="7">
+              <span class="pen-color-dot" style="background:#14b8a6; box-shadow:0 0 8px #14b8a6;"></span>
+              <div class="pen-meta">
+                <span class="pen-tag">PEN 8: L2 SUPPLY FLOW (FT_S)</span>
+                <span class="pen-val font-mono" id="cip-pen-ft2">-- L/h</span>
+              </div>
+              <span class="pen-limit" id="cip-pen-ft2-limit">SP: 14,000 L/h</span>
+            </div>
+
+            <div class="pen-chip" data-section="cip" data-pen="8">
               <span class="pen-color-dot" style="background:#f59e0b; box-shadow:0 0 8px #f59e0b;"></span>
               <div class="pen-meta">
-                <span class="pen-tag">PEN 6: CIP PUMPS POWER</span>
+                <span class="pen-tag">PEN 9: CIP PUMPS POWER</span>
                 <span class="pen-val font-mono" id="cip-pen-power">-- kW</span>
               </div>
               <span class="pen-limit">VSD04 + VSD05</span>
@@ -1110,7 +1182,7 @@
                 <span class="pen-tag">PEN 1: C1 RETURN COND (CT_R)</span>
                 <span class="pen-val font-mono" id="cip-c1-pen-ctr">-- mS/cm</span>
               </div>
-              <span class="pen-limit">Return Conductivity</span>
+              <span class="pen-limit" id="cip-c1-pen-ctr-limit">SP: 2.00 mS/cm</span>
             </div>
 
             <div class="pen-chip" data-section="cip_line1" data-pen="1">
@@ -1119,7 +1191,7 @@
                 <span class="pen-tag">PEN 2: C1 RETURN TEMP (TT_R)</span>
                 <span class="pen-val font-mono" id="cip-c1-pen-ttr">-- °C</span>
               </div>
-              <span class="pen-limit">Return Temperature</span>
+              <span class="pen-limit" id="cip-c1-pen-ttr-limit">SP: 80.0 °C</span>
             </div>
 
             <div class="pen-chip" data-section="cip_line1" data-pen="2">
@@ -1137,7 +1209,7 @@
                 <span class="pen-tag">PEN 4: C1 SUPPLY FLOW (FT_S)</span>
                 <span class="pen-val font-mono" id="cip-c1-pen-fts">-- L/h</span>
               </div>
-              <span class="pen-limit">Supply Flow Rate</span>
+              <span class="pen-limit" id="cip-c1-pen-fts-limit">SP: 13000 L/h</span>
             </div>
 
             <div class="pen-chip" data-section="cip_line1" data-pen="4">
@@ -1146,7 +1218,7 @@
                 <span class="pen-tag">PEN 5: VSD05 PUMP POWER</span>
                 <span class="pen-val font-mono" id="cip-c1-pen-power">-- kW</span>
               </div>
-              <span class="pen-limit">Supply Pump (7.5 kW)</span>
+              <span class="pen-limit">Supply Pump (5.5 kW)</span>
             </div>
           </div>
 
@@ -1158,7 +1230,7 @@
                 <span class="pen-tag">PEN 1: C2 RETURN COND (CT_R)</span>
                 <span class="pen-val font-mono" id="cip-c2-pen-ctr">-- mS/cm</span>
               </div>
-              <span class="pen-limit">Return Conductivity</span>
+              <span class="pen-limit" id="cip-c2-pen-ctr-limit">SP: 2.00 mS/cm</span>
             </div>
 
             <div class="pen-chip" data-section="cip_line2" data-pen="1">
@@ -1167,7 +1239,7 @@
                 <span class="pen-tag">PEN 2: C2 RETURN TEMP (TT_R)</span>
                 <span class="pen-val font-mono" id="cip-c2-pen-ttr">-- °C</span>
               </div>
-              <span class="pen-limit">Return Temperature</span>
+              <span class="pen-limit" id="cip-c2-pen-ttr-limit">SP: 80.0 °C</span>
             </div>
 
             <div class="pen-chip" data-section="cip_line2" data-pen="2">
@@ -1185,7 +1257,7 @@
                 <span class="pen-tag">PEN 4: C2 SUPPLY FLOW (FT_S)</span>
                 <span class="pen-val font-mono" id="cip-c2-pen-fts">-- L/h</span>
               </div>
-              <span class="pen-limit">Supply Flow Rate</span>
+              <span class="pen-limit" id="cip-c2-pen-fts-limit">SP: 14000 L/h</span>
             </div>
 
             <div class="pen-chip" data-section="cip_line2" data-pen="4">
@@ -1308,7 +1380,7 @@
                 <span class="pen-tag">PEN 1: PT_IN FILTER INLET</span>
                 <span class="pen-val font-mono" id="prod-pen-ptin">-- bar</span>
               </div>
-              <span class="pen-limit">Filter Inlet</span>
+              <span class="pen-limit" id="prod-pen-ptin-limit">SP: 2.00 bar</span>
             </div>
 
             <div class="pen-chip" data-section="prod" data-pen="1">

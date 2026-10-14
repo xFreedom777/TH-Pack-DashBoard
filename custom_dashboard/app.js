@@ -655,7 +655,7 @@ function initCharts() {
   charts.power = new Chart(ctxPower, {
     type: 'doughnut',
     data: {
-      labels: ['VSD01 (Booster 15kW)', 'VSD02 (Feed 7.5kW)', 'VSD03 (PID Supply 4kW)', 'VSD04 (CIP L2 5.5kW)', 'VSD05 (CIP L1 7.5kW)', 'VSD06 (Return 4kW)', 'VSD08 (P101 3kW)', 'VSD09 (Agitator 3kW)'],
+      labels: ['VSD01 (Booster 15kW)', 'VSD02 (Feed 7.5kW)', 'VSD03 (PID Supply 4kW)', 'VSD04 (CIP L2 5.5kW)', 'VSD05 (CIP L1 5.5kW)', 'VSD06 (Return 4kW)', 'VSD08 (P101 3kW)', 'VSD09 (Agitator 3kW)'],
       datasets: [{
         data: p.powerShare,
         backgroundColor: [
@@ -762,49 +762,49 @@ const sectionRecorders = {
     canvasId: 'chartRecorderUht',
     statusId: 'recorder-uht-status',
     chart: null,
-    history: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [], pen5: [] },
+    history: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [], pen5: [], pen6: [], pen7: [], pen8: [], pen9: [], pen10: [], pen11: [], pen12: [], pen13: [], pen14: [], pen15: [], pen16: [], pen17: [], pen18: [] },
     windowSec: 60,
     paused: false,
     mode: 'live',
     historyRange: '1d',
-    penVisibility: [true, true, true, true, true, true]
+    penVisibility: [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true]
   },
   atank: {
     canvasId: 'chartRecorderAtank',
     statusId: 'recorder-atank-status',
     chart: null,
-    history: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [] },
+    history: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [], pen5: [], pen6: [] },
     windowSec: 60,
     paused: false,
     mode: 'live',
     historyRange: '1d',
-    penVisibility: [true, true, true, true, true]
+    penVisibility: [true, true, true, true, true, true, true]
   },
   cip: {
     canvasId: 'chartRecorderCip',
     statusId: 'recorder-cip-status',
     chart: null,
     currentCircuit: 'all',
-    history: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [], pen5: [] },
-    allHistory: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [], pen5: [] },
-    c1History: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [] },
-    c2History: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [] },
+    history: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [], pen5: [], pen6: [], pen7: [], pen8: [], pen9: [], pen10: [], pen11: [], pen12: [], pen13: [], pen14: [] },
+    allHistory: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [], pen5: [], pen6: [], pen7: [], pen8: [], pen9: [], pen10: [], pen11: [], pen12: [], pen13: [], pen14: [] },
+    c1History: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [], pen5: [], pen6: [], pen7: [] },
+    c2History: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [], pen5: [], pen6: [], pen7: [] },
     windowSec: 60,
     paused: false,
     mode: 'live',
     historyRange: '1d',
-    penVisibility: [true, true, true, true, true, true]
+    penVisibility: [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true]
   },
   prod: {
     canvasId: 'chartRecorderProd',
     statusId: 'recorder-prod-status',
     chart: null,
-    history: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [] },
+    history: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [], pen5: [] },
     windowSec: 60,
     paused: false,
     mode: 'live',
     historyRange: '1d',
-    penVisibility: [true, true, true, true, true]
+    penVisibility: [true, true, true, true, true, true]
   }
 };
 
@@ -812,17 +812,27 @@ const sectionRecorders = {
 const CIP_CONFIGS = {
   all: {
     title: 'CIP DUAL-LINE CHEMICAL & THERMAL RECORDER',
-    sub: 'บันทึกตัวแปรเฉพาะระบบล้าง CIP: ค่า Conductivity (ความเข้มข้นน้ำยา), อุณหภูมิ และอัตราการไหล Line 1 & Line 2',
+    sub: 'บันทึกตัวแปรเฉพาะระบบล้าง CIP: ค่า Conductivity (ความเข้มข้นน้ำยา), อุณหภูมิ Supply/Return และอัตราการไหล Line 1 & Line 2',
     reportTarget: 'cip_line1',
     reportTitle: '📑 ออกรายงาน Step Log Line 1 [DB1801]',
     gridId: 'cip-pen-grid-all',
     datasets: [
       { label: 'L1 CT_R Return Cond (mS/cm)', data: [], borderColor: '#8b5cf6', backgroundColor: 'rgba(139, 92, 246, 0.08)', borderWidth: 2.2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yCond' },
       { label: 'L1 TT_R Return Temp (°C)', data: [], borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
+      { label: 'L1 TT_S Supply Temp (°C)', data: [], borderColor: '#f97316', backgroundColor: 'rgba(249, 115, 22, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
       { label: 'L1 FT_S Supply Flow (L/h)', data: [], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.08)', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yFlow' },
       { label: 'L2 CT_R Return Cond (mS/cm)', data: [], borderColor: '#ec4899', backgroundColor: 'rgba(236, 72, 153, 0.08)', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yCond' },
-      { label: 'L2 TT_R Return Temp (°C)', data: [], borderColor: '#06b6d4', backgroundColor: 'rgba(6, 182, 212, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
-      { label: 'CIP Pumps Power (kW)', data: [], borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yPower' }
+      { label: 'L2 TT_R Return Temp (°C)', data: [], borderColor: '#dc2626', backgroundColor: 'rgba(220, 38, 38, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
+      { label: 'L2 TT_S Supply Temp (°C)', data: [], borderColor: '#06b6d4', backgroundColor: 'rgba(6, 182, 212, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
+      { label: 'L2 FT_S Supply Flow (L/h)', data: [], borderColor: '#14b8a6', backgroundColor: 'rgba(20, 184, 166, 0.08)', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yFlow' },
+      { label: 'CIP Pumps Power (kW)', data: [], borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yPower' },
+      // Setpoint Curves for Dual Combined
+      { label: 'SP: L1 Return Cond (mS/cm)', data: [], borderColor: '#8b5cf6', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yCond' },
+      { label: 'SP: L1 Temp (°C)', data: [], borderColor: '#ef4444', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yTemp' },
+      { label: 'SP: L1 Supply Flow (L/h)', data: [], borderColor: '#10b981', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yFlow' },
+      { label: 'SP: L2 Return Cond (mS/cm)', data: [], borderColor: '#ec4899', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yCond' },
+      { label: 'SP: L2 Temp (°C)', data: [], borderColor: '#dc2626', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yTemp' },
+      { label: 'SP: L2 Supply Flow (L/h)', data: [], borderColor: '#14b8a6', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yFlow' }
     ],
     scales: {
       yCond: { min: 0, max: 80, title: 'Cond (mS/cm)', color: '#8b5cf6', position: 'left' },
@@ -833,7 +843,7 @@ const CIP_CONFIGS = {
   },
   cip_line1: {
     title: 'CIP CIRCUIT 1 [DB1801] CHEMICAL & THERMAL RECORDER',
-    sub: 'บันทึกตัวแปรเฉพาะวงล้าง Circuit 1: Conductivity ขากลับ, อุณหภูมิ Supply/Return, Flow Supply และปั๊มจ่าย VSD05 (7.5 kW)',
+    sub: 'บันทึกตัวแปรเฉพาะวงล้าง Circuit 1: Conductivity ขากลับ, อุณหภูมิ Supply/Return, Flow Supply และปั๊มจ่าย VSD05 (5.5 kW)',
     reportTarget: 'cip_line1',
     reportTitle: '📑 ออกรายงาน Step Log Circuit 1 [DB1801]',
     gridId: 'cip-pen-grid-c1',
@@ -842,7 +852,11 @@ const CIP_CONFIGS = {
       { label: 'C1 Return Temp (TT_R) (°C)', data: [], borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
       { label: 'C1 Supply Temp (TT_S) (°C)', data: [], borderColor: '#06b6d4', backgroundColor: 'rgba(6, 182, 212, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
       { label: 'C1 Supply Flow (FT_S) (L/h)', data: [], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.08)', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yFlow' },
-      { label: 'VSD05 Pump Power (kW)', data: [], borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yPower' }
+      { label: 'VSD05 Pump Power (kW)', data: [], borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yPower' },
+      // Dynamic Setpoints from DB1801 (Evaluated dynamically by active CIP1 Step)
+      { label: 'SP: C1 Return Cond (mS/cm)', data: [], borderColor: '#8b5cf6', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yCond' },
+      { label: 'SP: C1 Temp (°C)', data: [], borderColor: '#ef4444', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yTemp' },
+      { label: 'SP: C1 Supply Flow (L/h)', data: [], borderColor: '#10b981', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yFlow' }
     ],
     scales: {
       yCond: { min: 0, max: 80, title: 'Cond (mS/cm)', color: '#8b5cf6', position: 'left' },
@@ -862,7 +876,11 @@ const CIP_CONFIGS = {
       { label: 'C2 Return Temp (TT_R) (°C)', data: [], borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
       { label: 'C2 Supply Temp (TT_S) (°C)', data: [], borderColor: '#06b6d4', backgroundColor: 'rgba(6, 182, 212, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
       { label: 'C2 Supply Flow (FT_S) (L/h)', data: [], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.08)', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yFlow' },
-      { label: 'VSD04 Pump Power (kW)', data: [], borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yPower' }
+      { label: 'VSD04 Pump Power (kW)', data: [], borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yPower' },
+      // Dynamic Setpoints from DB1802 (Evaluated dynamically by active CIP2 Step)
+      { label: 'SP: C2 Return Cond (mS/cm)', data: [], borderColor: '#ec4899', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yCond' },
+      { label: 'SP: C2 Temp (°C)', data: [], borderColor: '#ef4444', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yTemp' },
+      { label: 'SP: C2 Supply Flow (L/h)', data: [], borderColor: '#10b981', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yFlow' }
     ],
     scales: {
       yCond: { min: 0, max: 80, title: 'Cond (mS/cm)', color: '#ec4899', position: 'left' },
@@ -984,14 +1002,29 @@ function initUhtRecorder() {
         { label: 'TT04 Inlet Temp (°C)', data: [], borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
         { label: 'FIQ04 Inlet Flow (M4) (L/h)', data: [], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.08)', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yFlow' },
         { label: 'FIQCV08 Add Water (Liter)', data: [], borderColor: '#8b5cf6', backgroundColor: 'rgba(139, 92, 246, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yLevel' },
-        { label: 'UHT VSDs Power (kW)', data: [], borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yPower' }
+        { label: 'UHT VSDs Power (kW)', data: [], borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yPower' },
+        { label: 'TT42 (TT05) Outlet HC (°C)', data: [], borderColor: '#ec4899', backgroundColor: 'rgba(236, 72, 153, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
+        { label: 'TT44 (TT06) Sec 11 HC (°C)', data: [], borderColor: '#14b8a6', backgroundColor: 'rgba(20, 184, 166, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
+        { label: 'TT03 Pre-Heat 2 (°C)', data: [], borderColor: '#f97316', backgroundColor: 'rgba(249, 115, 22, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
+        { label: 'TT07 Outlet Temp (°C)', data: [], borderColor: '#84cc16', backgroundColor: 'rgba(132, 204, 22, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
+        { label: 'CT Conductivity (mS/cm)', data: [], borderColor: '#a855f7', backgroundColor: 'rgba(168, 85, 247, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yCond' },
+        // Setpoint Dashed Curves from DB1101 (colors matching corresponding Pens)
+        { label: 'SP: TT01 Holding (136°C)', data: [], borderColor: '#ef4444', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yTemp' },
+        { label: 'SP: TT02 Pre-Heat 1 (90°C)', data: [], borderColor: '#06b6d4', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yTemp' },
+        { label: 'SP: TT42 Outlet HC (25°C)', data: [], borderColor: '#ec4899', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yTemp' },
+        { label: 'SP: TT44 Sec 11 HC (25°C)', data: [], borderColor: '#14b8a6', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yTemp' },
+        { label: 'SP: TT03 Pre-Heat 2 (90°C)', data: [], borderColor: '#f97316', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yTemp' },
+        { label: 'SP: TT07 Outlet (25°C)', data: [], borderColor: '#84cc16', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yTemp' },
+        { label: 'SP: FIQ04 Inlet Flow (L/h)', data: [], borderColor: '#10b981', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yFlow' },
+        { label: 'SP: FIQCV08 Add Water (Liter)', data: [], borderColor: '#8b5cf6', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yLevel' }
       ]
     },
     options: getRecorderChartOptions({
       yTemp: { min: 0, max: 160, title: 'Temp (°C)', color: '#ef4444', position: 'left' },
       yFlow: { min: 0, max: 20000, title: 'Flow (L/h)', color: '#10b981', position: 'right' },
       yLevel: { min: 0, max: 200, title: 'Level (Liter)', color: '#8b5cf6', position: 'left', display: false },
-      yPower: { min: 0, max: 45, title: 'Power (kW)', color: '#f59e0b', position: 'right' }
+      yPower: { min: 0, max: 45, title: 'Power (kW)', color: '#f59e0b', position: 'right' },
+      yCond: { min: 0, max: 60, title: 'Cond (mS/cm)', color: '#a855f7', position: 'left', display: false }
     })
   });
 }
@@ -1011,7 +1044,10 @@ function initAtankRecorder() {
         { label: 'TT460 Sterile Temp (°C)', data: [], borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.08)', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
         { label: 'TT477 Barrier Temp (°C)', data: [], borderColor: '#a855f7', backgroundColor: 'rgba(168, 85, 247, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
         { label: 'LC Product Weight (kg)', data: [], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.08)', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yWeight' },
-        { label: 'VSD09 Agitator Speed (%)', data: [], borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'ySpeed' }
+        { label: 'VSD09 Agitator Speed (%)', data: [], borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'ySpeed' },
+        // Dynamic Setpoints from DB1301 (SP_PT and SP_TT auto-switching by Step)
+        { label: 'SP: PT460 Press (bar)', data: [], borderColor: '#06b6d4', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yPress' },
+        { label: 'SP: TT460/TT477 Temp (°C)', data: [], borderColor: '#ef4444', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yTemp' }
       ]
     },
     options: getRecorderChartOptions({
@@ -1057,7 +1093,9 @@ function initProdRecorder() {
         { label: 'PT_OUT Filter Outlet (bar)', data: [], borderColor: '#06b6d4', backgroundColor: 'rgba(6, 182, 212, 0.08)', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yPress' },
         { label: 'ΔP Diff Press (bar)', data: [], borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.08)', borderWidth: 2.2, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yDiff' },
         { label: 'P101 Power (kW)', data: [], borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yPower' },
-        { label: 'P101 Running Speed (%)', data: [], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'ySpeed' }
+        { label: 'P101 Running Speed (%)', data: [], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'ySpeed' },
+        // Setpoint from DB331 (PID SV for Pump Supply PT_IN Filter Inlet)
+        { label: 'SP: PT_IN Inlet (bar)', data: [], borderColor: '#3b82f6', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yPress' }
       ]
     },
     options: getRecorderChartOptions({
@@ -1348,6 +1386,44 @@ function setupSectionRecorderControls() {
       rec.penVisibility[penIdx] = !rec.penVisibility[penIdx];
       chip.classList.toggle('disabled', !rec.penVisibility[penIdx]);
       rec.chart.setDatasetVisibility(penIdx, rec.penVisibility[penIdx]);
+      // Also sync visibility of matching setpoint curve in UHT recorder
+      if (targetSec === 'uht') {
+        const spMap = { 0: 11, 1: 12, 3: 17, 4: 18, 6: 13, 7: 14, 8: 15, 9: 16 };
+        if (spMap[penIdx] !== undefined) {
+          rec.penVisibility[spMap[penIdx]] = rec.penVisibility[penIdx];
+          rec.chart.setDatasetVisibility(spMap[penIdx], rec.penVisibility[penIdx]);
+        }
+      } else if (targetSec === 'atank') {
+        const spMapAtk = { 0: 5, 1: 6 };
+        if (spMapAtk[penIdx] !== undefined) {
+          rec.penVisibility[spMapAtk[penIdx]] = rec.penVisibility[penIdx];
+          rec.chart.setDatasetVisibility(spMapAtk[penIdx], rec.penVisibility[penIdx]);
+        }
+      } else if (sec === 'cip_line1' || (targetSec === 'cip' && rec.currentCircuit === 'cip_line1')) {
+        const spMapC1 = { 0: 5, 1: 6, 3: 7 };
+        if (spMapC1[penIdx] !== undefined) {
+          rec.penVisibility[spMapC1[penIdx]] = rec.penVisibility[penIdx];
+          rec.chart.setDatasetVisibility(spMapC1[penIdx], rec.penVisibility[penIdx]);
+        }
+      } else if (sec === 'cip_line2' || (targetSec === 'cip' && rec.currentCircuit === 'cip_line2')) {
+        const spMapC2 = { 0: 5, 1: 6, 3: 7 };
+        if (spMapC2[penIdx] !== undefined) {
+          rec.penVisibility[spMapC2[penIdx]] = rec.penVisibility[penIdx];
+          rec.chart.setDatasetVisibility(spMapC2[penIdx], rec.penVisibility[penIdx]);
+        }
+      } else if (targetSec === 'cip' && (rec.currentCircuit === 'all' || !rec.currentCircuit)) {
+        const spMapAll = { 0: 9, 1: 10, 3: 11, 4: 12, 5: 13, 7: 14 };
+        if (spMapAll[penIdx] !== undefined) {
+          rec.penVisibility[spMapAll[penIdx]] = rec.penVisibility[penIdx];
+          rec.chart.setDatasetVisibility(spMapAll[penIdx], rec.penVisibility[penIdx]);
+        }
+      } else if (targetSec === 'prod') {
+        const spMapProd = { 0: 5 };
+        if (spMapProd[penIdx] !== undefined) {
+          rec.penVisibility[spMapProd[penIdx]] = rec.penVisibility[penIdx];
+          rec.chart.setDatasetVisibility(spMapProd[penIdx], rec.penVisibility[penIdx]);
+        }
+      }
       rec.chart.update();
     });
   });
@@ -1590,44 +1666,52 @@ async function executeExportWithResolution() {
 // ================= PROCESS ALARM LIMITS & TOLERANCE MATRIX =================
 const PEN_ALARM_LIMITS = {
   uht: [
-    { pen: 0, tag: 'TT01 Holding Temp', unit: '°C', target: '137.0 - 142.0', ll: 135.0, l: 137.0, h: 143.0, hh: 145.0, ccp: true },
-    { pen: 1, tag: 'TT02 Pre-Heat 1', unit: '°C', target: '80.0 - 90.0', ll: 70.0, l: 75.0, h: 92.0, hh: 96.0, ccp: false },
+    { pen: 0, tag: 'TT01 Holding Temp', unit: '°C', target: 'SP: 136.0°C (137-142)', ll: 135.0, l: 137.0, h: 143.0, hh: 145.0, ccp: true },
+    { pen: 1, tag: 'TT02 Pre-Heat 1', unit: '°C', target: 'SP: 90.0°C (80-90)', ll: 70.0, l: 75.0, h: 92.0, hh: 96.0, ccp: false },
     { pen: 2, tag: 'TT04 Inlet Temp', unit: '°C', target: '60.0 - 70.0', ll: 50.0, l: 55.0, h: 75.0, hh: 80.0, ccp: false },
-    { pen: 3, tag: 'FIQ04 Inlet Flow (M4)', unit: 'L/h', target: 'SV: 7000 L/h', ll: null, l: null, h: null, hh: null, ccp: true },
+    { pen: 3, tag: 'FIQ04 Inlet Flow (M4)', unit: 'L/h', target: 'SV: 10,000 L/h', ll: null, l: null, h: null, hh: null, ccp: true },
     { pen: 4, tag: 'FIQCV08 Add Water', unit: 'Liter', target: 'SV: 50.0 L', ll: null, l: null, h: null, hh: null, ccp: false },
-    { pen: 5, tag: 'UHT VSDs Power', unit: 'kW', target: '< 38.0', ll: null, l: null, h: 36.0, hh: 40.0, ccp: false }
+    { pen: 5, tag: 'UHT VSDs Power', unit: 'kW', target: '< 38.0', ll: null, l: null, h: 36.0, hh: 40.0, ccp: false },
+    { pen: 6, tag: 'TT42 (TT05) Outlet HC', unit: '°C', target: 'SP: 25.0°C', ll: null, l: null, h: null, hh: null, ccp: false },
+    { pen: 7, tag: 'TT44 (TT06) Sec 11 HC', unit: '°C', target: 'SP: 25.0°C', ll: null, l: null, h: null, hh: null, ccp: false },
+    { pen: 8, tag: 'TT03 Pre-Heat 2', unit: '°C', target: 'SP: 90.0°C (80-90)', ll: 70.0, l: 75.0, h: 92.0, hh: 96.0, ccp: false },
+    { pen: 9, tag: 'TT07 Outlet Temp', unit: '°C', target: 'SP: 25.0°C (20-30)', ll: 15.0, l: 20.0, h: 32.0, hh: 36.0, ccp: false },
+    { pen: 10, tag: 'CT Conductivity', unit: 'mS/cm', target: '0.0 - 30.0', ll: null, l: null, h: 35.0, hh: 50.0, ccp: false }
   ],
   atank: [
-    { pen: 0, tag: 'PT460 Aseptic Pressure', unit: 'bar', target: '2.0 - 2.5', ll: 1.8, l: 1.95, h: 2.65, hh: 2.9, ccp: true },
-    { pen: 1, tag: 'TT460 Sterile Temp', unit: '°C', target: 'Sterile: >135 / Stor: <28', ll: null, l: 20.0, h: 32.0, hh: 145.0, ccp: true },
+    { pen: 0, tag: 'PT460 Aseptic Pressure', unit: 'bar', target: 'Dynamic SP: 1.50 / 0.50 bar', ll: 0.4, l: 0.5, h: 2.5, hh: 2.8, ccp: true },
+    { pen: 1, tag: 'TT460 Sterile Temp', unit: '°C', target: 'Dynamic SP: 125.0 / 80.0 / 30.0°C', ll: null, l: 20.0, h: 130.0, hh: 145.0, ccp: true },
     { pen: 2, tag: 'TT477 Barrier Temp', unit: '°C', target: '> 121.0', ll: 115.0, l: 120.0, h: 145.0, hh: 150.0, ccp: false },
     { pen: 3, tag: 'LC Product Weight', unit: 'kg', target: '2,000 - 26,000', ll: 1000, l: 2000, h: 26500, hh: 27500, ccp: false },
     { pen: 4, tag: 'VSD09 Agitator Speed', unit: '%', target: '50.0 - 90.0', ll: 30.0, l: 45.0, h: 95.0, hh: 100.0, ccp: false }
   ],
   cip: [
-    { pen: 0, tag: 'L1 CT_R Return Cond', unit: 'mS/cm', target: 'Caustic: 35-55 / Rinse: <2', ll: 0.5, l: 1.0, h: 60.0, hh: 70.0, ccp: true },
-    { pen: 1, tag: 'L1 TT_R Return Temp', unit: '°C', target: '> 75.0', ll: 65.0, l: 72.0, h: 92.0, hh: 98.0, ccp: true },
-    { pen: 2, tag: 'L1 FT_S Supply Flow', unit: 'L/h', target: '> 15000', ll: 10000, l: 12000, h: 22000, hh: 25000, ccp: false },
-    { pen: 3, tag: 'L2 CT_R Return Cond', unit: 'mS/cm', target: 'Caustic: 35-55 / Rinse: <2', ll: 0.5, l: 1.0, h: 60.0, hh: 70.0, ccp: true },
-    { pen: 4, tag: 'L2 TT_R Return Temp', unit: '°C', target: '> 75.0', ll: 65.0, l: 72.0, h: 92.0, hh: 98.0, ccp: true },
-    { pen: 5, tag: 'CIP Pumps Power', unit: 'kW', target: '< 24.0', ll: null, l: null, h: 22.0, hh: 25.0, ccp: false }
+    { pen: 0, tag: 'L1 CT_R Return Cond', unit: 'mS/cm', target: 'Dynamic SP: 60.0 / 12.0 / 2.0 mS', ll: 0.5, l: 1.0, h: 60.0, hh: 70.0, ccp: true },
+    { pen: 1, tag: 'L1 TT_R Return Temp', unit: '°C', target: 'Dynamic SP: 80.0 / 60.0°C', ll: 65.0, l: 72.0, h: 92.0, hh: 98.0, ccp: true },
+    { pen: 2, tag: 'L1 TT_S Supply Temp', unit: '°C', target: '75.0 - 85.0', ll: 65.0, l: 72.0, h: 90.0, hh: 95.0, ccp: false },
+    { pen: 3, tag: 'L1 FT_S Supply Flow', unit: 'L/h', target: 'SP: 13,000 L/h', ll: 10000, l: 12000, h: 22000, hh: 25000, ccp: false },
+    { pen: 4, tag: 'L2 CT_R Return Cond', unit: 'mS/cm', target: 'Dynamic SP: 60.0 / 15.0 / 2.0 mS', ll: 0.5, l: 1.0, h: 60.0, hh: 70.0, ccp: true },
+    { pen: 5, tag: 'L2 TT_R Return Temp', unit: '°C', target: 'Dynamic SP: 80.0 / 63.0°C', ll: 65.0, l: 72.0, h: 92.0, hh: 98.0, ccp: true },
+    { pen: 6, tag: 'L2 TT_S Supply Temp', unit: '°C', target: '75.0 - 85.0', ll: 65.0, l: 72.0, h: 90.0, hh: 95.0, ccp: false },
+    { pen: 7, tag: 'L2 FT_S Supply Flow', unit: 'L/h', target: 'SP: 14,000 L/h', ll: 10000, l: 12000, h: 22000, hh: 25000, ccp: false },
+    { pen: 8, tag: 'CIP Pumps Power', unit: 'kW', target: '< 24.0', ll: null, l: null, h: 22.0, hh: 25.0, ccp: false }
   ],
   cip_line1: [
-    { pen: 0, tag: 'C1 Return Cond (CT_R)', unit: 'mS/cm', target: 'Caustic: 35-55 / Rinse: <2', ll: 0.5, l: 1.0, h: 60.0, hh: 70.0, ccp: true },
-    { pen: 1, tag: 'C1 Return Temp (TT_R)', unit: '°C', target: '> 75.0', ll: 65.0, l: 72.0, h: 92.0, hh: 98.0, ccp: true },
+    { pen: 0, tag: 'C1 Return Cond (CT_R)', unit: 'mS/cm', target: 'Dynamic SP: 60.0 / 12.0 / 2.0 mS', ll: 0.5, l: 1.0, h: 60.0, hh: 70.0, ccp: true },
+    { pen: 1, tag: 'C1 Return Temp (TT_R)', unit: '°C', target: 'Dynamic SP: 80.0 / 60.0°C', ll: 65.0, l: 72.0, h: 92.0, hh: 98.0, ccp: true },
     { pen: 2, tag: 'C1 Supply Temp (TT_S)', unit: '°C', target: '75.0 - 85.0', ll: 65.0, l: 72.0, h: 90.0, hh: 95.0, ccp: false },
-    { pen: 3, tag: 'C1 Supply Flow (FT_S)', unit: 'L/h', target: '> 15000', ll: 10000, l: 12000, h: 22000, hh: 25000, ccp: false },
-    { pen: 4, tag: 'VSD05 Pump Power', unit: 'kW', target: '< 7.5', ll: null, l: null, h: 7.0, hh: 8.0, ccp: false }
+    { pen: 3, tag: 'C1 Supply Flow (FT_S)', unit: 'L/h', target: 'SP: 13,000 L/h', ll: 10000, l: 12000, h: 22000, hh: 25000, ccp: false },
+    { pen: 4, tag: 'VSD05 Pump Power', unit: 'kW', target: '< 5.5', ll: null, l: null, h: 5.0, hh: 5.8, ccp: false }
   ],
   cip_line2: [
-    { pen: 0, tag: 'C2 Return Cond (CT_R)', unit: 'mS/cm', target: 'Caustic: 35-55 / Rinse: <2', ll: 0.5, l: 1.0, h: 60.0, hh: 70.0, ccp: true },
-    { pen: 1, tag: 'C2 Return Temp (TT_R)', unit: '°C', target: '> 75.0', ll: 65.0, l: 72.0, h: 92.0, hh: 98.0, ccp: true },
+    { pen: 0, tag: 'C2 Return Cond (CT_R)', unit: 'mS/cm', target: 'Dynamic SP: 60.0 / 15.0 / 2.0 mS', ll: 0.5, l: 1.0, h: 60.0, hh: 70.0, ccp: true },
+    { pen: 1, tag: 'C2 Return Temp (TT_R)', unit: '°C', target: 'Dynamic SP: 80.0 / 63.0°C', ll: 65.0, l: 72.0, h: 92.0, hh: 98.0, ccp: true },
     { pen: 2, tag: 'C2 Supply Temp (TT_S)', unit: '°C', target: '75.0 - 85.0', ll: 65.0, l: 72.0, h: 90.0, hh: 95.0, ccp: false },
-    { pen: 3, tag: 'C2 Supply Flow (FT_S)', unit: 'L/h', target: '> 15000', ll: 10000, l: 12000, h: 22000, hh: 25000, ccp: false },
+    { pen: 3, tag: 'C2 Supply Flow (FT_S)', unit: 'L/h', target: 'SP: 14,000 L/h', ll: 10000, l: 12000, h: 22000, hh: 25000, ccp: false },
     { pen: 4, tag: 'VSD04 Pump Power', unit: 'kW', target: '< 5.5', ll: null, l: null, h: 5.0, hh: 5.8, ccp: false }
   ],
   prod: [
-    { pen: 0, tag: 'PT_IN Filter Inlet', unit: 'bar', target: '3.0 - 4.5', ll: 2.0, l: 2.5, h: 4.8, hh: 5.5, ccp: false },
+    { pen: 0, tag: 'PT_IN Filter Inlet', unit: 'bar', target: 'SP: 2.00 bar (DB331)', ll: 1.0, l: 1.5, h: 4.8, hh: 5.5, ccp: false },
     { pen: 1, tag: 'PT_OUT Filter Outlet', unit: 'bar', target: '2.5 - 4.0', ll: 1.8, l: 2.2, h: 4.5, hh: 5.2, ccp: false },
     { pen: 2, tag: 'ΔP Diff Press', unit: 'bar', target: '< 0.5', ll: null, l: null, h: 0.8, hh: 1.2, ccp: true },
     { pen: 3, tag: 'P101 Power', unit: 'kW', target: '< 3.0', ll: null, l: null, h: 2.8, hh: 3.2, ccp: false },
@@ -1758,6 +1842,9 @@ function pushAllSectionRecordersData(d) {
   const vf = d.vsd_fleet || {};
   const uhtPower = (vf.VSD01?.power_kw || 0) + (vf.VSD02?.power_kw || 0) + (vf.VSD03?.power_kw || 0) + (vf.VSD06?.power_kw || 0);
 
+  const tt42Val = (u.tt42 !== undefined) ? u.tt42 : (u.tt05 || 0);
+  const tt44Val = (u.tt44 !== undefined) ? u.tt44 : (u.tt06 || 0);
+
   setText('uht-pen-tt01', `${(u.tt01 || 0).toFixed(1)} °C`);
   setText('uht-pen-tt02', `${(u.tt02 || 0).toFixed(1)} °C`);
   setText('uht-pen-tt04', `${(u.tt04 || 0).toFixed(1)} °C`);
@@ -1765,6 +1852,11 @@ function pushAllSectionRecordersData(d) {
   const fiqPv = (u.fiqcv08_pv !== undefined) ? u.fiqcv08_pv : (u.lt || 0);
   setText('uht-pen-lt', `${fiqPv.toFixed(2)} Liter`);
   setText('uht-pen-power', `${uhtPower.toFixed(1)} kW`);
+  setText('uht-pen-tt42', `${tt42Val.toFixed(1)} °C`);
+  setText('uht-pen-tt44', `${tt44Val.toFixed(1)} °C`);
+  setText('uht-pen-tt03', `${(u.tt03 || 0).toFixed(1)} °C`);
+  setText('uht-pen-tt07', `${(u.tt07 || 0).toFixed(1)} °C`);
+  setText('uht-pen-ct', `${(u.ct || 0).toFixed(3)} mS/cm`);
 
   // Update UHT Alarm Alerts on Chips
   updatePenChipAlert('uht', 0, u.tt01);
@@ -1773,6 +1865,23 @@ function pushAllSectionRecordersData(d) {
   updatePenChipAlert('uht', 3, u.ft04fiq);
   updatePenChipAlert('uht', 4, u.lt);
   updatePenChipAlert('uht', 5, uhtPower);
+  updatePenChipAlert('uht', 6, tt42Val);
+  updatePenChipAlert('uht', 7, tt44Val);
+  updatePenChipAlert('uht', 8, u.tt03);
+  updatePenChipAlert('uht', 9, u.tt07);
+  updatePenChipAlert('uht', 10, u.ct);
+
+  const spHtc = (u.sp_htc !== undefined) ? u.sp_htc : 136.0;
+  const spPh01 = (u.sp_ph01 !== undefined) ? u.sp_ph01 : 90.0;
+  const spC01 = (u.sp_c01 !== undefined) ? u.sp_c01 : 25.0;
+  const spC02 = (u.sp_c02 !== undefined) ? u.sp_c02 : 25.0;
+  const spPh02 = (u.sp_ph02 !== undefined) ? u.sp_ph02 : 90.0;
+  const spCtc = (u.sp_ctc !== undefined) ? u.sp_ctc : 25.0;
+  const spFiq04 = (u.fiq04_sv !== undefined) ? u.fiq04_sv : 10000.0;
+  const spFiqcv08 = (u.fiqcv08_sv !== undefined) ? u.fiqcv08_sv : 50.0;
+
+  setText('uht-pen-flow-limit', `SV: ${spFiq04.toFixed(0)} L/h`);
+  setText('uht-pen-lt-limit', `SV: ${spFiqcv08.toFixed(2)} Liter`);
 
   if (!uhtRec.paused && uhtRec.mode === 'live') {
     uhtRec.history.times.push(timeStr);
@@ -1784,6 +1893,28 @@ function pushAllSectionRecordersData(d) {
     uhtRec.history.pen3.push(u.ft04fiq || 0);
     uhtRec.history.pen4.push(u.lt || 0);
     uhtRec.history.pen5.push(uhtPower);
+    uhtRec.history.pen6.push(tt42Val);
+    uhtRec.history.pen7.push(tt44Val);
+    uhtRec.history.pen8.push(u.tt03 || 0);
+    uhtRec.history.pen9.push(u.tt07 || 0);
+    uhtRec.history.pen10.push(u.ct || 0);
+    // Push DB1101 & DB331 Setpoints (pen11..pen18)
+    if (!uhtRec.history.pen11) uhtRec.history.pen11 = [];
+    if (!uhtRec.history.pen12) uhtRec.history.pen12 = [];
+    if (!uhtRec.history.pen13) uhtRec.history.pen13 = [];
+    if (!uhtRec.history.pen14) uhtRec.history.pen14 = [];
+    if (!uhtRec.history.pen15) uhtRec.history.pen15 = [];
+    if (!uhtRec.history.pen16) uhtRec.history.pen16 = [];
+    if (!uhtRec.history.pen17) uhtRec.history.pen17 = [];
+    if (!uhtRec.history.pen18) uhtRec.history.pen18 = [];
+    uhtRec.history.pen11.push(spHtc);
+    uhtRec.history.pen12.push(spPh01);
+    uhtRec.history.pen13.push(spC01);
+    uhtRec.history.pen14.push(spC02);
+    uhtRec.history.pen15.push(spPh02);
+    uhtRec.history.pen16.push(spCtc);
+    uhtRec.history.pen17.push(spFiq04);
+    uhtRec.history.pen18.push(spFiqcv08);
     trimRecorderHistory(uhtRec);
   }
 
@@ -1805,6 +1936,12 @@ function pushAllSectionRecordersData(d) {
   updatePenChipAlert('atank', 3, a.lc);
   updatePenChipAlert('atank', 4, vsd09.curspeed_pct);
 
+  const atkSpPt = (a.sp_pt !== undefined) ? a.sp_pt : 1.50;
+  const atkSpTt = (a.sp_tt !== undefined) ? a.sp_tt : 125.0;
+
+  setText('atank-pen-pt-limit', `SP: ${atkSpPt.toFixed(2)} bar`);
+  setText('atank-pen-tt460-limit', `SP: ${atkSpTt.toFixed(1)} °C`);
+
   if (!atkRec.paused && atkRec.mode === 'live') {
     atkRec.history.times.push(timeStr);
     if (!atkRec.history.fullTimes) atkRec.history.fullTimes = [];
@@ -1814,6 +1951,10 @@ function pushAllSectionRecordersData(d) {
     atkRec.history.pen2.push(a.tt477 || 0);
     atkRec.history.pen3.push(a.lc || 0);
     atkRec.history.pen4.push(vsd09.curspeed_pct || 0);
+    if (!atkRec.history.pen5) atkRec.history.pen5 = [];
+    if (!atkRec.history.pen6) atkRec.history.pen6 = [];
+    atkRec.history.pen5.push(atkSpPt);
+    atkRec.history.pen6.push(atkSpTt);
     trimRecorderHistory(atkRec);
   }
 
@@ -1825,20 +1966,42 @@ function pushAllSectionRecordersData(d) {
   const c2Power = vf.VSD04?.power_kw || 0;
   const cipPower = c1Power + c2Power;
 
+  const c1SpCt = (c1.sp_ct !== undefined) ? c1.sp_ct : 2.0;
+  const c1SpTt = (c1.sp_tt !== undefined) ? c1.sp_tt : 85.0;
+  const c1SpFt = (c1.sp_ft !== undefined) ? c1.sp_ft : 13000.0;
+
+  const c2SpCt = (c2.sp_ct !== undefined) ? c2.sp_ct : 2.0;
+  const c2SpTt = (c2.sp_tt !== undefined) ? c2.sp_tt : 80.0;
+  const c2SpFt = (c2.sp_ft !== undefined) ? c2.sp_ft : 14000.0;
+
   // 3a. Update ALL Pen Chips
   setText('cip-pen-ct1', `${(c1.ct_r || 0).toFixed(2)} mS/cm`);
   setText('cip-pen-tt1', `${(c1.tt_r || 0).toFixed(1)} °C`);
+  setText('cip-pen-tts1', `${(c1.tt_s || 0).toFixed(1)} °C`);
   setText('cip-pen-ft1', `${(c1.ft_s || 0).toFixed(0)} L/h`);
   setText('cip-pen-ct2', `${(c2.ct_r || 0).toFixed(2)} mS/cm`);
   setText('cip-pen-tt2', `${(c2.tt_r || 0).toFixed(1)} °C`);
+  setText('cip-pen-tts2', `${(c2.tt_s || 0).toFixed(1)} °C`);
+  setText('cip-pen-ft2', `${(c2.ft_s || 0).toFixed(0)} L/h`);
   setText('cip-pen-power', `${cipPower.toFixed(1)} kW`);
+
+  // Update SP Limits on chips for ALL
+  setText('cip-pen-ct1-limit', `SP: ${c1SpCt.toFixed(1)} mS/cm`);
+  setText('cip-pen-tt1-limit', `SP: ${c1SpTt.toFixed(1)} °C`);
+  setText('cip-pen-ft1-limit', `SP: ${c1SpFt.toLocaleString('en-US', { maximumFractionDigits: 0 })} L/h`);
+  setText('cip-pen-ct2-limit', `SP: ${c2SpCt.toFixed(1)} mS/cm`);
+  setText('cip-pen-tt2-limit', `SP: ${c2SpTt.toFixed(1)} °C`);
+  setText('cip-pen-ft2-limit', `SP: ${c2SpFt.toLocaleString('en-US', { maximumFractionDigits: 0 })} L/h`);
 
   updatePenChipAlert('cip', 0, c1.ct_r);
   updatePenChipAlert('cip', 1, c1.tt_r);
-  updatePenChipAlert('cip', 2, c1.ft_s);
-  updatePenChipAlert('cip', 3, c2.ct_r);
-  updatePenChipAlert('cip', 4, c2.tt_r);
-  updatePenChipAlert('cip', 5, cipPower);
+  updatePenChipAlert('cip', 2, c1.tt_s);
+  updatePenChipAlert('cip', 3, c1.ft_s);
+  updatePenChipAlert('cip', 4, c2.ct_r);
+  updatePenChipAlert('cip', 5, c2.tt_r);
+  updatePenChipAlert('cip', 6, c2.tt_s);
+  updatePenChipAlert('cip', 7, c2.ft_s);
+  updatePenChipAlert('cip', 8, cipPower);
 
   // 3b. Update Circuit 1 Dedicated Chips
   setText('cip-c1-pen-ctr', `${(c1.ct_r || 0).toFixed(2)} mS/cm`);
@@ -1846,6 +2009,10 @@ function pushAllSectionRecordersData(d) {
   setText('cip-c1-pen-tts', `${(c1.tt_s || 0).toFixed(1)} °C`);
   setText('cip-c1-pen-fts', `${(c1.ft_s || 0).toFixed(0)} L/h`);
   setText('cip-c1-pen-power', `${c1Power.toFixed(2)} kW`);
+
+  setText('cip-c1-pen-ctr-limit', `SP: ${c1SpCt.toFixed(1)} mS/cm`);
+  setText('cip-c1-pen-ttr-limit', `SP: ${c1SpTt.toFixed(1)} °C`);
+  setText('cip-c1-pen-fts-limit', `SP: ${c1SpFt.toLocaleString('en-US', { maximumFractionDigits: 0 })} L/h`);
 
   updatePenChipAlert('cip_line1', 0, c1.ct_r);
   updatePenChipAlert('cip_line1', 1, c1.tt_r);
@@ -1860,6 +2027,10 @@ function pushAllSectionRecordersData(d) {
   setText('cip-c2-pen-fts', `${(c2.ft_s || 0).toFixed(0)} L/h`);
   setText('cip-c2-pen-power', `${c2Power.toFixed(2)} kW`);
 
+  setText('cip-c2-pen-ctr-limit', `SP: ${c2SpCt.toFixed(1)} mS/cm`);
+  setText('cip-c2-pen-ttr-limit', `SP: ${c2SpTt.toFixed(1)} °C`);
+  setText('cip-c2-pen-fts-limit', `SP: ${c2SpFt.toLocaleString('en-US', { maximumFractionDigits: 0 })} L/h`);
+
   updatePenChipAlert('cip_line2', 0, c2.ct_r);
   updatePenChipAlert('cip_line2', 1, c2.tt_r);
   updatePenChipAlert('cip_line2', 2, c2.tt_s);
@@ -1873,10 +2044,26 @@ function pushAllSectionRecordersData(d) {
     cipRec.allHistory.fullTimes.push(fullTimeStr);
     cipRec.allHistory.pen0.push(c1.ct_r || 0);
     cipRec.allHistory.pen1.push(c1.tt_r || 0);
-    cipRec.allHistory.pen2.push(c1.ft_s || 0);
-    cipRec.allHistory.pen3.push(c2.ct_r || 0);
-    cipRec.allHistory.pen4.push(c2.tt_r || 0);
-    cipRec.allHistory.pen5.push(cipPower);
+    cipRec.allHistory.pen2.push(c1.tt_s || 0);
+    cipRec.allHistory.pen3.push(c1.ft_s || 0);
+    cipRec.allHistory.pen4.push(c2.ct_r || 0);
+    cipRec.allHistory.pen5.push(c2.tt_r || 0);
+    cipRec.allHistory.pen6.push(c2.tt_s || 0);
+    cipRec.allHistory.pen7.push(c2.ft_s || 0);
+    cipRec.allHistory.pen8.push(cipPower);
+    // Push SP curves for All (pen9..pen14)
+    if (!cipRec.allHistory.pen9) cipRec.allHistory.pen9 = [];
+    if (!cipRec.allHistory.pen10) cipRec.allHistory.pen10 = [];
+    if (!cipRec.allHistory.pen11) cipRec.allHistory.pen11 = [];
+    if (!cipRec.allHistory.pen12) cipRec.allHistory.pen12 = [];
+    if (!cipRec.allHistory.pen13) cipRec.allHistory.pen13 = [];
+    if (!cipRec.allHistory.pen14) cipRec.allHistory.pen14 = [];
+    cipRec.allHistory.pen9.push(c1SpCt);
+    cipRec.allHistory.pen10.push(c1SpTt);
+    cipRec.allHistory.pen11.push(c1SpFt);
+    cipRec.allHistory.pen12.push(c2SpCt);
+    cipRec.allHistory.pen13.push(c2SpTt);
+    cipRec.allHistory.pen14.push(c2SpFt);
     trimRecorderHistory({ history: cipRec.allHistory });
 
     // 2) Circuit 1 History
@@ -1888,6 +2075,12 @@ function pushAllSectionRecordersData(d) {
     cipRec.c1History.pen2.push(c1.tt_s || 0);
     cipRec.c1History.pen3.push(c1.ft_s || 0);
     cipRec.c1History.pen4.push(c1Power);
+    if (!cipRec.c1History.pen5) cipRec.c1History.pen5 = [];
+    if (!cipRec.c1History.pen6) cipRec.c1History.pen6 = [];
+    if (!cipRec.c1History.pen7) cipRec.c1History.pen7 = [];
+    cipRec.c1History.pen5.push(c1SpCt);
+    cipRec.c1History.pen6.push(c1SpTt);
+    cipRec.c1History.pen7.push(c1SpFt);
     trimRecorderHistory({ history: cipRec.c1History });
 
     // 3) Circuit 2 History
@@ -1899,6 +2092,12 @@ function pushAllSectionRecordersData(d) {
     cipRec.c2History.pen2.push(c2.tt_s || 0);
     cipRec.c2History.pen3.push(c2.ft_s || 0);
     cipRec.c2History.pen4.push(c2Power);
+    if (!cipRec.c2History.pen5) cipRec.c2History.pen5 = [];
+    if (!cipRec.c2History.pen6) cipRec.c2History.pen6 = [];
+    if (!cipRec.c2History.pen7) cipRec.c2History.pen7 = [];
+    cipRec.c2History.pen5.push(c2SpCt);
+    cipRec.c2History.pen6.push(c2SpTt);
+    cipRec.c2History.pen7.push(c2SpFt);
     trimRecorderHistory({ history: cipRec.c2History });
 
     if (cipRec.currentCircuit === 'cip_line1') {
@@ -1922,6 +2121,9 @@ function pushAllSectionRecordersData(d) {
   setText('prod-pen-power', `${(vsd08.power_kw || 0).toFixed(2)} kW`);
   setText('prod-pen-speed', `${(vsd08.curspeed_pct || 0).toFixed(0)} %`);
 
+  const prodSpPtin = (p.sp_pt_in !== undefined) ? p.sp_pt_in : 2.0;
+  setText('prod-pen-ptin-limit', `SP: ${prodSpPtin.toFixed(2)} bar`);
+
   // Update PROD Alarm Alerts on Chips
   updatePenChipAlert('prod', 0, p.pt_in);
   updatePenChipAlert('prod', 1, p.pt_out);
@@ -1938,6 +2140,8 @@ function pushAllSectionRecordersData(d) {
     prodRec.history.pen2.push(dp);
     prodRec.history.pen3.push(vsd08.power_kw || 0);
     prodRec.history.pen4.push(vsd08.curspeed_pct || 0);
+    if (!prodRec.history.pen5) prodRec.history.pen5 = [];
+    prodRec.history.pen5.push(prodSpPtin);
     trimRecorderHistory(prodRec);
   }
 
@@ -2064,7 +2268,7 @@ function renderDriveBayCards(vf) {
     { key: 'VSD03', tag: 'VSD03', name: 'UHT PUMP SUPPLY (PID)', section: 'UHT STERILIZER', rated: '4.0 kW', group: 'uht' },
     { key: 'VSD06', tag: 'VSD06', name: 'UHT PUMP RETURN', section: 'UHT STERILIZER', rated: '4.0 kW', group: 'uht' },
     { key: 'VSD04', tag: 'VSD04', name: 'CIP L2 SUPPLY PUMP', section: 'CIP SYSTEMS', rated: '5.5 kW', group: 'cip' },
-    { key: 'VSD05', tag: 'VSD05', name: 'CIP L1 SUPPLY PUMP', section: 'CIP SYSTEMS', rated: '7.5 kW', group: 'cip' },
+    { key: 'VSD05', tag: 'VSD05', name: 'CIP L1 SUPPLY PUMP', section: 'CIP SYSTEMS', rated: '5.5 kW', group: 'cip' },
     { key: 'VSD08', tag: 'VSD08', name: 'PROD P101 SUPPLY PUMP', section: 'PROD SUPPLY', rated: '3.0 kW', group: 'tank' },
     { key: 'VSD09', tag: 'VSD09', name: 'ATANK ASEPTIC AGITATOR', section: 'ASEPTIC TANK', rated: '3.0 kW', group: 'tank' }
   ];
