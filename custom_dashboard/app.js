@@ -1382,14 +1382,8 @@ function setupSectionRecorderControls() {
 
   // Pen chip visibility toggle & solo mode
   document.querySelectorAll('.pen-chip').forEach(chip => {
-    // Add visual checkmark badge if not present
-    if (!chip.querySelector('.pen-check-badge')) {
-      const badge = document.createElement('span');
-      badge.className = 'pen-check-badge';
-      badge.textContent = '✓';
-      badge.title = 'คลิกเพื่อเปิด/ปิดสีนี้ • ดับเบิ้ลคลิกเพื่อดูเฉพาะสีนี้ (Solo)';
-      chip.appendChild(badge);
-    }
+    const badge = chip.querySelector('.pen-check-badge');
+    if (badge) badge.remove();
 
     chip.addEventListener('click', () => {
       const sec = chip.getAttribute('data-section');
