@@ -1018,10 +1018,10 @@ function initUhtRecorder() {
         // Setpoint Dashed Curves from DB1101 (colors matching corresponding Pens)
         { label: 'SP: TT01 Holding (136°C)', data: [], borderColor: '#ef4444', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yTemp' },
         { label: 'SP: TT02 Pre-Heat 1 (90°C)', data: [], borderColor: '#06b6d4', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yTemp' },
-        { label: 'SP: TT42 Outlet HC (25°C)', data: [], borderColor: '#ec4899', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yTemp' },
+        { label: 'SP: TT42 (TT05) Outlet HC (SP: TT01)', data: [], borderColor: '#ec4899', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yTemp' },
         { label: 'SP: TT44 Sec 11 HC (25°C)', data: [], borderColor: '#14b8a6', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yTemp' },
         { label: 'SP: TT03 Pre-Heat 2 (90°C)', data: [], borderColor: '#f97316', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yTemp' },
-        { label: 'SP: TT07 Outlet (25°C)', data: [], borderColor: '#84cc16', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yTemp' },
+        { label: 'SP: TT07 Outlet Temp (SP: TT01)', data: [], borderColor: '#84cc16', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yTemp' },
         { label: 'SP: FIQ04 Inlet Flow (L/h)', data: [], borderColor: '#10b981', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yFlow' },
         { label: 'SP: FIQCV08 Add Water (Liter)', data: [], borderColor: '#8b5cf6', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yLevel' }
       ]
@@ -1943,6 +1943,34 @@ function pushAllSectionRecordersData(d) {
   setText('uht-pen-ct', `${(u.ct || 0).toFixed(3)} mS/cm`);
   setText('uht-pen-tt71', `${tt71Val.toFixed(1)} °C`);
 
+  const spHtc = (u.sp_htc !== undefined) ? u.sp_htc : 136.0;
+  const isSterileStep = (u.step_int === 18);
+
+  // TT05 and TT07 use the exact same Set Point as TT01 (spHtc from DB1101)
+  PEN_ALARM_LIMITS.uht[0].target = `SP: ${spHtc.toFixed(1)}°C`;
+  PEN_ALARM_LIMITS.uht[6].target = `SP: ${spHtc.toFixed(1)}°C (Same as TT01)`;
+  PEN_ALARM_LIMITS.uht[9].target = `SP: ${spHtc.toFixed(1)}°C (Same as TT01)`;
+
+  if (isSterileStep) {
+    PEN_ALARM_LIMITS.uht[6].ll = spHtc - 2.0;
+    PEN_ALARM_LIMITS.uht[6].l = spHtc - 1.0;
+    PEN_ALARM_LIMITS.uht[6].h = spHtc + 8.0;
+    PEN_ALARM_LIMITS.uht[6].hh = spHtc + 10.0;
+    PEN_ALARM_LIMITS.uht[9].ll = spHtc - 2.0;
+    PEN_ALARM_LIMITS.uht[9].l = spHtc - 1.0;
+    PEN_ALARM_LIMITS.uht[9].h = spHtc + 8.0;
+    PEN_ALARM_LIMITS.uht[9].hh = spHtc + 10.0;
+  } else {
+    PEN_ALARM_LIMITS.uht[6].ll = null;
+    PEN_ALARM_LIMITS.uht[6].l = null;
+    PEN_ALARM_LIMITS.uht[6].h = null;
+    PEN_ALARM_LIMITS.uht[6].hh = null;
+    PEN_ALARM_LIMITS.uht[9].ll = null;
+    PEN_ALARM_LIMITS.uht[9].l = null;
+    PEN_ALARM_LIMITS.uht[9].h = null;
+    PEN_ALARM_LIMITS.uht[9].hh = null;
+  }
+
   // Update UHT Alarm Alerts on Chips
   updatePenChipAlert('uht', 0, u.tt01);
   updatePenChipAlert('uht', 1, u.tt02);
@@ -1957,7 +1985,6 @@ function pushAllSectionRecordersData(d) {
   updatePenChipAlert('uht', 10, u.ct);
   updatePenChipAlert('uht', 11, tt71Val);
 
-  const spHtc = (u.sp_htc !== undefined) ? u.sp_htc : 136.0;
   const spPh01 = (u.sp_ph01 !== undefined) ? u.sp_ph01 : 90.0;
   const spC01 = (u.sp_c01 !== undefined) ? u.sp_c01 : 25.0;
   const spC02 = (u.sp_c02 !== undefined) ? u.sp_c02 : 25.0;
@@ -1996,10 +2023,10 @@ function pushAllSectionRecordersData(d) {
     if (!uhtRec.history.pen19) uhtRec.history.pen19 = [];
     uhtRec.history.pen12.push(spHtc);
     uhtRec.history.pen13.push(spPh01);
-    uhtRec.history.pen14.push(spC01);
+    uhtRec.history.pen14.push(spHtc); // TT05 uses the same Set Point as TT01 (spHtc)
     uhtRec.history.pen15.push(spC02);
     uhtRec.history.pen16.push(spPh02);
-    uhtRec.history.pen17.push(spCtc);
+    uhtRec.history.pen17.push(spHtc); // TT07 uses the same Set Point as TT01 (spHtc)
     uhtRec.history.pen18.push(spFiq04);
     uhtRec.history.pen19.push(spFiqcv08);
     trimRecorderHistory(uhtRec);

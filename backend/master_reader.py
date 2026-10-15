@@ -439,6 +439,8 @@ class MasterPlantReader:
                 "step_timer": uht_timer,
                 "step_setpoint": uht_sp,
                 "sp_htc": sp_htc,
+                "sp_tt05": sp_htc,
+                "sp_tt07": sp_htc,
                 "sp_ctc": sp_ctc,
                 "sp_ph01": sp_ph01,
                 "sp_ph02": sp_ph02,

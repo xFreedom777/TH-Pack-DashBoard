@@ -103,8 +103,8 @@ def generate_step_report_html(section: str, batch_id: str, date_str: str, steps:
     if section == "uht":
         col_span_params = 4
         param_headers_html = """
-        <th style="border:1px solid #94a3b8;padding:3px;width:72px;text-align:center;">Temp TT05 (°C)<br><span style="font-size:6.5pt;font-weight:normal;color:#b91c1c;">Outlet HC (CCP)</span></th>
-        <th style="border:1px solid #94a3b8;padding:3px;width:72px;text-align:center;">Temp TT07 (°C)<br><span style="font-size:6.5pt;font-weight:normal;color:#b91c1c;">Outlet Heat (CCP)</span></th>
+        <th style="border:1px solid #94a3b8;padding:3px;width:72px;text-align:center;">Temp TT05 (°C)<br><span style="font-size:6.5pt;font-weight:normal;color:#b91c1c;">Outlet HC (SP: TT01)</span></th>
+        <th style="border:1px solid #94a3b8;padding:3px;width:72px;text-align:center;">Temp TT07 (°C)<br><span style="font-size:6.5pt;font-weight:normal;color:#b91c1c;">Outlet Heat (SP: TT01)</span></th>
         <th style="border:1px solid #94a3b8;padding:3px;width:70px;text-align:center;">FIQ04 Flow<br><span style="font-size:6.5pt;font-weight:normal;color:#0369a1;">(L/h)</span></th>
         <th style="border:1px solid #94a3b8;padding:3px;width:65px;text-align:center;">FIQCV08<br><span style="font-size:6.5pt;font-weight:normal;color:#475569;">(Liter)</span></th>
         """

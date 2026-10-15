@@ -32,10 +32,10 @@ SECTION_CONFIG = {
             "TT71 Aseptic Outlet (°C)",
             "SP: TT01 Holding (136°C)",
             "SP: TT02 Pre-Heat 1 (90°C)",
-            "SP: TT42 Outlet HC (25°C)",
+            "SP: TT42 (TT05) Outlet HC (SP: TT01)",
             "SP: TT44 Sec 11 HC (25°C)",
             "SP: TT03 Pre-Heat 2 (90°C)",
-            "SP: TT07 Outlet (25°C)",
+            "SP: TT07 Outlet Temp (SP: TT01)",
             "SP: FIQ04 Inlet Flow (L/h)",
             "SP: FIQCV08 Add Water (Liter)"
         ]
