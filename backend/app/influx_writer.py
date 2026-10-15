@@ -29,7 +29,7 @@ SECTION_CONFIG = {
             "TT03 Pre-Heat 2 (°C)",
             "TT07 Outlet Temp (°C)",
             "CT Conductivity (mS/cm)",
-            "TT71 Aseptic Outlet (°C)",
+            "TT171 Aseptic Outlet (°C)",
             "SP: TT01 Holding (136°C)",
             "SP: TT02 Pre-Heat 1 (90°C)",
             "SP: TT42 Outlet HC (25°C)",

@@ -1014,7 +1014,7 @@ function initUhtRecorder() {
         { label: 'TT03 Pre-Heat 2 (°C)', data: [], borderColor: '#f97316', backgroundColor: 'rgba(249, 115, 22, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
         { label: 'TT07 Outlet Temp (°C)', data: [], borderColor: '#84cc16', backgroundColor: 'rgba(132, 204, 22, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
         { label: 'CT Conductivity (mS/cm)', data: [], borderColor: '#a855f7', backgroundColor: 'rgba(168, 85, 247, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yCond' },
-        { label: 'TT71 Aseptic Outlet (°C)', data: [], borderColor: '#eab308', backgroundColor: 'rgba(234, 179, 8, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
+        { label: 'TT171 Aseptic Outlet (°C)', data: [], borderColor: '#eab308', backgroundColor: 'rgba(234, 179, 8, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
         // Setpoint Dashed Curves from DB1101 (colors matching corresponding Pens)
         { label: 'SP: TT01 Holding (136°C)', data: [], borderColor: '#ef4444', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yTemp' },
         { label: 'SP: TT02 Pre-Heat 1 (90°C)', data: [], borderColor: '#06b6d4', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yTemp' },
@@ -1752,7 +1752,7 @@ const PEN_ALARM_LIMITS = {
     { pen: 8, tag: 'TT03 Pre-Heat 2', unit: '°C', target: 'SP: 90.0°C (80-90)', ll: 70.0, l: 75.0, h: 92.0, hh: 96.0, ccp: false },
     { pen: 9, tag: 'TT07 Outlet Temp', unit: '°C', target: 'SP: 25.0°C (20-30)', ll: 15.0, l: 20.0, h: 32.0, hh: 36.0, ccp: false },
     { pen: 10, tag: 'CT Conductivity', unit: 'mS/cm', target: '0.0 - 30.0', ll: null, l: null, h: 35.0, hh: 50.0, ccp: false },
-    { pen: 11, tag: 'TT71 Aseptic Outlet', unit: '°C', target: '135.0 - 145.0°C', ll: 130.0, l: 135.0, h: 145.0, hh: 150.0, ccp: false }
+    { pen: 11, tag: 'TT171 Aseptic Outlet', unit: '°C', target: '135.0 - 145.0°C', ll: 130.0, l: 135.0, h: 145.0, hh: 150.0, ccp: false }
   ],
   atank: [
     { pen: 0, tag: 'PT460 Aseptic Pressure', unit: 'bar', target: 'Dynamic SP: 1.50 / 0.50 bar', ll: 0.4, l: 0.5, h: 2.5, hh: 2.8, ccp: true },
