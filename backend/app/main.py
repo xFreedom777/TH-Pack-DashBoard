@@ -337,7 +337,7 @@ def get_process_logs(
            start_time, stop_time, duration_sec, duration_formatted, status, validation_result,
            validation_note, temp_primary_avg, temp_primary_min, temp_primary_max,
            temp_secondary_avg, pressure_avg, flow_avg, conductivity_avg, level_avg,
-           operator_name, created_at
+           sensor_summary_json, operator_name, created_at
     FROM process_step_logs
     {where_sql}
     ORDER BY id ASC
@@ -398,7 +398,7 @@ def get_process_step_report(
            start_time, stop_time, duration_sec, duration_formatted, status, validation_result,
            validation_note, temp_primary_avg, temp_primary_min, temp_primary_max,
            temp_secondary_avg, pressure_avg, flow_avg, conductivity_avg, level_avg,
-           operator_name, created_at
+           sensor_summary_json, operator_name, created_at
     FROM process_step_logs
     {where_sql}
     ORDER BY id ASC
@@ -420,7 +420,7 @@ def get_process_step_report(
                start_time, stop_time, duration_sec, duration_formatted, status, validation_result,
                validation_note, temp_primary_avg, temp_primary_min, temp_primary_max,
                temp_secondary_avg, pressure_avg, flow_avg, conductivity_avg, level_avg,
-               operator_name, created_at
+               sensor_summary_json, operator_name, created_at
         FROM process_step_logs
         WHERE {" AND ".join(fb_where)}
         ORDER BY id DESC

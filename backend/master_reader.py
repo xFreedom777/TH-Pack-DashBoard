@@ -406,9 +406,12 @@ class MasterPlantReader:
                 fouling_status = "CIP RECOMMENDED"
                 fouling_badge_color = "#ef4444"
 
-            # TT01 Sterilization Thermal Lethality (F0 calculation at 121.1°C reference, z=10°C)
+            # UHT Sterilization Thermal Lethality & CCP Compliance (TT05 & TT07 Heat CCPs)
             tt01_val = round(get_real(d1200, 8), 2)
-            f0_rate_per_min = round(10.0 ** ((tt01_val - 121.1) / 10.0), 2) if tt01_val >= 120.0 else 0.0
+            tt05_val = round(get_real(d1200, 24), 2)
+            tt07_val = round(get_real(d1200, 32), 2)
+            heat_ccp_temp = max(tt05_val, tt07_val)
+            f0_rate_per_min = round(10.0 ** ((heat_ccp_temp - 121.1) / 10.0), 2) if heat_ccp_temp >= 120.0 else 0.0
 
             res["uht"] = {
                 "lt": fiqcv08_pv,
@@ -419,11 +422,11 @@ class MasterPlantReader:
                 "tt02": round(get_real(d1200, 12), 2),
                 "tt03": round(get_real(d1200, 16), 2),
                 "tt04": round(get_real(d1200, 20), 2),
-                "tt05": round(get_real(d1200, 24), 2),
+                "tt05": tt05_val,
                 "tt06": round(get_real(d1200, 28), 2),
-                "tt42": round(get_real(d1200, 24), 2),
+                "tt42": tt05_val,
                 "tt44": round(get_real(d1200, 28), 2),
-                "tt07": round(get_real(d1200, 32), 2),
+                "tt07": tt07_val,
                 "tt71": tt71_val,
                 "tt171": tt71_val,
                 "ct": round(get_real(d1200, 36), 3),
@@ -449,7 +452,7 @@ class MasterPlantReader:
                     "fouling_color": fouling_badge_color,
                     "steam_demand_avg": steam_demand_total,
                     "f0_rate_per_min": f0_rate_per_min,
-                    "ccp_compliant": (tt01_val >= 135.0 or uht_step_int == 0),
+                    "ccp_compliant": ((tt05_val >= 135.0 and tt07_val >= 135.0) if uht_step_int in [16, 18] else True),
                     "holding_time_s": 16.0
                 },
                 "loops": {

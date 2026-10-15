@@ -402,7 +402,7 @@
                 <h3 class="recorder-title">UHT THERMAL & FLOW PROCESS RECORDER</h3>
                 <span class="recorder-status-tag" id="recorder-uht-status">LIVE STREAMING</span>
               </div>
-              <p class="recorder-sub">บันทึกตัวแปรเฉพาะส่วน UHT: อุณหภูมิฆ่าเชื้อ TT01 (CCP), อุณหภูมิอุ่น/ทางเข้า, อัตราการไหล, และระดับแทงก์บาลานซ์</p>
+              <p class="recorder-sub">บันทึกตัวแปรเฉพาะส่วน UHT: อุณหภูมิความร้อน TT05 / TT07 (Heat CCP), อัตราการไหล, และระดับแทงก์บาลานซ์</p>
             </div>
             
             <div class="recorder-controls">
@@ -454,7 +454,7 @@
                 <span class="pen-tag">PEN 1: TT01 HOLDING TEMP</span>
                 <span class="pen-val font-mono" id="uht-pen-tt01">-- °C</span>
               </div>
-              <span class="pen-limit">Target: 137.0 - 142.0°C</span>
+              <span class="pen-limit">Holding Tube Temp</span>
             </div>
 
             <div class="pen-chip" data-section="uht" data-pen="1">
@@ -508,7 +508,7 @@
                 <span class="pen-tag">PEN 7: TT42 (TT05) OUTLET HC</span>
                 <span class="pen-val font-mono" id="uht-pen-tt42">-- °C</span>
               </div>
-              <span class="pen-limit">Target: 75.0 - 85.0°C</span>
+              <span class="pen-limit">Heat CCP (137.0 - 144.0°C)</span>
             </div>
 
             <div class="pen-chip" data-section="uht" data-pen="7">
@@ -535,7 +535,7 @@
                 <span class="pen-tag">PEN 10: TT07 OUTLET TEMP</span>
                 <span class="pen-val font-mono" id="uht-pen-tt07">-- °C</span>
               </div>
-              <span class="pen-limit">Target: 20.0 - 30.0°C</span>
+              <span class="pen-limit">Heat CCP (137.0 - 144.0°C)</span>
             </div>
 
             <div class="pen-chip" data-section="uht" data-pen="10">
@@ -721,13 +721,13 @@
         <div class="analytics-grid-3">
           <div class="analytics-card accent-success">
             <div class="analytics-card-header">
-              <div class="analytics-card-title">🏅 CCP TT01 Compliance Rate</div>
+              <div class="analytics-card-title">🏅 Heat CCP (TT05 & TT07) Compliance Rate</div>
               <span class="analytics-badge success" id="uht-ccp-badge">100% AUDIT READY</span>
             </div>
             <div class="analytics-val-huge">100.0<span class="unit">%</span></div>
-            <div class="analytics-subtext">อุณหภูมิฆ่าเชื้อน้ำมะพร้าว TT01 อยู่ในเกณฑ์มาตรฐาน ไม่พบประวัติอุณหภูมิวูบต่ำกว่าเกณฑ์</div>
+            <div class="analytics-subtext">อุณหภูมิความร้อนฆ่าเชื้อ TT05 และ TT07 อยู่ในเกณฑ์มาตรฐาน ไม่พบประวัติอุณหภูมิวูบต่ำกว่าเกณฑ์</div>
             <div class="analytics-metrics-row">
-              <div class="analytics-submetric"><span class="lbl">Critical Limit (LL):</span><span class="val text-danger">135.0 °C</span></div>
+              <div class="analytics-submetric"><span class="lbl">Critical Limit (LL):</span><span class="val text-danger">137.0 °C</span></div>
               <div class="analytics-submetric"><span class="lbl">Under-Temp Violations:</span><span class="val text-success">0 ครั้ง (0s)</span></div>
             </div>
           </div>

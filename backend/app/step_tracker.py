@@ -188,10 +188,10 @@ class StepTransitionTracker:
             level_avg = None
 
             if section == "uht":
-                temp_p_avg = avg_s.get("tt01")
-                temp_p_min = min_s.get("tt01")
-                temp_p_max = max_s.get("tt01")
-                temp_s_avg = avg_s.get("tt02")
+                temp_p_avg = avg_s.get("tt05")
+                temp_p_min = min_s.get("tt05")
+                temp_p_max = max_s.get("tt05")
+                temp_s_avg = avg_s.get("tt07")
                 flow_avg = avg_s.get("ft04fiq")
                 cond_avg = avg_s.get("ct")
                 level_avg = avg_s.get("lt")
@@ -258,11 +258,14 @@ class StepTransitionTracker:
     def _validate_step(self, section: str, step_int: int, avg_s: dict, min_s: dict, max_s: dict):
         if section == "uht":
             if step_int == 18:  # Sterile Timer
-                tt01_min = min_s.get("tt01", 0.0)
-                if tt01_min >= 137.0:
-                    return "OK", f"Sterile Temp Verified: Min {tt01_min:.1f}°C >= 137.0°C"
+                tt05_min = min_s.get("tt05", 0.0)
+                tt07_min = min_s.get("tt07", 0.0)
+                if tt05_min >= 137.0 and tt07_min >= 137.0:
+                    return "OK", f"Sterile Heat CCP Verified: TT05 Min {tt05_min:.1f}°C, TT07 Min {tt07_min:.1f}°C >= 137.0°C"
+                elif tt05_min >= 137.0 or tt07_min >= 137.0:
+                    return "OK", f"Sterile Heat CCP Verified: TT05 Min {tt05_min:.1f}°C, TT07 Min {tt07_min:.1f}°C"
                 else:
-                    return "NG", f"Sterile Temp Deviation: Min {tt01_min:.1f}°C < 137.0°C"
+                    return "NG", f"Sterile Heat CCP Deviation: TT05 {tt05_min:.1f}°C, TT07 {tt07_min:.1f}°C < 137.0°C"
             return "OK", "Normal Transition"
 
         elif section == "atank":

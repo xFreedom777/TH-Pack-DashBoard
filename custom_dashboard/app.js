@@ -1735,16 +1735,16 @@ async function executeExportWithResolution() {
 // ================= PROCESS ALARM LIMITS & TOLERANCE MATRIX =================
 const PEN_ALARM_LIMITS = {
   uht: [
-    { pen: 0, tag: 'TT01 Holding Temp', unit: '°C', target: 'SP: 136.0°C (137-142)', ll: 135.0, l: 137.0, h: 143.0, hh: 145.0, ccp: true },
+    { pen: 0, tag: 'TT01 Holding Temp', unit: '°C', target: 'Holding Tube Temp', ll: null, l: null, h: null, hh: null, ccp: false },
     { pen: 1, tag: 'TT02 Pre-Heat 1', unit: '°C', target: 'SP: 90.0°C (80-90)', ll: 70.0, l: 75.0, h: 92.0, hh: 96.0, ccp: false },
     { pen: 2, tag: 'TT04 Inlet Temp', unit: '°C', target: '60.0 - 70.0', ll: 50.0, l: 55.0, h: 75.0, hh: 80.0, ccp: false },
     { pen: 3, tag: 'FIQ04 Inlet Flow (M4)', unit: 'L/h', target: 'SV: 10,000 L/h', ll: null, l: null, h: null, hh: null, ccp: true },
     { pen: 4, tag: 'FIQCV08 Add Water', unit: 'Liter', target: 'SV: 50.0 L', ll: null, l: null, h: null, hh: null, ccp: false },
     { pen: 5, tag: 'UHT VSDs Power', unit: 'kW', target: '< 38.0', ll: null, l: null, h: 36.0, hh: 40.0, ccp: false },
-    { pen: 6, tag: 'TT42 (TT05) Outlet HC', unit: '°C', target: 'SP: 25.0°C', ll: null, l: null, h: null, hh: null, ccp: false },
-    { pen: 7, tag: 'TT44 (TT06) Sec 11 HC', unit: '°C', target: 'SP: 25.0°C', ll: null, l: null, h: null, hh: null, ccp: false },
+    { pen: 6, tag: 'TT42 (TT05) Outlet HC', unit: '°C', target: 'Heat CCP (137-144°C)', ll: null, l: null, h: null, hh: null, ccp: true },
+    { pen: 7, tag: 'TT44 (TT06) Sec 11 HC', unit: '°C', target: '75.0 - 85.0', ll: null, l: null, h: null, hh: null, ccp: false },
     { pen: 8, tag: 'TT03 Pre-Heat 2', unit: '°C', target: 'SP: 90.0°C (80-90)', ll: 70.0, l: 75.0, h: 92.0, hh: 96.0, ccp: false },
-    { pen: 9, tag: 'TT07 Outlet Temp', unit: '°C', target: 'SP: 25.0°C (20-30)', ll: 15.0, l: 20.0, h: 32.0, hh: 36.0, ccp: false },
+    { pen: 9, tag: 'TT07 Outlet Temp', unit: '°C', target: 'Heat CCP (137-144°C)', ll: null, l: null, h: 148.0, hh: 152.0, ccp: true },
     { pen: 10, tag: 'CT Conductivity', unit: 'mS/cm', target: '0.0 - 30.0', ll: null, l: null, h: 35.0, hh: 50.0, ccp: false },
     { pen: 11, tag: 'TT71 Aseptic Outlet', unit: '°C', target: '135.0 - 145.0°C', ll: 130.0, l: 135.0, h: 145.0, hh: 150.0, ccp: false }
   ],
@@ -1802,8 +1802,9 @@ const PEN_ALARM_LIMITS = {
 };
 
 function evaluatePenAlarm(conf, val) {
+  const unitSuffix = (conf.target && conf.target.includes(conf.unit)) ? '' : ` ${conf.unit}`;
   if (val === null || val === undefined || isNaN(val)) {
-    return { status: 'NORMAL', text: `Target: ${conf.target} ${conf.unit}`, badgeClass: 'badge-ok', chipClass: '' };
+    return { status: 'NORMAL', text: `Target: ${conf.target}${unitSuffix}`, badgeClass: 'badge-ok', chipClass: '' };
   }
   const formattedVal = conf.unit === 'kg' ? val.toLocaleString('en-US', { maximumFractionDigits: 1 }) : val.toFixed(1);
   const fmtLim = lim => lim !== null ? (conf.unit === 'kg' ? Number(lim).toLocaleString('en-US') : lim) : '';
@@ -1819,7 +1820,7 @@ function evaluatePenAlarm(conf, val) {
   if (conf.l !== null && val <= conf.l) {
     return { status: 'WARNING', text: `⚠️ LOW (L): ${formattedVal} ≤ ${fmtLim(conf.l)}`, badgeClass: 'badge-warn', chipClass: 'alarm-warning' };
   }
-  return { status: 'NORMAL', text: `Target: ${conf.target} ${conf.unit}`, badgeClass: 'badge-ok', chipClass: '' };
+  return { status: 'NORMAL', text: `Target: ${conf.target}${unitSuffix}`, badgeClass: 'badge-ok', chipClass: '' };
 }
 
 function updatePenChipAlert(sec, penIdx, val) {
