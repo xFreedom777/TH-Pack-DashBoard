@@ -762,12 +762,12 @@ const sectionRecorders = {
     canvasId: 'chartRecorderUht',
     statusId: 'recorder-uht-status',
     chart: null,
-    history: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [], pen5: [], pen6: [], pen7: [], pen8: [], pen9: [], pen10: [], pen11: [], pen12: [], pen13: [], pen14: [], pen15: [], pen16: [], pen17: [], pen18: [] },
+    history: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [], pen5: [], pen6: [], pen7: [], pen8: [], pen9: [], pen10: [], pen11: [], pen12: [], pen13: [], pen14: [], pen15: [], pen16: [], pen17: [], pen18: [], pen19: [] },
     windowSec: 60,
     paused: false,
     mode: 'live',
     historyRange: '1d',
-    penVisibility: [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true]
+    penVisibility: [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true]
   },
   atank: {
     canvasId: 'chartRecorderAtank',
@@ -1014,6 +1014,7 @@ function initUhtRecorder() {
         { label: 'TT03 Pre-Heat 2 (°C)', data: [], borderColor: '#f97316', backgroundColor: 'rgba(249, 115, 22, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
         { label: 'TT07 Outlet Temp (°C)', data: [], borderColor: '#84cc16', backgroundColor: 'rgba(132, 204, 22, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
         { label: 'CT Conductivity (mS/cm)', data: [], borderColor: '#a855f7', backgroundColor: 'rgba(168, 85, 247, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yCond' },
+        { label: 'TT71 Aseptic Outlet (°C)', data: [], borderColor: '#eab308', backgroundColor: 'rgba(234, 179, 8, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
         // Setpoint Dashed Curves from DB1101 (colors matching corresponding Pens)
         { label: 'SP: TT01 Holding (136°C)', data: [], borderColor: '#ef4444', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yTemp' },
         { label: 'SP: TT02 Pre-Heat 1 (90°C)', data: [], borderColor: '#06b6d4', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yTemp' },
@@ -1379,8 +1380,17 @@ function setupSectionRecorderControls() {
     if (e.target.id === 'limits-modal-overlay') closeLimitsModal();
   });
 
-  // Pen chip visibility toggle
+  // Pen chip visibility toggle & solo mode
   document.querySelectorAll('.pen-chip').forEach(chip => {
+    // Add visual checkmark badge if not present
+    if (!chip.querySelector('.pen-check-badge')) {
+      const badge = document.createElement('span');
+      badge.className = 'pen-check-badge';
+      badge.textContent = '✓';
+      badge.title = 'คลิกเพื่อเปิด/ปิดสีนี้ • ดับเบิ้ลคลิกเพื่อดูเฉพาะสีนี้ (Solo)';
+      chip.appendChild(badge);
+    }
+
     chip.addEventListener('click', () => {
       const sec = chip.getAttribute('data-section');
       const penIdx = parseInt(chip.getAttribute('data-pen'));
@@ -1392,9 +1402,10 @@ function setupSectionRecorderControls() {
       rec.penVisibility[penIdx] = !rec.penVisibility[penIdx];
       chip.classList.toggle('disabled', !rec.penVisibility[penIdx]);
       rec.chart.setDatasetVisibility(penIdx, rec.penVisibility[penIdx]);
+
       // Also sync visibility of matching setpoint curve in UHT recorder
       if (targetSec === 'uht') {
-        const spMap = { 0: 11, 1: 12, 3: 17, 4: 18, 6: 13, 7: 14, 8: 15, 9: 16 };
+        const spMap = { 0: 12, 1: 13, 3: 18, 4: 19, 6: 14, 7: 15, 8: 16, 9: 17 };
         if (spMap[penIdx] !== undefined) {
           rec.penVisibility[spMap[penIdx]] = rec.penVisibility[penIdx];
           rec.chart.setDatasetVisibility(spMap[penIdx], rec.penVisibility[penIdx]);
@@ -1432,8 +1443,66 @@ function setupSectionRecorderControls() {
       }
       rec.chart.update();
     });
+
+    // Double click to Solo (isolate single sensor line)
+    chip.addEventListener('dblclick', (e) => {
+      e.preventDefault();
+      const sec = chip.getAttribute('data-section');
+      const penIdx = parseInt(chip.getAttribute('data-pen'));
+      if (!sec || isNaN(penIdx)) return;
+      const targetSec = (sec === 'cip_line1' || sec === 'cip_line2') ? 'cip' : sec;
+      const rec = sectionRecorders[targetSec];
+      if (!rec || !rec.chart) return;
+
+      const chips = document.querySelectorAll(`.pen-chip[data-section="${sec}"]`);
+      const isAlreadySolo = rec.penVisibility[penIdx] && Array.from(chips).every(c => {
+        const p = parseInt(c.getAttribute('data-pen'));
+        return p === penIdx ? rec.penVisibility[p] : !rec.penVisibility[p];
+      });
+
+      if (isAlreadySolo) {
+        toggleAllSectionPens(sec, true);
+      } else {
+        chips.forEach(c => {
+          const p = parseInt(c.getAttribute('data-pen'));
+          const show = (p === penIdx);
+          rec.penVisibility[p] = show;
+          c.classList.toggle('disabled', !show);
+          rec.chart.setDatasetVisibility(p, show);
+        });
+        rec.chart.update();
+      }
+    });
   });
 }
+
+window.toggleAllSectionPens = function(sec, visible) {
+  const targetSec = (sec === 'cip_line1' || sec === 'cip_line2') ? 'cip' : sec;
+  const rec = sectionRecorders[targetSec];
+  if (!rec || !rec.chart) return;
+
+  const chips = document.querySelectorAll(`.pen-chip[data-section="${sec}"]`);
+  chips.forEach(chip => {
+    const penIdx = parseInt(chip.getAttribute('data-pen'), 10);
+    if (!isNaN(penIdx)) {
+      rec.penVisibility[penIdx] = visible;
+      chip.classList.toggle('disabled', !visible);
+      rec.chart.setDatasetVisibility(penIdx, visible);
+    }
+  });
+
+  // Also sync setpoints
+  const totalDs = rec.chart.data.datasets.length;
+  for (let i = 0; i < totalDs; i++) {
+    const ds = rec.chart.data.datasets[i];
+    if (ds.label && ds.label.startsWith('SP:')) {
+      rec.chart.setDatasetVisibility(i, visible);
+      rec.penVisibility[i] = visible;
+    }
+  }
+
+  rec.chart.update();
+};
 
 // ================= CONFIGURE SAMPLING & EXPORT CSV / EXCEL =================
 let currentExportSection = 'uht';
@@ -1682,7 +1751,8 @@ const PEN_ALARM_LIMITS = {
     { pen: 7, tag: 'TT44 (TT06) Sec 11 HC', unit: '°C', target: 'SP: 25.0°C', ll: null, l: null, h: null, hh: null, ccp: false },
     { pen: 8, tag: 'TT03 Pre-Heat 2', unit: '°C', target: 'SP: 90.0°C (80-90)', ll: 70.0, l: 75.0, h: 92.0, hh: 96.0, ccp: false },
     { pen: 9, tag: 'TT07 Outlet Temp', unit: '°C', target: 'SP: 25.0°C (20-30)', ll: 15.0, l: 20.0, h: 32.0, hh: 36.0, ccp: false },
-    { pen: 10, tag: 'CT Conductivity', unit: 'mS/cm', target: '0.0 - 30.0', ll: null, l: null, h: 35.0, hh: 50.0, ccp: false }
+    { pen: 10, tag: 'CT Conductivity', unit: 'mS/cm', target: '0.0 - 30.0', ll: null, l: null, h: 35.0, hh: 50.0, ccp: false },
+    { pen: 11, tag: 'TT71 Aseptic Outlet', unit: '°C', target: '135.0 - 145.0°C', ll: 130.0, l: 135.0, h: 145.0, hh: 150.0, ccp: false }
   ],
   atank: [
     { pen: 0, tag: 'PT460 Aseptic Pressure', unit: 'bar', target: 'Dynamic SP: 1.50 / 0.50 bar', ll: 0.4, l: 0.5, h: 2.5, hh: 2.8, ccp: true },
@@ -1862,6 +1932,7 @@ function pushAllSectionRecordersData(d) {
 
   const tt42Val = (u.tt42 !== undefined) ? u.tt42 : (u.tt05 || 0);
   const tt44Val = (u.tt44 !== undefined) ? u.tt44 : (u.tt06 || 0);
+  const tt71Val = (u.tt71 !== undefined) ? u.tt71 : (u.tt171 || 0);
 
   setText('uht-pen-tt01', `${(u.tt01 || 0).toFixed(1)} °C`);
   setText('uht-pen-tt02', `${(u.tt02 || 0).toFixed(1)} °C`);
@@ -1875,6 +1946,7 @@ function pushAllSectionRecordersData(d) {
   setText('uht-pen-tt03', `${(u.tt03 || 0).toFixed(1)} °C`);
   setText('uht-pen-tt07', `${(u.tt07 || 0).toFixed(1)} °C`);
   setText('uht-pen-ct', `${(u.ct || 0).toFixed(3)} mS/cm`);
+  setText('uht-pen-tt71', `${tt71Val.toFixed(1)} °C`);
 
   // Update UHT Alarm Alerts on Chips
   updatePenChipAlert('uht', 0, u.tt01);
@@ -1888,6 +1960,7 @@ function pushAllSectionRecordersData(d) {
   updatePenChipAlert('uht', 8, u.tt03);
   updatePenChipAlert('uht', 9, u.tt07);
   updatePenChipAlert('uht', 10, u.ct);
+  updatePenChipAlert('uht', 11, tt71Val);
 
   const spHtc = (u.sp_htc !== undefined) ? u.sp_htc : 136.0;
   const spPh01 = (u.sp_ph01 !== undefined) ? u.sp_ph01 : 90.0;
@@ -1916,8 +1989,8 @@ function pushAllSectionRecordersData(d) {
     uhtRec.history.pen8.push(u.tt03 || 0);
     uhtRec.history.pen9.push(u.tt07 || 0);
     uhtRec.history.pen10.push(u.ct || 0);
-    // Push DB1101 & DB331 Setpoints (pen11..pen18)
-    if (!uhtRec.history.pen11) uhtRec.history.pen11 = [];
+    uhtRec.history.pen11.push(tt71Val);
+    // Push DB1101 & DB331 Setpoints (pen12..pen19)
     if (!uhtRec.history.pen12) uhtRec.history.pen12 = [];
     if (!uhtRec.history.pen13) uhtRec.history.pen13 = [];
     if (!uhtRec.history.pen14) uhtRec.history.pen14 = [];
@@ -1925,14 +1998,15 @@ function pushAllSectionRecordersData(d) {
     if (!uhtRec.history.pen16) uhtRec.history.pen16 = [];
     if (!uhtRec.history.pen17) uhtRec.history.pen17 = [];
     if (!uhtRec.history.pen18) uhtRec.history.pen18 = [];
-    uhtRec.history.pen11.push(spHtc);
-    uhtRec.history.pen12.push(spPh01);
-    uhtRec.history.pen13.push(spC01);
-    uhtRec.history.pen14.push(spC02);
-    uhtRec.history.pen15.push(spPh02);
-    uhtRec.history.pen16.push(spCtc);
-    uhtRec.history.pen17.push(spFiq04);
-    uhtRec.history.pen18.push(spFiqcv08);
+    if (!uhtRec.history.pen19) uhtRec.history.pen19 = [];
+    uhtRec.history.pen12.push(spHtc);
+    uhtRec.history.pen13.push(spPh01);
+    uhtRec.history.pen14.push(spC01);
+    uhtRec.history.pen15.push(spC02);
+    uhtRec.history.pen16.push(spPh02);
+    uhtRec.history.pen17.push(spCtc);
+    uhtRec.history.pen18.push(spFiq04);
+    uhtRec.history.pen19.push(spFiqcv08);
     trimRecorderHistory(uhtRec);
   }
 
@@ -2519,6 +2593,7 @@ function applyLiveTelemetry(d) {
     setText('uht-tt05-chip', `${u.tt05.toFixed(1)}°C`);
     setText('uht-tt06-chip', `${u.tt06.toFixed(1)}°C`);
     setText('uht-tt07-chip', `${u.tt07.toFixed(1)}°C`);
+    setText('uht-tt71-chip', `${(u.tt71 !== undefined ? u.tt71 : (u.tt171 || 0)).toFixed(1)}°C`);
 
     // UHT Subtab 2 & 3 Analytics Live Binding (Zero PLC Load)
     const an = u.analytics || {};
@@ -3485,6 +3560,7 @@ window.openTrendPdfModal = function(section, fromTime, toTime) {
     batchInput.value = `${prefix}-B${dateCode}-01`;
   }
 
+  renderTrendPdfPenCheckboxes(effectiveSec);
   updateTrendPdfEstimate();
   modal.classList.add('active');
 };
@@ -3510,7 +3586,70 @@ window.onTrendPdfSectionChange = function() {
   const dateCode = now.toISOString().slice(2, 10).replace(/-/g, '');
   const batchInput = document.getElementById('trend-pdf-batch-input');
   if (batchInput) batchInput.value = `${prefix}-B${dateCode}-01`;
+  renderTrendPdfPenCheckboxes(sec);
   updateTrendPdfEstimate();
+};
+
+window.renderTrendPdfPenCheckboxes = function(sec) {
+  const container = document.getElementById('trend-pdf-pens-list');
+  if (!container) return;
+
+  let effectiveSec = sec || 'uht';
+  if (sec === 'cip') {
+    const cur = sectionRecorders.cip?.currentCircuit;
+    if (cur === 'cip_line1' || cur === 'cip_line2') effectiveSec = cur;
+  }
+
+  const rec = (effectiveSec === 'cip_line1' || effectiveSec === 'cip_line2') ? sectionRecorders.cip : sectionRecorders[effectiveSec];
+  const confList = PEN_ALARM_LIMITS[effectiveSec] || [];
+  const datasets = rec?.chart?.data?.datasets || [];
+
+  if (datasets.length === 0) {
+    container.innerHTML = '<div style="color:#64748b; font-size:11px; padding:8px;">ไม่มีข้อมูลปากกาวัดในหมวดนี้</div>';
+    return;
+  }
+
+  let html = '';
+  datasets.forEach((ds, idx) => {
+    const conf = confList[idx];
+    const penColor = ds.borderColor || ds.backgroundColor || (conf && conf.color) || '#38bdf8';
+    const tag = conf?.tag || ds.label;
+    const unit = conf?.unit ? ` (${conf.unit})` : '';
+    const isCcp = conf?.ccp;
+
+    const isVisible = (rec.penVisibility && rec.penVisibility[idx] !== undefined)
+      ? rec.penVisibility[idx]
+      : (rec.chart ? rec.chart.isDatasetVisible(idx) : true);
+
+    html += `
+      <label class="trend-pdf-pen-item ${isVisible ? 'active' : ''}" id="trend-pdf-pen-item-${idx}">
+        <input type="checkbox" class="trend-pdf-pen-checkbox" data-pen-idx="${idx}" ${isVisible ? 'checked' : ''} onchange="onTrendPdfPenCheckboxChange(${idx})">
+        <span class="trend-pdf-pen-dot" style="background:${penColor}; box-shadow:0 0 6px ${penColor};"></span>
+        <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600;">
+          ${tag}${unit}
+        </span>
+        ${isCcp ? '<span style="color:#ef4444; font-size:9px; font-weight:800; background:rgba(239,68,68,0.15); padding:1px 4px; border-radius:3px;">CCP</span>' : ''}
+      </label>
+    `;
+  });
+
+  container.innerHTML = html;
+};
+
+window.onTrendPdfPenCheckboxChange = function(idx) {
+  const item = document.getElementById(`trend-pdf-pen-item-${idx}`);
+  const cb = item?.querySelector('.trend-pdf-pen-checkbox');
+  if (item && cb) {
+    item.classList.toggle('active', cb.checked);
+  }
+};
+
+window.selectAllTrendPdfPens = function(checked) {
+  document.querySelectorAll('#trend-pdf-pens-list .trend-pdf-pen-checkbox').forEach(cb => {
+    cb.checked = checked;
+    const item = cb.closest('.trend-pdf-pen-item');
+    if (item) item.classList.toggle('active', checked);
+  });
 };
 
 window.updateTrendPdfEstimate = function() {
@@ -3578,6 +3717,17 @@ window.executeConfiguredTrendPdf = async function() {
   const includeTable = document.getElementById('trend-pdf-opt-table')?.checked !== false;
   const includeSign = document.getElementById('trend-pdf-opt-sign')?.checked !== false;
 
+  const selectedPenCheckboxes = document.querySelectorAll('#trend-pdf-pens-list .trend-pdf-pen-checkbox:checked');
+  const selectedPenIndices = [];
+  selectedPenCheckboxes.forEach(cb => {
+    selectedPenIndices.push(parseInt(cb.getAttribute('data-pen-idx'), 10));
+  });
+
+  if (selectedPenIndices.length === 0) {
+    alert('กรุณาเลือกปากกาวัด (Pen Mark Sensor) อย่างน้อย 1 สี/ตัวแปร ที่ต้องการให้ออกในรายงาน PDF');
+    return;
+  }
+
   const btnConfirm = document.getElementById('btn-trend-pdf-confirm');
   if (btnConfirm) {
     btnConfirm.disabled = true;
@@ -3613,6 +3763,7 @@ window.executeConfiguredTrendPdf = async function() {
       includeStats,
       includeTable,
       includeSign,
+      selectedPens: selectedPenIndices,
       scope: isCustom ? 'custom' : 'current'
     });
 
@@ -3634,6 +3785,12 @@ window.executeConfiguredTrendCsv = async function() {
   const fromVal = document.getElementById('trend-pdf-from-input')?.value;
   const toVal = document.getElementById('trend-pdf-to-input')?.value;
   const interval = document.getElementById('trend-pdf-interval-select')?.value || 'step_5m';
+
+  const selectedPenCheckboxes = document.querySelectorAll('#trend-pdf-pens-list .trend-pdf-pen-checkbox:checked');
+  const selectedPenIndices = [];
+  selectedPenCheckboxes.forEach(cb => {
+    selectedPenIndices.push(parseInt(cb.getAttribute('data-pen-idx'), 10));
+  });
 
   if (isCustom) {
     if (!fromVal || !toVal) {
@@ -3665,9 +3822,12 @@ window.executeConfiguredTrendCsv = async function() {
   const sampleIndices = calculateSampleIndices(timestamps, interval);
   const datasets = rec.chart.data.datasets || [];
   const confList = PEN_ALARM_LIMITS[effectiveSec] || [];
+  const targetIndices = selectedPenIndices.length > 0 ? selectedPenIndices : datasets.map((_, i) => i);
 
   const headers = ['#', 'Date_Time_Bangkok_0700'];
-  datasets.forEach((ds, idx) => {
+  targetIndices.forEach(idx => {
+    const ds = datasets[idx];
+    if (!ds) return;
     const conf = confList[idx];
     const tag = conf?.tag || ds.label;
     const unit = conf?.unit ? `_${conf.unit}` : '';
@@ -3683,8 +3843,8 @@ window.executeConfiguredTrendCsv = async function() {
   sampleIndices.forEach((rowIdx, seq) => {
     const ts = timestamps[rowIdx] || '';
     const r = [seq + 1, `"${ts}"`];
-    for (let p = 0; p < datasets.length; p++) {
-      const val = datasets[p].data ? datasets[p].data[rowIdx] : null;
+    for (let p of targetIndices) {
+      const val = datasets[p]?.data ? datasets[p].data[rowIdx] : null;
       if (val !== null && val !== undefined && !isNaN(val)) {
         r.push(Number(val).toFixed(2));
       } else {
@@ -3749,7 +3909,31 @@ window.generateTrendPdfDocument = function(section, options) {
     return;
   }
 
-  const chartImgUri = rec.chart.toBase64Image('image/png', 1.0);
+  const selectedPens = (opts.selectedPens && opts.selectedPens.length > 0) ? opts.selectedPens : null;
+  const datasets = rec.chart.data.datasets || [];
+  const targetIndices = selectedPens || datasets.map((_, i) => i);
+
+  let chartImgUri = '';
+  if (includeChart) {
+    if (selectedPens) {
+      const totalDs = datasets.length;
+      const originalVisibility = [];
+      for (let i = 0; i < totalDs; i++) {
+        originalVisibility[i] = rec.chart.isDatasetVisible(i);
+        const shouldBeVisible = selectedPens.includes(i);
+        rec.chart.setDatasetVisibility(i, shouldBeVisible);
+      }
+      rec.chart.update('none');
+      chartImgUri = rec.chart.toBase64Image('image/png', 1.0);
+      for (let i = 0; i < totalDs; i++) {
+        rec.chart.setDatasetVisibility(i, originalVisibility[i]);
+      }
+      rec.chart.update('none');
+    } else {
+      chartImgUri = rec.chart.toBase64Image('image/png', 1.0);
+    }
+  }
+
   const fromTime = timestamps[0] || '—';
   const toTime = timestamps[timestamps.length - 1] || '—';
   const totalPoints = timestamps.length;
@@ -3814,11 +3998,11 @@ window.generateTrendPdfDocument = function(section, options) {
   };
 
   const confList = PEN_ALARM_LIMITS[effectiveSec] || [];
-  const datasets = rec.chart.data.datasets || [];
   const statRows = [];
 
-  for (let i = 0; i < datasets.length; i++) {
+  for (let i of targetIndices) {
     const ds = datasets[i];
+    if (!ds) continue;
     const conf = confList[i] || { tag: ds.label, unit: '', target: '—', ll: null, l: null, h: null, hh: null, ccp: false };
     const rawVals = ds.data || [];
     const validVals = rawVals.filter(v => v !== null && v !== undefined && !isNaN(v));
@@ -3846,12 +4030,15 @@ window.generateTrendPdfDocument = function(section, options) {
       else statusColor = '#059669';
     }
 
+    const penColor = ds.borderColor || ds.backgroundColor || (conf && conf.color) || '#38bdf8';
     statRows.push(`
       <tr>
         <td style="font-weight:700; color:#0f172a;">
-          <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:${ds.borderColor || '#38bdf8'}; margin-right:6px; vertical-align:middle;"></span>
-          ${conf.tag || ds.label}
-          ${conf.ccp ? '<span style="color:#dc2626; font-size:7pt; font-weight:800; margin-left:4px;">[CCP]</span>' : ''}
+          <svg width="12" height="12" viewBox="0 0 12 12" style="display:inline-block; vertical-align:middle; margin-right:6px; flex-shrink:0;">
+            <circle cx="6" cy="6" r="5" fill="${penColor}" stroke="#1e293b" stroke-width="0.8" />
+          </svg>
+          <span style="display:inline-block; vertical-align:middle;">${conf.tag || ds.label}</span>
+          ${conf.ccp ? '<span style="color:#dc2626; font-size:7pt; font-weight:800; margin-left:4px; vertical-align:middle;">[CCP]</span>' : ''}
         </td>
         <td style="text-align:center; font-family:monospace; color:#475569;">${conf.unit || '—'}</td>
         <td style="text-align:center; font-size:7.5pt; color:#334155;">${conf.target || '—'}</td>
@@ -3868,18 +4055,27 @@ window.generateTrendPdfDocument = function(section, options) {
   const sampleIndices = calculateSampleIndices(timestamps, intervalSetting);
 
   const sampleHeaders = ['#', 'วัน-เวลา (Date-Time +07:00)'];
-  datasets.forEach((ds, idx) => {
+  targetIndices.forEach(idx => {
+    const ds = datasets[idx];
+    if (!ds) return;
     const conf = confList[idx];
-    sampleHeaders.push(conf?.tag ? (conf.tag + ' (' + conf.unit + ')') : ds.label);
+    const penColor = ds.borderColor || ds.backgroundColor || (conf && conf.color) || '#38bdf8';
+    const tag = conf?.tag ? (conf.tag + (conf.unit ? ' (' + conf.unit + ')' : '')) : ds.label;
+    sampleHeaders.push(`
+      <div style="display:inline-flex; align-items:center; justify-content:center; gap:4px;">
+        <svg width="9" height="9" viewBox="0 0 10 10" style="display:inline-block; vertical-align:middle; flex-shrink:0;"><circle cx="5" cy="5" r="4.5" fill="${penColor}" stroke="#cbd5e1" stroke-width="0.6" /></svg>
+        <span>${tag}</span>
+      </div>
+    `);
   });
 
   const sampleRowsHtml = sampleIndices.map((rowIdx, num) => {
     const bg = num % 2 === 0 ? '#ffffff' : '#f8fafc';
     const ts = timestamps[rowIdx] || '';
     const cols = ['<td style="text-align:center; font-family:monospace; color:#64748b;">' + (num + 1) + '</td>', '<td style="text-align:center; font-family:monospace; font-weight:600; color:#0f172a;">' + ts + '</td>'];
-    for (let p = 0; p < datasets.length; p++) {
+    for (let p of targetIndices) {
       const conf = confList[p];
-      const val = datasets[p].data ? datasets[p].data[rowIdx] : null;
+      const val = datasets[p]?.data ? datasets[p].data[rowIdx] : null;
       let valDisp = '—';
       if (val !== null && val !== undefined && !isNaN(val)) {
         valDisp = conf?.unit === 'kg' 
@@ -3906,27 +4102,39 @@ window.generateTrendPdfDocument = function(section, options) {
 <title>RUNGSAPPATTANA (THAILAND) — ${meta.name} TREND REPORT</title>
 <style>
 @page { size: A4 landscape; margin: 6mm 8mm; }
-* { box-sizing: border-box; font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+*, *::before, *::after { 
+  box-sizing: border-box; 
+  font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+  color-adjust: exact !important;
+}
 body { font-size: 8pt; color: #0f172a; background: #fff; padding: 10px 14px; margin: 0; line-height: 1.25; }
 table { width: 100%; border-collapse: collapse; page-break-inside: auto; }
 tr { page-break-inside: avoid; page-break-after: auto; }
 thead { display: table-header-group; }
 th, td { font-size: 7.5pt; border: 1px solid #cbd5e1; padding: 3px 5px; }
-th { background: #1e293b; color: #ffffff; font-weight: 700; text-align: center; }
+th { background: #1e293b !important; color: #ffffff !important; font-weight: 700; text-align: center; }
 .header-box { border: 2px solid #0f172a; margin-bottom: 6px; }
 .header-table td { border: none; padding: 3px 6px; }
 .field-lbl { color: #64748b; font-size: 7pt; }
 .field-val { font-weight: 700; color: #0f172a; font-size: 8pt; }
-.chart-box { border: 1.5px solid #0f172a; border-radius: 6px; padding: 4px; background: #070d17; text-align: center; margin: 6px 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.chart-box { border: 1.5px solid #0f172a; border-radius: 6px; padding: 4px; background: #070d17 !important; text-align: center; margin: 6px 0; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
 .chart-img { width: 100%; max-height: 250px; object-fit: contain; display: block; margin: 0 auto; }
 .section-title-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; margin-bottom: 3px; font-weight: 800; font-size: 8.5pt; color: #0f172a; }
 .print-btn-bar { text-align: right; margin-bottom: 8px; }
 .btn-print { background: #ea580c; color: #fff; border: none; padding: 6px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
 .sign-box { border: 1px solid #94a3b8; height: 46px; text-align: center; vertical-align: bottom; padding: 3px; font-size: 7pt; color: #64748b; }
 @media print {
-  .print-btn-bar { display: none; }
-  body { padding: 0; }
-  .chart-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  .print-btn-bar { display: none !important; }
+  body { padding: 0 !important; }
+  th { background: #1e293b !important; color: #ffffff !important; }
+  .chart-box { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
 }
 </style>
 </head>

@@ -377,18 +377,19 @@
           </div>
         </div>
 
-        <!-- Temperature Spectrum Cards TT01..TT07 -->
+        <!-- Temperature Spectrum Cards TT01..TT07, TT71 -->
         <div class="card-head section-head">
-          <h3>โปรไฟล์อุณหภูมิตามจุดกระบวนการ UHT (Thermal Profile: TT01 - TT07)</h3>
+          <h3>โปรไฟล์อุณหภูมิตามจุดกระบวนการ UHT (Thermal Profile: TT01 - TT07, TT71)</h3>
         </div>
         <div class="temp-spectrum-grid">
-          <div class="temp-chip"><span class="chip-label">TT01 (Sterile)</span><span class="chip-val font-mono" id="uht-tt01-chip">34.1°C</span></div>
-          <div class="temp-chip"><span class="chip-label">TT02 (Pre-heat 1)</span><span class="chip-val font-mono" id="uht-tt02-chip">34.9°C</span></div>
-          <div class="temp-chip"><span class="chip-label">TT03 (Pre-heat 2)</span><span class="chip-val font-mono" id="uht-tt03-chip">32.9°C</span></div>
-          <div class="temp-chip"><span class="chip-label">TT04 (Inlet)</span><span class="chip-val font-mono" id="uht-tt04-chip">20.7°C</span></div>
-          <div class="temp-chip"><span class="chip-label">TT05 (TT42 Cooling 1)</span><span class="chip-val font-mono" id="uht-tt05-chip">33.1°C</span></div>
-          <div class="temp-chip"><span class="chip-label">TT06 (TT44 Cooling 2)</span><span class="chip-val font-mono" id="uht-tt06-chip">34.9°C</span></div>
-          <div class="temp-chip"><span class="chip-label">TT07 (Outlet)</span><span class="chip-val font-mono" id="uht-tt07-chip">35.0°C</span></div>
+          <div class="temp-chip"><span class="chip-label">TT01 (Sterile)</span><span class="chip-val font-mono" id="uht-tt01-chip">--°C</span></div>
+          <div class="temp-chip"><span class="chip-label">TT02 (Pre-heat 1)</span><span class="chip-val font-mono" id="uht-tt02-chip">--°C</span></div>
+          <div class="temp-chip"><span class="chip-label">TT03 (Pre-heat 2)</span><span class="chip-val font-mono" id="uht-tt03-chip">--°C</span></div>
+          <div class="temp-chip"><span class="chip-label">TT04 (Inlet)</span><span class="chip-val font-mono" id="uht-tt04-chip">--°C</span></div>
+          <div class="temp-chip"><span class="chip-label">TT05 (TT42 Cooling 1)</span><span class="chip-val font-mono" id="uht-tt05-chip">--°C</span></div>
+          <div class="temp-chip"><span class="chip-label">TT06 (TT44 Cooling 2)</span><span class="chip-val font-mono" id="uht-tt06-chip">--°C</span></div>
+          <div class="temp-chip"><span class="chip-label">TT07 (Outlet)</span><span class="chip-val font-mono" id="uht-tt07-chip">--°C</span></div>
+          <div class="temp-chip"><span class="chip-label">TT71 (Aseptic Outlet)</span><span class="chip-val font-mono" style="color:#eab308;" id="uht-tt71-chip">--°C</span></div>
         </div>
 
         
@@ -438,7 +439,14 @@
             </div>
           </div>
 
-          <!-- UHT PEN CHIPS -->
+          <!-- UHT PEN CHIPS & FILTER BAR -->
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:11px; color:#94a3b8;">
+            <span>🎯 ปากกาวัด (คลิกติ๊กเพื่อเปิด/ปิดเส้นสี • ดับเบิ้ลคลิกเพื่อดูเฉพาะสีนี้ Solo):</span>
+            <div style="display:flex; gap:6px;">
+              <button type="button" class="ctrl-btn" style="padding:2px 8px; font-size:11px;" onclick="toggleAllSectionPens('uht', true)">✅ แสดงทุกสี</button>
+              <button type="button" class="ctrl-btn" style="padding:2px 8px; font-size:11px;" onclick="toggleAllSectionPens('uht', false)">❌ ซ่อนทุกสี</button>
+            </div>
+          </div>
           <div class="pen-legend-grid">
             <div class="pen-chip" data-section="uht" data-pen="0">
               <span class="pen-color-dot" style="background:#ef4444; box-shadow:0 0 8px #ef4444;"></span>
@@ -537,6 +545,15 @@
                 <span class="pen-val font-mono" id="uht-pen-ct">-- mS/cm</span>
               </div>
               <span class="pen-limit">Target: 0.0 - 30.0 mS/cm</span>
+            </div>
+
+            <div class="pen-chip" data-section="uht" data-pen="11">
+              <span class="pen-color-dot" style="background:#eab308; box-shadow:0 0 8px #eab308;"></span>
+              <div class="pen-meta">
+                <span class="pen-tag">PEN 12: TT71 (TT171) ASEPTIC OUTLET</span>
+                <span class="pen-val font-mono" id="uht-pen-tt71">-- °C</span>
+              </div>
+              <span class="pen-limit">Aseptic Outlet Stage</span>
             </div>
           </div>
 
@@ -872,7 +889,14 @@
             </div>
           </div>
 
-          <!-- ATANK PEN CHIPS -->
+          <!-- ATANK PEN CHIPS & FILTER BAR -->
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:11px; color:#94a3b8;">
+            <span>🎯 ปากกาวัด (คลิกติ๊กเพื่อเปิด/ปิดเส้นสี • ดับเบิ้ลคลิกเพื่อดูเฉพาะสีนี้ Solo):</span>
+            <div style="display:flex; gap:6px;">
+              <button type="button" class="ctrl-btn" style="padding:2px 8px; font-size:11px;" onclick="toggleAllSectionPens('atank', true)">✅ แสดงทุกสี</button>
+              <button type="button" class="ctrl-btn" style="padding:2px 8px; font-size:11px;" onclick="toggleAllSectionPens('atank', false)">❌ ซ่อนทุกสี</button>
+            </div>
+          </div>
           <div class="pen-legend-grid">
             <div class="pen-chip" data-section="atank" data-pen="0">
               <span class="pen-color-dot" style="background:#06b6d4; box-shadow:0 0 8px #06b6d4;"></span>
@@ -1966,6 +1990,22 @@
                 <option value="all">ดึงทุกจุดข้อมูลทั้งหมด (ไม่ข้ามจุด)</option>
               </optgroup>
             </select>
+          </div>
+
+          <!-- เลือกปากกาวัด (Pen Mark Sensors Selection) -->
+          <div class="export-form-group">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <label class="export-label" style="margin-bottom:0; font-weight:700; color:#38bdf8;">
+                🎯 เลือกปากกาวัดที่ต้องการรวมในรายงาน (Select Pen Mark Sensors):
+              </label>
+              <div style="display:flex; gap:6px;">
+                <button type="button" class="btn-pen-action" onclick="selectAllTrendPdfPens(true)">✅ เลือกทั้งหมด</button>
+                <button type="button" class="btn-pen-action" onclick="selectAllTrendPdfPens(false)">❌ ล้างทั้งหมด</button>
+              </div>
+            </div>
+            <div class="trend-pdf-pens-container" id="trend-pdf-pens-list">
+              <!-- Dynamically populated checkboxes based on section -->
+            </div>
           </div>
 
           <!-- Metadata -->

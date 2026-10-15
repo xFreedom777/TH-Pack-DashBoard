@@ -382,6 +382,14 @@ class MasterPlantReader:
             except Exception as e_d331:
                 pass
 
+            # Read DB321 TT71 / TT171 (Aseptic Outlet Temperature) at offset 1702 (Real)
+            tt71_val = 0.0
+            try:
+                d321_tt71 = self.client.db_read(321, 1702, 4)
+                tt71_val = round(get_real(d321_tt71, 0), 2)
+            except Exception as e_d321:
+                pass
+
             # Calculate Advanced UHT Analytics (Edge Computed, 0% PLC Overhead)
             steam_demand_total = round((cv49_ov + cv50_ov) / 2.0, 1)
             fouling_index = min(100.0, max(0.0, round(((cv49_ov + cv50_ov) / 1.6), 1)))
@@ -416,6 +424,8 @@ class MasterPlantReader:
                 "tt42": round(get_real(d1200, 24), 2),
                 "tt44": round(get_real(d1200, 28), 2),
                 "tt07": round(get_real(d1200, 32), 2),
+                "tt71": tt71_val,
+                "tt171": tt71_val,
                 "ct": round(get_real(d1200, 36), 3),
                 "ft04fiq": fiq04_pv if fiq04_pv > 0 else round(get_real(d1200, 50), 1),
                 "fiq04_pv": fiq04_pv,

@@ -13,7 +13,7 @@ SECTION_CONFIG = {
     "uht": {
         "pens": [
             "tt01", "tt02", "tt04", "ft04fiq", "lt", "uht_power", "tt05", "tt06",
-            "tt03", "tt07", "ct",
+            "tt03", "tt07", "ct", "tt71",
             "sp_htc", "sp_ph01", "sp_c01", "sp_c02", "sp_ph02", "sp_ctc",
             "fiq04_sv", "fiqcv08_sv"
         ],
@@ -29,6 +29,7 @@ SECTION_CONFIG = {
             "TT03 Pre-Heat 2 (°C)",
             "TT07 Outlet Temp (°C)",
             "CT Conductivity (mS/cm)",
+            "TT71 Aseptic Outlet (°C)",
             "SP: TT01 Holding (136°C)",
             "SP: TT02 Pre-Heat 1 (90°C)",
             "SP: TT42 Outlet HC (25°C)",
@@ -173,10 +174,12 @@ class InfluxTelemetryWriter:
         u = telemetry.get("uht") or {}
         uht_pwr = sum(float(vf.get(k, {}).get("power_kw", 0.0) or 0.0) for k in ["VSD01", "VSD02", "VSD03", "VSD06"])
         p_uht = Point("process_telemetry").tag("section", "uht").time(now)
-        for f in ["tt01", "tt02", "tt03", "tt04", "tt05", "tt06", "tt07", "ct", "lt", "ft04fiq",
+        for f in ["tt01", "tt02", "tt03", "tt04", "tt05", "tt06", "tt07", "tt71", "ct", "lt", "ft04fiq",
                   "sp_htc", "sp_ph01", "sp_c01", "sp_c02", "sp_ph02", "sp_ctc",
                   "fiq04_sv", "fiqcv08_sv"]:
             val = u.get(f)
+            if val is None and f == "tt71":
+                val = u.get("tt171")
             if isinstance(val, (int, float)):
                 p_uht.field(f, float(val))
         p_uht.field("uht_power", float(uht_pwr))
