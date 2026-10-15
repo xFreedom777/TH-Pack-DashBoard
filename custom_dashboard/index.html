@@ -186,6 +186,10 @@
             <span>UHT Temp: <strong id="kpi-uht-temp" class="font-mono">34.1 °C</strong></span>
             <span>ATANK Pressure: <strong id="kpi-atank-pt" class="font-mono">1.91 bar</strong></span>
           </div>
+          <div class="kpi-sterile-counts-pill">
+            <span class="sc-pill" title="UHT Balance Tank Sterile Time Count">BTD01 Count: <strong id="kpi-uht-sterile-count" class="font-mono">5</strong></span>
+            <span class="sc-pill" title="Aseptic Tank Sterile Time Count">ATANK Count: <strong id="kpi-atank-sterile-count" class="font-mono">19</strong></span>
+          </div>
         </div>
       </section>
 
@@ -220,6 +224,99 @@
               </span>
               <input type="date" id="overview-date-input" class="overview-date-input" title="เลือกวันที่ต้องการดูข้อมูล">
               <button class="btn-overview-quick" id="btn-overview-today" title="กลับไปดูวันนี้">วันนี้</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1.1 FILLER CHANGEOVER & STERILE CYCLE DECISION MATRIX -->
+        <div class="filler-decision-matrix" id="filler-decision-matrix-widget">
+          <div class="fdm-header">
+            <div class="fdm-title-group">
+              <span class="fdm-title">
+                🛡️ FILLER CHANGEOVER & STERILITY DECISION MATRIX
+                <span class="badge-tag">HMI DB1000 SYNC</span>
+              </span>
+            </div>
+            <div class="fdm-sub">
+              ระบบวิเคราะห์เกณฑ์รอบปลอดเชื้อ (Sterile Time Count) เพื่อประกอบการตัดสินใจสลับ/เปลี่ยนเครื่องบรรจุ Filler
+            </div>
+          </div>
+
+          <div class="fdm-content-grid">
+            <!-- Tank 1: UHT Balance Tank BTD01 -->
+            <div class="fdm-card">
+              <div class="fdm-card-top">
+                <div class="fdm-tank-info">
+                  <span class="fdm-tank-tag">BALANCE TANK BTD01 (DB1000.DBW4)</span>
+                  <span class="fdm-tank-name">UHT Sterile Time Count</span>
+                </div>
+                <div class="hmi-count-badge" id="fdm-uht-badge">
+                  <span id="fdm-uht-count">5</span>
+                </div>
+              </div>
+              <div class="fdm-progress-wrap">
+                <div class="fdm-progress-label">
+                  <span>ความจุรอบปลอดเชื้อ (Max Target)</span>
+                  <span class="font-mono"><strong id="fdm-uht-count-sub">5</strong> / 10 cycles</span>
+                </div>
+                <div class="fdm-bar">
+                  <div class="fdm-bar-fill green" id="fdm-uht-bar" style="width: 50%;"></div>
+                </div>
+              </div>
+              <div class="fdm-footer-stat">
+                <span>ความเสี่ยงการตกค้าง/Biofilm: <strong id="fdm-uht-risk" class="highlight-green">LOW</strong></span>
+                <span>HMI Tag: INT[0] (4.0)</span>
+              </div>
+            </div>
+
+            <!-- Tank 2: Aseptic Tank ATANK -->
+            <div class="fdm-card">
+              <div class="fdm-card-top">
+                <div class="fdm-tank-info">
+                  <span class="fdm-tank-tag">ASEPTIC TANK [-A TANK-] (DB1000.DBW6)</span>
+                  <span class="fdm-tank-name">Aseptic Tank Sterile Time Count</span>
+                </div>
+                <div class="hmi-count-badge warning" id="fdm-atank-badge">
+                  <span id="fdm-atank-count">19</span>
+                </div>
+              </div>
+              <div class="fdm-progress-wrap">
+                <div class="fdm-progress-label">
+                  <span>ความจุรอบปลอดเชื้อ (Max Target)</span>
+                  <span class="font-mono"><strong id="fdm-atank-count-sub">19</strong> / 25 cycles</span>
+                </div>
+                <div class="fdm-bar">
+                  <div class="fdm-bar-fill red" id="fdm-atank-bar" style="width: 76%;"></div>
+                </div>
+              </div>
+              <div class="fdm-footer-stat">
+                <span>อายุ Barrier ปลอดเชื้อรอบถัง: <strong id="fdm-atank-risk" class="highlight-gold">MONITORING</strong></span>
+                <span>HMI Tag: INT[1] (6.0)</span>
+              </div>
+            </div>
+
+            <!-- Advisory & Decision Status Engine -->
+            <div class="fdm-decision-card">
+              <div class="fdm-decision-header">
+                <span class="fdm-decision-title">การตัดสินใจสลับ Filler (FILLER ADVISORY)</span>
+                <span class="decision-badge-status normal" id="fdm-decision-badge">
+                  🟢 READY FOR FILLER
+                </span>
+              </div>
+              <div class="fdm-decision-msg" id="fdm-decision-msg">
+                สภาวะปกติ: ทั้ง Balance Tank และ Aseptic Tank ยังอยู่ในเกณฑ์ปลอดเชื้อ พร้อมเดินเครื่องหรือสลับเครื่องบรรจุ Filler ได้ต่อเนื่อง
+              </div>
+              <div class="fdm-checklist">
+                <div class="fdm-check-item ok" id="chk-uht-ccp">
+                  <span>✓</span> UHT CCP TT05/07 (&ge;135°C)
+                </div>
+                <div class="fdm-check-item ok" id="chk-atank-pt">
+                  <span>✓</span> ATANK Barrier PT460 (&ge;1.5 bar)
+                </div>
+                <div class="fdm-check-item warn" id="chk-cycle-margin">
+                  <span>⚠️</span> ATANK Count: 19 (ใกล้เกณฑ์ 25)
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -312,6 +409,13 @@
               <div class="step-name" id="uht-step-name">OFF</div>
               <div class="step-timer-text">เวลานับ: <span id="uht-timer-val" class="font-mono">0s</span> / <span id="uht-sp-val" class="font-mono">0s</span></div>
             </div>
+          </div>
+          <div class="tab-hmi-sterile-container" title="UHT Balance Tank Sterile Time Count (DB1000.DBW4)">
+            <div class="tab-hmi-label">
+              <span>BALANCE TANK BTD01</span>
+              UHT Sterile Time
+            </div>
+            <div class="tab-hmi-red-box" id="uht-tab-sterile-count">5</div>
           </div>
         </div>
 
@@ -810,6 +914,13 @@
               <div class="step-name" id="atank-step-name">Sterile Timer</div>
               <div class="step-timer-text">เวลานับ: <span id="atank-timer-val" class="font-mono">1500s</span> / <span id="atank-sp-val" class="font-mono">1800s</span></div>
             </div>
+          </div>
+          <div class="tab-hmi-sterile-container" title="Aseptic Tank Sterile Time Count (DB1000.DBW6)">
+            <div class="tab-hmi-label">
+              <span>[-A TANK-] 1051</span>
+              Aseptic Sterile Time
+            </div>
+            <div class="tab-hmi-red-box" id="atank-tab-sterile-count">19</div>
           </div>
         </div>
 

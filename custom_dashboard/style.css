@@ -2773,6 +2773,383 @@ body {
   display: none !important;
 }
 
+/* ================= FILLER CHANGEOVER & STERILE CYCLE DECISION MATRIX ================= */
+.filler-decision-matrix {
+  background: linear-gradient(135deg, rgba(20, 31, 54, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.filler-decision-matrix::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 100%;
+  background: linear-gradient(180deg, #38bdf8 0%, #3b82f6 50%, #8b5cf6 100%);
+}
+
+.fdm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.fdm-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fdm-title {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 800;
+  color: #f8fafc;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fdm-title .badge-tag {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.fdm-sub {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.fdm-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.35fr;
+  gap: 16px;
+  align-items: stretch;
+}
+
+@media (max-width: 1024px) {
+  .fdm-content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fdm-card {
+  background: rgba(11, 19, 35, 0.75);
+  border: 1px solid rgba(51, 65, 85, 0.6);
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.25s ease;
+}
+
+.fdm-card:hover {
+  border-color: rgba(56, 189, 248, 0.5);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.fdm-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.fdm-tank-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.fdm-tank-tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: #38bdf8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.fdm-tank-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-top: 2px;
+}
+
+/* Authentic HMI Red Badge styling matching user screenshots */
+.hmi-count-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  height: 52px;
+  background: linear-gradient(180deg, #dc2626 0%, #991b1b 100%);
+  border: 2px solid #ef4444;
+  border-radius: 6px;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1;
+  padding: 4px 12px;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.hmi-count-badge:hover {
+  transform: scale(1.04);
+  box-shadow: 0 0 18px rgba(239, 68, 68, 0.6);
+}
+
+.hmi-count-badge.warning {
+  background: linear-gradient(180deg, #ea580c 0%, #c2410c 100%);
+  border-color: #f97316;
+  box-shadow: 0 0 12px rgba(249, 115, 22, 0.4);
+}
+
+.hmi-count-badge.normal {
+  background: linear-gradient(180deg, #059669 0%, #047857 100%);
+  border-color: #10b981;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+}
+
+.fdm-progress-wrap {
+  margin-top: 8px;
+}
+
+.fdm-progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+.fdm-bar {
+  height: 6px;
+  background: rgba(51, 65, 85, 0.6);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.fdm-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.fdm-bar-fill.red {
+  background: linear-gradient(90deg, #f59e0b 0%, #ef4444 100%);
+}
+
+.fdm-bar-fill.green {
+  background: linear-gradient(90deg, #10b981 0%, #06b6d4 100%);
+}
+
+.fdm-footer-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(51, 65, 85, 0.5);
+}
+
+/* Decision Status Card (Right column) */
+.fdm-decision-card {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.fdm-decision-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.fdm-decision-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.decision-badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.decision-badge-status.normal {
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.decision-badge-status.warning {
+  background: rgba(245, 158, 11, 0.18);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.decision-badge-status.critical {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  animation: pulse-critical 2s infinite;
+}
+
+@keyframes pulse-critical {
+  0%, 100% { box-shadow: 0 0 8px rgba(239, 68, 68, 0.4); }
+  50% { box-shadow: 0 0 18px rgba(239, 68, 68, 0.8); }
+}
+
+.fdm-decision-msg {
+  font-size: 13px;
+  color: #f1f5f9;
+  line-height: 1.5;
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  background: rgba(15, 23, 42, 0.7);
+  border-radius: 6px;
+  border-left: 3px solid #38bdf8;
+}
+
+.fdm-checklist {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 11px;
+}
+
+.fdm-check-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(30, 41, 59, 0.5);
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(51, 65, 85, 0.4);
+}
+
+.fdm-check-item.ok {
+  color: #34d399;
+  border-color: rgba(52, 211, 153, 0.3);
+}
+
+.fdm-check-item.warn {
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.3);
+}
+
+/* Mini HMI Badge for UHT and ATANK tabs */
+.tab-hmi-sterile-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  padding: 6px 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.tab-hmi-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-hmi-label span {
+  font-size: 10px;
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+.tab-hmi-red-box {
+  min-width: 44px;
+  height: 32px;
+  background: linear-gradient(180deg, #dc2626 0%, #991b1b 100%);
+  border: 1.5px solid #ef4444;
+  border-radius: 4px;
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+  padding: 0 8px;
+}
+
+/* Card 4 footer pill */
+.kpi-sterile-counts-pill {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.kpi-sterile-counts-pill .sc-pill {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.kpi-sterile-counts-pill .sc-pill strong {
+  color: #f87171;
+  font-size: 13px;
+}
+
+
 
 
 

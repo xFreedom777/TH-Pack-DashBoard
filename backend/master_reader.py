@@ -466,6 +466,20 @@ class MasterPlantReader:
                 }
             }
 
+            # 1.1 READ DB1000 (HMI DATA) FOR STERILE TIME COUNTS
+            # DB1000.DBW4: UHT Sterile Time Count (Balance Tank BTD01)
+            # DB1000.DBW6: Aseptic Tank Sterile Time Count (ATANK)
+            uht_sterile_count = 0
+            atank_sterile_count = 0
+            try:
+                d1000 = self.client.db_read(1000, 4, 4)
+                uht_sterile_count = get_int(d1000, 0)
+                atank_sterile_count = get_int(d1000, 2)
+            except Exception as e_d1000:
+                pass
+
+            res["uht"]["sterile_count"] = uht_sterile_count
+
             # 2. READ DB1301 (ATANK)
             d1301 = self.client.db_read(1301, 0, 22)
             d1301_step = self.client.db_read(1301, 254, 2)
@@ -526,7 +540,27 @@ class MasterPlantReader:
                 "sp_pt_flush": sp_pt[2],
                 "sp_pt_prod": sp_pt[3],
                 "ycip": get_bool(d1301, 18, 0),
-                "ypressure": get_bool(d1301, 18, 1)
+                "ypressure": get_bool(d1301, 18, 1),
+                "sterile_count": atank_sterile_count
+            }
+
+            # Filler Changeover Decision State
+            filler_status = "NORMAL"
+            filler_msg = "สภาวะปกติ: พร้อมเดินเครื่องหรือสลับ Filler ได้ต่อเนื่อง"
+            if uht_sterile_count >= 10 or atank_sterile_count >= 25:
+                filler_status = "CRITICAL"
+                filler_msg = "ครบเกณฑ์รอบ Sterile สูงสุด: ต้องทำการ Sterile Flush หรือล้าง CIP ทันทีก่อนจ่ายต่อ"
+            elif uht_sterile_count >= 7 or atank_sterile_count >= 18:
+                filler_status = "WARNING"
+                filler_msg = "รอบสะสมเริ่มสูง: ควรเตรียมวางแผนสลับ Filler หรือเตรียมจังหวะ Flush น้ำวน Balance Tank"
+
+            res["filler_decision"] = {
+                "uht_sterile_count": uht_sterile_count,
+                "atank_sterile_count": atank_sterile_count,
+                "status": filler_status,
+                "message": filler_msg,
+                "uht_limit": 10,
+                "atank_limit": 25
             }
 
             # 3. READ DB1801 (CIP CIRCUIT 1)

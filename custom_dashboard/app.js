@@ -2754,6 +2754,124 @@ function applyLiveTelemetry(d) {
     }
   }
 
+  // ================= FILLER DECISION & STERILE TIME COUNTS =================
+  const uhtCnt = (d.uht && d.uht.sterile_count !== undefined) ? d.uht.sterile_count : 0;
+  const atankCnt = (d.atank && d.atank.sterile_count !== undefined) ? d.atank.sterile_count : 0;
+
+  // 1. Update Card 4 Pills
+  setText('kpi-uht-sterile-count', uhtCnt);
+  setText('kpi-atank-sterile-count', atankCnt);
+
+  // 2. Update Tab Mini Badges
+  setText('uht-tab-sterile-count', uhtCnt);
+  setText('atank-tab-sterile-count', atankCnt);
+
+  // 3. Update Decision Matrix Cards in Overview
+  setText('fdm-uht-count', uhtCnt);
+  setText('fdm-uht-count-sub', uhtCnt);
+  const uhtBar = document.getElementById('fdm-uht-bar');
+  if (uhtBar) {
+    const pct = Math.min(Math.max((uhtCnt / 10) * 100, 0), 100);
+    uhtBar.style.width = `${pct}%`;
+    uhtBar.className = uhtCnt >= 10 ? 'fdm-bar-fill red' : (uhtCnt >= 7 ? 'fdm-bar-fill red' : 'fdm-bar-fill green');
+  }
+  const uhtRisk = document.getElementById('fdm-uht-risk');
+  if (uhtRisk) {
+    if (uhtCnt >= 10) {
+      uhtRisk.textContent = 'CRITICAL (FLUSH NEEDED)';
+      uhtRisk.className = 'highlight-red';
+    } else if (uhtCnt >= 7) {
+      uhtRisk.textContent = 'WARNING (MONITOR)';
+      uhtRisk.className = 'highlight-gold';
+    } else {
+      uhtRisk.textContent = 'NORMAL / LOW';
+      uhtRisk.className = 'highlight-green';
+    }
+  }
+
+  setText('fdm-atank-count', atankCnt);
+  setText('fdm-atank-count-sub', atankCnt);
+  const atankBar = document.getElementById('fdm-atank-bar');
+  if (atankBar) {
+    const pct = Math.min(Math.max((atankCnt / 25) * 100, 0), 100);
+    atankBar.style.width = `${pct}%`;
+    atankBar.className = atankCnt >= 25 ? 'fdm-bar-fill red' : (atankCnt >= 18 ? 'fdm-bar-fill red' : 'fdm-bar-fill green');
+  }
+  const atankRisk = document.getElementById('fdm-atank-risk');
+  if (atankRisk) {
+    if (atankCnt >= 25) {
+      atankRisk.textContent = 'LIMIT REACHED (CIP REQUIRED)';
+      atankRisk.className = 'highlight-red';
+    } else if (atankCnt >= 18) {
+      atankRisk.textContent = 'HIGH CYCLE (MONITOR)';
+      atankRisk.className = 'highlight-gold';
+    } else {
+      atankRisk.textContent = 'SECURE / NORMAL';
+      atankRisk.className = 'highlight-green';
+    }
+  }
+
+  // 4. Update Decision Badge & Advisory Message
+  const decBadge = document.getElementById('fdm-decision-badge');
+  const decMsg = document.getElementById('fdm-decision-msg');
+  const fd = d.filler_decision || {};
+  const status = fd.status || (uhtCnt >= 10 || atankCnt >= 25 ? 'CRITICAL' : (uhtCnt >= 7 || atankCnt >= 18 ? 'WARNING' : 'NORMAL'));
+
+  if (decBadge) {
+    if (status === 'CRITICAL') {
+      decBadge.textContent = '🔴 STERILE FLUSH / CIP REQUIRED';
+      decBadge.className = 'decision-badge-status critical';
+    } else if (status === 'WARNING') {
+      decBadge.textContent = '🟡 SWITCH RECOMMENDED / FLUSH';
+      decBadge.className = 'decision-badge-status warning';
+    } else {
+      decBadge.textContent = '🟢 READY FOR FILLER';
+      decBadge.className = 'decision-badge-status normal';
+    }
+  }
+
+  if (decMsg) {
+    if (fd.message) {
+      decMsg.textContent = fd.message;
+    } else if (status === 'CRITICAL') {
+      decMsg.textContent = 'ครบเกณฑ์รอบ Sterile สูงสุด: ต้องทำการ Sterile Flush หรือล้าง CIP ทันทีก่อนจ่ายเข้า Filler';
+    } else if (status === 'WARNING') {
+      decMsg.textContent = 'รอบสะสมเริ่มสูง: ควรเตรียมวางแผนสลับ Filler หรือเตรียมจังหวะ Flush น้ำวน Balance Tank';
+    } else {
+      decMsg.textContent = 'สภาวะปกติ: ทั้ง Balance Tank และ Aseptic Tank ยังอยู่ในเกณฑ์ปลอดเชื้อ พร้อมเดินเครื่องหรือสลับเครื่องบรรจุ Filler ได้ต่อเนื่อง';
+    }
+  }
+
+  // Checklist updates
+  const chkUht = document.getElementById('chk-uht-ccp');
+  if (chkUht) {
+    const ccpOk = (d.uht && d.uht.analytics && d.uht.analytics.ccp_compliant !== undefined) ? d.uht.analytics.ccp_compliant : true;
+    chkUht.className = ccpOk ? 'fdm-check-item ok' : 'fdm-check-item warn';
+    chkUht.innerHTML = ccpOk ? '<span>✓</span> UHT CCP TT05/07 (&ge;135°C)' : '<span>⚠️</span> UHT CCP Deviation!';
+  }
+
+  const chkPt = document.getElementById('chk-atank-pt');
+  if (chkPt) {
+    const ptVal = (d.atank && d.atank.pt460) ? d.atank.pt460 : 0;
+    const ptOk = ptVal >= 1.45;
+    chkPt.className = ptOk ? 'fdm-check-item ok' : 'fdm-check-item warn';
+    chkPt.innerHTML = ptOk ? `<span>✓</span> ATANK Barrier (${ptVal.toFixed(2)} bar)` : `<span>⚠️</span> ATANK Low Barrier (${ptVal.toFixed(2)} bar)`;
+  }
+
+  const chkMargin = document.getElementById('chk-cycle-margin');
+  if (chkMargin) {
+    if (atankCnt >= 25 || uhtCnt >= 10) {
+      chkMargin.className = 'fdm-check-item warn';
+      chkMargin.innerHTML = `<span>❌</span> โควตารอบหมด (UHT:${uhtCnt}/10, ATANK:${atankCnt}/25)`;
+    } else if (atankCnt >= 18 || uhtCnt >= 7) {
+      chkMargin.className = 'fdm-check-item warn';
+      chkMargin.innerHTML = `<span>⚠️</span> เฝ้าระวังรอบสะสม (UHT:${uhtCnt}/10, ATANK:${atankCnt}/25)`;
+    } else {
+      chkMargin.className = 'fdm-check-item ok';
+      chkMargin.innerHTML = `<span>✓</span> รอบ Sterile ปกติ (UHT:${uhtCnt}/10, ATANK:${atankCnt}/25)`;
+    }
+  }
+
   // 3. CIP CIRCUIT 1 & 2
   if (d.cip_line1) {
     const c1 = d.cip_line1;
