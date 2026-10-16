@@ -146,6 +146,18 @@ graph TD
 
 ## 📅 บันทึกความคืบหน้าการพัฒนา (Development Progress Logs)
 
+### 📌 วันที่ 16 ตุลาคม 2026 (Trend PDF Dual-Theme Engine, Multi-Axis Engine & User Alarm Limits)
+
+| ลำดับ | รายการพัฒนา / Feature | สถานะ | รายละเอียดการดำเนินงาน |
+| :---: | :--- | :---: | :--- |
+| **1** | **Trend PDF Dual-Theme Architecture (`☀️ Light Style` vs `🌙 Blacks Style`)** | ✅ เสร็จสมบูรณ์ | เพิ่มการเลือกสไตล์ธีมรายงาน Trend PDF ในหน้าต่าง Modal แบบ Interactive Cards: **☀️ Light Style** (ปรับโทนสีเส้นกราฟเป็นชุดสีวิศวกรรมความคมชัดสูง High-Contrast Engineering Print Palette: Royal Blue, Crimson, Forest Green, Amber บนพื้นขาวสะอาด สบายตาและคมชัดเมื่อพิมพ์ลงกระดาษจริง) และ **🌙 Blacks Style** (คงเอกลักษณ์มืดเข้มแบบ HMI SCADA) |
+| **2** | **Multi-Axis Full-Width Historian Snapshot Engine** | ✅ เสร็จสมบูรณ์ | พัฒนาระบบ Snapshot กราฟดึงจาก `rec.chart` โดยตรง รักษาโครงสร้าง Multi-Axes ทั้ง 4 แกนครบถ้วน (Temp 0–160°C, Press 0–10 Bar, Flow 0–20,000 L/h, Power 0–45 kW) และเส้นประ Setpoint DB1101 พร้อมปรับขนาดกว้างเต็มหน้ากระดาษ (Full Width 100%) สอดรับกับตารางหัวรายงานและตารางสรุปค่าสถิติอย่างลงตัว |
+| **3** | **Strict A4 Landscape Dimension Locking (`297mm x 210mm`) & Print Guide** | ✅ เสร็จสมบูรณ์ | ล็อกขนาดเอกสารพิมพ์ใน CSS `@page { size: 297mm 210mm; margin: 6mm 8mm; }` ทั้งระดับสากลและ `@media print` ป้องกันบั๊กของ Chromium ในการหมุนเนื้อหาตะแคง 90 องศา พร้อมติดตั้งแถบกล่องข้อความแนะนำการตั้งค่า Layout เป็น "แนวนอน (Landscape)" ที่หัวเอกสารพิมพ์ |
+| **4** | **User-Configurable Alarm Limits & Calibration Persistence** | ✅ เสร็จสมบูรณ์ | ติดตั้งระบบปรับแต่งขีดจำกัดเตือนภัย (LL, L, H, HH, Target, CCP) แยกรายหัววัดผ่านหน้า UI พร้อมบันทึกคงอยู่ข้ามเซสชันด้วย LocalStorage และ Backend API (`/api/v1/alarm_limits`) แสดงผลสถานะสีตามเกณฑ์อัตโนมัติ (NORMAL, WARNING, CRITICAL) พร้อมปุ่ม Reset คืนค่ามาตรฐานโรงงาน |
+| **5** | **Sterile Count Integration & Filler Changeover Decision Matrix** | ✅ เสร็จสมบูรณ์ | ดึงค่านับรอบ Sterile สะสมของ UHT (DB1000) และ ATANK (DB1000) ประมวลผลร่วมกับเมทริกซ์ตัดสินใจสลับเครื่องบรรจุ (Filler Decision Matrix) เพื่อแจ้งเตือนสถานะความปลอดภัย แจ้งเตือนสภาวะ Sterile Flush / CIP Required ป้องกันความเสี่ยงของเสียในกระบวนการผลิต |
+
+---
+
 ### 📌 วันที่ 12 ตุลาคม 2026 (Production Commissioning & Operational Analytics Suite)
 
 | ลำดับ | รายการพัฒนา / Feature | สถานะ | รายละเอียดการดำเนินงาน |

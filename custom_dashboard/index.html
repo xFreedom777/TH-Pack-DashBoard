@@ -2158,6 +2158,64 @@
             </div>
           </div>
 
+          <!-- 📄 การจัดวางหน้ากระดาษ (Page Orientation: Portrait vs Landscape) -->
+          <div class="export-form-group">
+            <label class="export-label" style="font-weight:700; color:#38bdf8;">
+              📄 การจัดวางหน้ากระดาษ (Page Orientation):
+            </label>
+            <div class="trend-pdf-theme-toggle">
+              <label class="trend-pdf-theme-card active" id="trend-orient-card-portrait" onclick="setTrendPdfOrientation('portrait')">
+                <input type="radio" name="trend-pdf-orient-radio" value="portrait" checked onchange="setTrendPdfOrientation('portrait')">
+                <div class="theme-card-body">
+                  <div class="theme-icon">📱</div>
+                  <div class="theme-info">
+                    <div class="theme-title">แนวตั้ง (Portrait) — [ค่าเริ่มต้น / แนะนำสำหรับมือถือ & พิมพ์ A4]</div>
+                    <div class="theme-desc">เปิดบนมือถือตรง ไม่เอียงตะแคง อ่านง่าย เลื่อนสะดวก เอกสาร A4 แนวตั้งมาตรฐาน</div>
+                  </div>
+                </div>
+              </label>
+              <label class="trend-pdf-theme-card" id="trend-orient-card-landscape" onclick="setTrendPdfOrientation('landscape')">
+                <input type="radio" name="trend-pdf-orient-radio" value="landscape" onchange="setTrendPdfOrientation('landscape')">
+                <div class="theme-card-body">
+                  <div class="theme-icon">🖥️</div>
+                  <div class="theme-info">
+                    <div class="theme-title">แนวนอน (Landscape) — [สำหรับจอกว้าง / วิศวกรรม]</div>
+                    <div class="theme-desc">กระดาษแนวนอน 297x210 มม. เหมาะสำหรับจอคอมพิวเตอร์กว้าง กราฟยืดขยายแนวนอนยาว</div>
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- 🎨 ธีมกราฟและสไตล์รายงาน (Theme Style: Light vs Blacks) -->
+          <div class="export-form-group">
+            <label class="export-label" style="font-weight:700; color:#38bdf8;">
+              🎨 สไตล์ธีมกราฟและรายงาน (Chart & Report Theme Style):
+            </label>
+            <div class="trend-pdf-theme-toggle">
+              <label class="trend-pdf-theme-card active" id="trend-theme-card-light" onclick="setTrendPdfTheme('light')">
+                <input type="radio" name="trend-pdf-theme-radio" value="light" checked onchange="setTrendPdfTheme('light')">
+                <div class="theme-card-body">
+                  <div class="theme-icon">☀️</div>
+                  <div class="theme-info">
+                    <div class="theme-title">Light Style (แนะนำพิมพ์ A4 / ส่งลูกค้า)</div>
+                    <div class="theme-desc">พื้นหลังขาว กราฟสีวิศวกรรมคอนทราสต์สูง ไม่แสบตา ไม่เปลืองหมึก อ่านง่าย สบายตา</div>
+                  </div>
+                </div>
+              </label>
+              <label class="trend-pdf-theme-card" id="trend-theme-card-dark" onclick="setTrendPdfTheme('dark')">
+                <input type="radio" name="trend-pdf-theme-radio" value="dark" onchange="setTrendPdfTheme('dark')">
+                <div class="theme-card-body">
+                  <div class="theme-icon">🌙</div>
+                  <div class="theme-info">
+                    <div class="theme-title">Blacks / Dark Style (SCADA Cyber)</div>
+                    <div class="theme-desc">พื้นหลังดำ สไตล์จอห้องควบคุม SCADA เส้นกราฟสะท้อนแสง Cyber Tones</div>
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+
           <!-- Report Sections Toggles -->
           <div class="export-form-group">
             <label class="export-label">องค์ประกอบที่บรรจุในเอกสาร PDF (Report Sections):</label>

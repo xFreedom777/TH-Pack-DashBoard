@@ -3916,6 +3916,248 @@ function calculateSampleIndices(timestamps, intervalSetting) {
   return res;
 }
 
+// =========================================================================
+// TREND PDF COLOR & THEME STYLES (LIGHT ENGINEERING VS BLACKS/SCADA CYBER)
+// =========================================================================
+function getThemePenColor(originalColor, theme) {
+  if (theme !== 'light') return originalColor;
+  
+  const c = (originalColor || '').toLowerCase().trim();
+  
+  // Mapping bright/neon cyber colors to high-contrast, comfortable engineering print tones (No eye-strain / ไม่ปวดตา)
+  const lightColorMap = {
+    // Cyans & Light Blues -> Deep Royal / Cobalt Blue
+    '#38bdf8': '#0284c7',
+    '#00f0ff': '#0369a1',
+    '#06b6d4': '#0284c7',
+    '#0ea5e9': '#0284c7',
+    'rgb(56, 189, 248)': '#0284c7',
+    'rgba(56, 189, 248, 1)': '#0284c7',
+    
+    // Pinks, Hot Magenta, Coral -> Deep Crimson / Rich Ruby (No eye-strain)
+    '#ec4899': '#b91c1c',
+    '#f43f5e': '#be123c',
+    '#e11d48': '#9f1239',
+    '#ff007f': '#9f1239',
+    'rgb(236, 72, 153)': '#b91c1c',
+    'rgba(236, 72, 153, 1)': '#b91c1c',
+    
+    // Limes & Light Greens -> Deep Forest / Emerald Green
+    '#22c55e': '#15803d',
+    '#4ade80': '#16a34a',
+    '#10b981': '#047857',
+    '#00ff66': '#15803d',
+    'rgb(34, 197, 94)': '#15803d',
+    'rgb(74, 222, 128)': '#16a34a',
+    
+    // Yellows & Golds -> Rich Warm Amber / Cognac
+    '#eab308': '#b45309',
+    '#facc15': '#b45309',
+    '#f59e0b': '#b45309',
+    '#ffd700': '#b45309',
+    'rgb(234, 179, 8)': '#b45309',
+    
+    // Purples & Violets -> Deep Royal Purple / Indigo
+    '#a855f7': '#6d28d9',
+    '#8b5cf6': '#5b21b6',
+    '#c084fc': '#6d28d9',
+    'rgb(168, 85, 247)': '#6d28d9',
+    
+    // Teals -> Deep Marine Teal
+    '#14b8a6': '#0f766e',
+    '#2dd4bf': '#0f766e',
+    '#00ffff': '#0369a1',
+    
+    // Oranges -> Burnt Terracotta
+    '#f97316': '#c2410c',
+    '#fb923c': '#c2410c',
+    'rgb(249, 115, 22)': '#c2410c',
+    
+    // Reds
+    '#ef4444': '#dc2626',
+    'rgb(239, 68, 68)': '#dc2626'
+  };
+
+  if (lightColorMap[c]) return lightColorMap[c];
+
+  if (c.startsWith('#') && c.length === 7) {
+    const r = parseInt(c.slice(1, 3), 16);
+    const g = parseInt(c.slice(3, 5), 16);
+    const b = parseInt(c.slice(5, 7), 16);
+    if (b > 180 && g > 150 && r < 100) return '#0284c7';
+    if (r > 200 && b > 140 && g < 150) return '#b91c1c';
+    if (r > 200 && g > 180 && b < 100) return '#b45309';
+    if (g > 180 && r < 120) return '#15803d';
+  }
+  
+  return originalColor || '#1e293b';
+}
+
+function captureChartWithBackground(chart, bgColor) {
+  const srcCanvas = chart.canvas;
+  const outCanvas = document.createElement('canvas');
+  outCanvas.width = srcCanvas.width;
+  outCanvas.height = srcCanvas.height;
+  const ctx = outCanvas.getContext('2d');
+  
+  // Fill solid background (white for light, #070d17 for dark)
+  ctx.fillStyle = bgColor;
+  ctx.fillRect(0, 0, outCanvas.width, outCanvas.height);
+  
+  // Draw the chart canvas over it
+  ctx.drawImage(srcCanvas, 0, 0);
+  return outCanvas.toDataURL('image/png', 1.0);
+}
+
+function captureThemedChartImage(rec, targetIndices, theme) {
+  const chart = rec.chart;
+  const isLight = (theme === 'light');
+  const datasets = chart.data.datasets || [];
+  const totalDs = datasets.length;
+  
+  // 1. Save original states
+  const originalVisibility = [];
+  const originalBorderColors = [];
+  const originalBgColors = [];
+  for (let i = 0; i < totalDs; i++) {
+    originalVisibility[i] = chart.isDatasetVisible(i);
+    originalBorderColors[i] = datasets[i].borderColor;
+    originalBgColors[i] = datasets[i].backgroundColor;
+  }
+  
+  // Save scale colors
+  const originalScaleConfigs = {};
+  if (chart.options.scales) {
+    for (let key in chart.options.scales) {
+      const scale = chart.options.scales[key];
+      originalScaleConfigs[key] = {
+        gridColor: scale.grid?.color,
+        borderColor: scale.grid?.borderColor,
+        tickColor: scale.ticks?.color,
+        titleColor: scale.title?.color
+      };
+    }
+  }
+
+  // Save legend label color
+  const originalLegendColor = chart.options.plugins?.legend?.labels?.color;
+
+  // 2. Apply theme modifications
+  // Visibility
+  if (targetIndices && targetIndices.length > 0) {
+    for (let i = 0; i < totalDs; i++) {
+      chart.setDatasetVisibility(i, targetIndices.includes(i));
+    }
+  }
+
+  if (isLight) {
+    // Theme datasets with comfortable print colors
+    for (let i = 0; i < totalDs; i++) {
+      if (datasets[i].borderColor) {
+        datasets[i].borderColor = getThemePenColor(originalBorderColors[i], 'light');
+      }
+      if (datasets[i].backgroundColor && datasets[i].backgroundColor !== 'transparent') {
+        datasets[i].backgroundColor = 'transparent';
+      }
+    }
+
+    // Theme scales for light mode
+    if (chart.options.scales) {
+      for (let key in chart.options.scales) {
+        const scale = chart.options.scales[key];
+        if (scale.grid) {
+          scale.grid.color = 'rgba(203, 213, 225, 0.55)';
+          scale.grid.borderColor = '#94a3b8';
+        }
+        if (scale.ticks) {
+          scale.ticks.color = '#334155';
+        }
+        if (scale.title) {
+          if (key === 'yTemp') scale.title.color = '#b91c1c';
+          else if (key === 'yPress') scale.title.color = '#0284c7';
+          else if (key === 'yFlow') scale.title.color = '#047857';
+          else if (key === 'yPower') scale.title.color = '#b45309';
+          else scale.title.color = '#1e293b';
+        }
+      }
+    }
+
+    if (chart.options.plugins?.legend?.labels) {
+      chart.options.plugins.legend.labels.color = '#0f172a';
+    }
+  }
+
+  // Update chart without animation
+  chart.update('none');
+
+  // 3. Capture with solid background
+  const imgUri = captureChartWithBackground(chart, isLight ? '#ffffff' : '#070d17');
+
+  // 4. Restore original settings
+  for (let i = 0; i < totalDs; i++) {
+    chart.setDatasetVisibility(i, originalVisibility[i]);
+    datasets[i].borderColor = originalBorderColors[i];
+    datasets[i].backgroundColor = originalBgColors[i];
+  }
+
+  if (chart.options.scales) {
+    for (let key in originalScaleConfigs) {
+      const orig = originalScaleConfigs[key];
+      const scale = chart.options.scales[key];
+      if (scale) {
+        if (scale.grid) {
+          scale.grid.color = orig.gridColor;
+          scale.grid.borderColor = orig.borderColor;
+        }
+        if (scale.ticks) scale.ticks.color = orig.tickColor;
+        if (scale.title) scale.title.color = orig.titleColor;
+      }
+    }
+  }
+
+  if (chart.options.plugins?.legend?.labels) {
+    chart.options.plugins.legend.labels.color = originalLegendColor;
+  }
+
+  chart.update('none');
+
+  return imgUri;
+}
+
+window.setTrendPdfOrientation = function(orient) {
+  const chosen = (orient === 'landscape') ? 'landscape' : 'portrait';
+  try {
+    localStorage.setItem('trend_pdf_orientation', chosen);
+  } catch (e) {}
+
+  const cardPort = document.getElementById('trend-orient-card-portrait');
+  const cardLand = document.getElementById('trend-orient-card-landscape');
+  const radioPort = document.querySelector('input[name="trend-pdf-orient-radio"][value="portrait"]');
+  const radioLand = document.querySelector('input[name="trend-pdf-orient-radio"][value="landscape"]');
+
+  if (cardPort) cardPort.classList.toggle('active', chosen === 'portrait');
+  if (cardLand) cardLand.classList.toggle('active', chosen === 'landscape');
+  if (radioPort) radioPort.checked = (chosen === 'portrait');
+  if (radioLand) radioLand.checked = (chosen === 'landscape');
+};
+
+window.setTrendPdfTheme = function(theme) {
+  const chosen = (theme === 'dark') ? 'dark' : 'light';
+  try {
+    localStorage.setItem('trend_pdf_theme', chosen);
+  } catch (e) {}
+
+  const cardLight = document.getElementById('trend-theme-card-light');
+  const cardDark = document.getElementById('trend-theme-card-dark');
+  const radioLight = document.querySelector('input[name="trend-pdf-theme-radio"][value="light"]');
+  const radioDark = document.querySelector('input[name="trend-pdf-theme-radio"][value="dark"]');
+
+  if (cardLight) cardLight.classList.toggle('active', chosen === 'light');
+  if (cardDark) cardDark.classList.toggle('active', chosen === 'dark');
+  if (radioLight) radioLight.checked = (chosen === 'light');
+  if (radioDark) radioDark.checked = (chosen === 'dark');
+};
+
 window.openTrendPdfModal = function(section, fromTime, toTime) {
   let effectiveSec = section || 'uht';
   if (section === 'cip') {
@@ -3958,6 +4200,12 @@ window.openTrendPdfModal = function(section, fromTime, toTime) {
     const dateCode = now.toISOString().slice(2, 10).replace(/-/g, '');
     batchInput.value = `${prefix}-B${dateCode}-01`;
   }
+
+  const savedTheme = localStorage.getItem('trend_pdf_theme') || 'light';
+  setTrendPdfTheme(savedTheme);
+
+  const savedOrient = localStorage.getItem('trend_pdf_orientation') || 'portrait';
+  setTrendPdfOrientation(savedOrient);
 
   renderTrendPdfPenCheckboxes(effectiveSec);
   updateTrendPdfEstimate();
@@ -4115,6 +4363,8 @@ window.executeConfiguredTrendPdf = async function() {
   const includeStats = document.getElementById('trend-pdf-opt-stats')?.checked !== false;
   const includeTable = document.getElementById('trend-pdf-opt-table')?.checked !== false;
   const includeSign = document.getElementById('trend-pdf-opt-sign')?.checked !== false;
+  const theme = document.querySelector('input[name="trend-pdf-theme-radio"]:checked')?.value || localStorage.getItem('trend_pdf_theme') || 'light';
+  const orientation = document.querySelector('input[name="trend-pdf-orient-radio"]:checked')?.value || localStorage.getItem('trend_pdf_orientation') || 'portrait';
 
   const selectedPenCheckboxes = document.querySelectorAll('#trend-pdf-pens-list .trend-pdf-pen-checkbox:checked');
   const selectedPenIndices = [];
@@ -4163,7 +4413,9 @@ window.executeConfiguredTrendPdf = async function() {
       includeTable,
       includeSign,
       selectedPens: selectedPenIndices,
-      scope: isCustom ? 'custom' : 'current'
+      scope: isCustom ? 'custom' : 'current',
+      theme: theme,
+      orientation: orientation
     });
 
     closeTrendPdfModal();
@@ -4284,6 +4536,10 @@ window.exportHistorianPdfCustomRange = function() {
 
 window.generateTrendPdfDocument = function(section, options) {
   const opts = options || {};
+  const orientation = opts.orientation || localStorage.getItem('trend_pdf_orientation') || 'portrait';
+  const isPortrait = (orientation === 'portrait');
+  const theme = opts.theme || localStorage.getItem('trend_pdf_theme') || 'light';
+  const isLight = (theme === 'light');
   const intervalSetting = opts.interval || 'step_5m';
   const includeChart = opts.includeChart !== false;
   const includeStats = opts.includeStats !== false;
@@ -4314,23 +4570,7 @@ window.generateTrendPdfDocument = function(section, options) {
 
   let chartImgUri = '';
   if (includeChart) {
-    if (selectedPens) {
-      const totalDs = datasets.length;
-      const originalVisibility = [];
-      for (let i = 0; i < totalDs; i++) {
-        originalVisibility[i] = rec.chart.isDatasetVisible(i);
-        const shouldBeVisible = selectedPens.includes(i);
-        rec.chart.setDatasetVisibility(i, shouldBeVisible);
-      }
-      rec.chart.update('none');
-      chartImgUri = rec.chart.toBase64Image('image/png', 1.0);
-      for (let i = 0; i < totalDs; i++) {
-        rec.chart.setDatasetVisibility(i, originalVisibility[i]);
-      }
-      rec.chart.update('none');
-    } else {
-      chartImgUri = rec.chart.toBase64Image('image/png', 1.0);
-    }
+    chartImgUri = captureThemedChartImage(rec, targetIndices, theme);
   }
 
   const fromTime = timestamps[0] || '—';
@@ -4429,7 +4669,7 @@ window.generateTrendPdfDocument = function(section, options) {
       else statusColor = '#059669';
     }
 
-    const penColor = ds.borderColor || ds.backgroundColor || (conf && conf.color) || '#38bdf8';
+    const penColor = getThemePenColor(ds.borderColor || ds.backgroundColor || (conf && conf.color) || '#38bdf8', theme);
     statRows.push(`
       <tr>
         <td style="font-weight:700; color:#0f172a;">
@@ -4458,7 +4698,7 @@ window.generateTrendPdfDocument = function(section, options) {
     const ds = datasets[idx];
     if (!ds) return;
     const conf = confList[idx];
-    const penColor = ds.borderColor || ds.backgroundColor || (conf && conf.color) || '#38bdf8';
+    const penColor = getThemePenColor(ds.borderColor || ds.backgroundColor || (conf && conf.color) || '#38bdf8', theme);
     const tag = conf?.tag ? (conf.tag + (conf.unit ? ' (' + conf.unit + ')' : '')) : ds.label;
     sampleHeaders.push(`
       <div style="display:inline-flex; align-items:center; justify-content:center; gap:4px;">
@@ -4498,9 +4738,13 @@ window.generateTrendPdfDocument = function(section, options) {
 <html lang="th">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.5">
 <title>RUNGSAPPATTANA (THAILAND) — ${meta.name} TREND REPORT</title>
 <style>
-@page { size: A4 landscape; margin: 6mm 8mm; }
+@page { 
+  size: ${isPortrait ? 'A4 portrait' : '297mm 210mm'}; 
+  margin: ${isPortrait ? '8mm 8mm' : '6mm 8mm'}; 
+}
 *, *::before, *::after { 
   box-sizing: border-box; 
   font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -4508,23 +4752,46 @@ window.generateTrendPdfDocument = function(section, options) {
   print-color-adjust: exact !important;
   color-adjust: exact !important;
 }
-body { font-size: 8pt; color: #0f172a; background: #fff; padding: 10px 14px; margin: 0; line-height: 1.25; }
+body { font-size: ${isPortrait ? '7.5pt' : '8pt'}; color: #0f172a; background: #fff; padding: ${isPortrait ? '6px 8px' : '10px 14px'}; margin: 0; line-height: 1.25; }
 table { width: 100%; border-collapse: collapse; page-break-inside: auto; }
 tr { page-break-inside: avoid; page-break-after: auto; }
 thead { display: table-header-group; }
-th, td { font-size: 7.5pt; border: 1px solid #cbd5e1; padding: 3px 5px; }
+th, td { font-size: ${isPortrait ? '7pt' : '7.5pt'}; border: 1px solid #cbd5e1; padding: ${isPortrait ? '2.5px 4px' : '3px 5px'}; }
 th { background: #1e293b !important; color: #ffffff !important; font-weight: 700; text-align: center; }
 .header-box { border: 2px solid #0f172a; margin-bottom: 6px; }
-.header-table td { border: none; padding: 3px 6px; }
-.field-lbl { color: #64748b; font-size: 7pt; }
-.field-val { font-weight: 700; color: #0f172a; font-size: 8pt; }
-.chart-box { border: 1.5px solid #0f172a; border-radius: 6px; padding: 4px; background: #070d17 !important; text-align: center; margin: 6px 0; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-.chart-img { width: 100%; max-height: 250px; object-fit: contain; display: block; margin: 0 auto; }
-.section-title-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; margin-bottom: 3px; font-weight: 800; font-size: 8.5pt; color: #0f172a; }
-.print-btn-bar { text-align: right; margin-bottom: 8px; }
-.btn-print { background: #ea580c; color: #fff; border: none; padding: 6px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+.header-table td { border: none; padding: ${isPortrait ? '2px 4px' : '3px 6px'}; }
+.field-lbl { color: #64748b; font-size: ${isPortrait ? '6.5pt' : '7pt'}; white-space: nowrap; }
+.field-val { font-weight: 700; color: #0f172a; font-size: ${isPortrait ? '7.5pt' : '8pt'}; }
+.chart-box { 
+  border: 1.5px solid ${isLight ? '#cbd5e1' : '#0f172a'}; 
+  border-radius: 6px; 
+  padding: 3px 6px; 
+  background: ${isLight ? '#ffffff' : '#070d17'} !important; 
+  text-align: center; 
+  margin: 4px 0 6px 0; 
+  width: 100%;
+  box-shadow: ${isLight ? '0 1px 4px rgba(0,0,0,0.06)' : 'none'};
+  -webkit-print-color-adjust: exact !important; 
+  print-color-adjust: exact !important; 
+}
+.chart-img { 
+  width: 100%; 
+  height: auto; 
+  max-height: ${isPortrait ? '230px' : '290px'}; 
+  object-fit: fill; 
+  display: block; 
+  margin: 0 auto; 
+}
+.section-title-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; margin-bottom: 3px; font-weight: 800; font-size: ${isPortrait ? '8pt' : '8.5pt'}; color: #0f172a; }
+.print-btn-bar { display: flex; justify-content: space-between; align-items: center; background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 8px; padding: 8px 14px; margin-bottom: 10px; }
+.print-hint-box { font-size: 11px; color: #1e40af; font-weight: 600; line-height: 1.4; text-align: left; }
+.btn-print { background: #ea580c; color: #fff; border: none; padding: 8px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); white-space: nowrap; }
 .sign-box { border: 1px solid #94a3b8; height: 46px; text-align: center; vertical-align: bottom; padding: 3px; font-size: 7pt; color: #64748b; }
 @media print {
+  @page {
+    size: ${isPortrait ? 'A4 portrait' : '297mm 210mm'};
+    margin: ${isPortrait ? '8mm 8mm' : '6mm 8mm'};
+  }
   *, *::before, *::after {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
@@ -4540,8 +4807,13 @@ th { background: #1e293b !important; color: #ffffff !important; font-weight: 700
 <body>
 
   <div class="print-btn-bar">
+    <div class="print-hint-box">
+      ${isPortrait 
+        ? '📱 <strong>จัดวางหน้ากระดาษ:</strong> เอกสารจัดวางเป็น <strong>"แนวตั้ง (Portrait)"</strong> เหมาะสำหรับอ่านบนมือถือและคอมพิวเตอร์แนวตรง ไม่เอียงตะแคง พร้อมสั่งพิมพ์/บันทึก PDF A4 มาตรฐาน'
+        : '🖥️ <strong>จัดวางหน้ากระดาษ:</strong> เอกสารจัดวางเป็น <strong>"แนวนอน (Landscape)"</strong> ในหน้าต่างสั่งพิมพ์ โปรดตรวจสอบช่อง <strong>"การจัดวาง (Layout)"</strong> ให้เลือกเป็น <strong>"แนวนอน (Landscape)"</strong> เพื่อให้หน้ากระดาษตรงตามมาตรฐาน'}
+    </div>
     <button onclick="window.print()" class="btn-print">
-      🖨️ สั่งพิมพ์เอกสาร A4 แนวนอน (PRINT / SAVE AS PDF)
+      ${isPortrait ? '🖨️ สั่งพิมพ์เอกสาร A4 แนวตั้ง (PRINT / SAVE AS PDF)' : '🖨️ สั่งพิมพ์เอกสาร A4 แนวนอน (PRINT / SAVE AS PDF)'}
     </button>
   </div>
 
@@ -4549,19 +4821,19 @@ th { background: #1e293b !important; color: #ffffff !important; font-weight: 700
   <div class="header-box">
     <table class="header-table" style="width:100%;">
       <tr>
-        <td style="width:145px; text-align:center; vertical-align:middle; border-right:2px solid #0f172a; padding:4px;">
-          <div style="background:#253b1b; border-radius:6px; padding:4px 6px; display:inline-block; border:1px solid #3d6029; -webkit-print-color-adjust:exact; print-color-adjust:exact;">
-            <img src="data:image/png;base64,${MARINE_LOGO_B64}" style="max-height:40px; width:auto; display:block; margin:0 auto;" alt="Marine Logo">
+        <td style="width:${isPortrait ? '105px' : '145px'}; text-align:center; vertical-align:middle; border-right:2px solid #0f172a; padding:4px;">
+          <div style="background:#253b1b; border-radius:6px; padding:${isPortrait ? '3px 5px' : '4px 6px'}; display:inline-block; border:1px solid #3d6029; -webkit-print-color-adjust:exact; print-color-adjust:exact;">
+            <img src="data:image/png;base64,${MARINE_LOGO_B64}" style="max-height:${isPortrait ? '34px' : '40px'}; width:auto; display:block; margin:0 auto;" alt="Marine Logo">
           </div>
-          <div style="font-size:7pt; font-weight:800; color:#0f172a; letter-spacing:0.5px; margin-top:3px; line-height:1.1;">RUNGSAPPATTANA<br><span style="font-size:6pt; color:#334155; font-weight:700;">(THAILAND)</span></div>
+          <div style="font-size:${isPortrait ? '6.5pt' : '7pt'}; font-weight:800; color:#0f172a; letter-spacing:0.3px; margin-top:2px; line-height:1.1;">RUNGSAPPATTANA<br><span style="font-size:${isPortrait ? '5.5pt' : '6pt'}; color:#334155; font-weight:700;">(THAILAND)</span></div>
         </td>
-        <td style="text-align:center; vertical-align:middle; border-right:2px solid #0f172a; padding:4px 10px;">
-          <div style="font-size:12pt; font-weight:900; color:#1e3a8a; letter-spacing:0.5px; line-height:1.2;">RUNGSAPPATTANA (THAILAND) CO., LTD.</div>
-          <div style="font-size:8pt; font-weight:700; color:#059669; letter-spacing:0.3px; margin-top:1px;">บริษัท รุ่งทรัพย์พัฒนา (ประเทศไทย) จำกัด • SCADA PROCESS HISTORIAN TREND REPORT</div>
-          <div style="font-size:9.5pt; font-weight:800; color:#0f172a; margin-top:2px;">${meta.name}</div>
-          <div style="font-size:6.5pt; color:#64748b; margin-top:1px;">${meta.desc} • SCADA Automation System By xDev.CO.LTD</div>
+        <td style="text-align:center; vertical-align:middle; border-right:2px solid #0f172a; padding:${isPortrait ? '3px 6px' : '4px 10px'};">
+          <div style="font-size:${isPortrait ? '10.5pt' : '12pt'}; font-weight:900; color:#1e3a8a; letter-spacing:0.3px; line-height:1.2;">RUNGSAPPATTANA (THAILAND) CO., LTD.</div>
+          <div style="font-size:${isPortrait ? '7pt' : '8pt'}; font-weight:700; color:#059669; letter-spacing:0.2px; margin-top:1px;">บริษัท รุ่งทรัพย์พัฒนา (ประเทศไทย) จำกัด • SCADA PROCESS HISTORIAN TREND REPORT</div>
+          <div style="font-size:${isPortrait ? '8.5pt' : '9.5pt'}; font-weight:800; color:#0f172a; margin-top:2px;">${meta.name}</div>
+          <div style="font-size:${isPortrait ? '6pt' : '6.5pt'}; color:#64748b; margin-top:1px;">${meta.desc} • SCADA Automation System By xDev.CO.LTD</div>
         </td>
-        <td style="width:315px; vertical-align:top; padding:4px 6px;">
+        <td style="width:${isPortrait ? '260px' : '315px'}; vertical-align:top; padding:${isPortrait ? '3px 5px' : '4px 6px'};">
           <table style="width:100%; border-collapse:collapse;">
             <tr>
               <td class="field-lbl">Date (วันที่) :</td>
@@ -4572,18 +4844,28 @@ th { background: #1e293b !important; color: #ffffff !important; font-weight: 700
             <tr>
               <td class="field-lbl">Batch Ref. :</td>
               <td class="field-val" style="color:#2563eb;">${meta.batch}</td>
-              <td class="field-lbl">Mode / Range :</td>
+              <td class="field-lbl">Mode :</td>
               <td class="field-val" style="color:#9333ea;">${rangeHorizon}</td>
             </tr>
             <tr>
               <td class="field-lbl">Time Horizon :</td>
-              <td colspan="3" class="field-val" style="color:#b91c1c; font-size:7.5pt; font-family:monospace;">${fromTime} → ${toTime}</td>
+              <td colspan="3" class="field-val" style="color:#b91c1c; font-size:${isPortrait ? '6.5pt' : '7.5pt'}; font-family:monospace;">${fromTime} → ${toTime}</td>
             </tr>
             <tr>
-              <td class="field-lbl">Stamp Setting :</td>
+              <td class="field-lbl">Sampling :</td>
               <td class="field-val" style="color:#0d9488;">${intervalDesc}</td>
+              <td class="field-lbl">Layout :</td>
+              <td class="field-val" style="color:#ea580c; font-weight:800;">
+                ${isPortrait ? '📱 PORTRAIT' : '🖥️ LANDSCAPE'}
+              </td>
+            </tr>
+            <tr>
+              <td class="field-lbl">Theme Style :</td>
+              <td class="field-val" style="color:${isLight ? '#0284c7' : '#38bdf8'}; font-weight:800;">
+                ${isLight ? '☀️ LIGHT' : '🌙 BLACKS'}
+              </td>
               <td class="field-lbl">Audit Points :</td>
-              <td class="field-val" style="color:#ea580c; font-weight:800;">${sampleIndices.length} / ${totalPoints}</td>
+              <td class="field-val" style="color:#10b981; font-weight:800;">${sampleIndices.length} / ${totalPoints}</td>
             </tr>
             ${noteBlock}
           </table>
