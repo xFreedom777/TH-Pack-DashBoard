@@ -93,6 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCharts();
   setupPeriodButtons();
   initAllSectionRecorders();
+  loadCustomAlarmLimits();
   setupDriveBayFilters();
   renderDriveBayCards({});
   startClock();
@@ -1378,6 +1379,8 @@ function setupSectionRecorderControls() {
   // Modal close handlers
   document.getElementById('limits-modal-close')?.addEventListener('click', closeLimitsModal);
   document.getElementById('limits-modal-btn-close')?.addEventListener('click', closeLimitsModal);
+  document.getElementById('limits-modal-btn-save')?.addEventListener('click', saveCustomAlarmLimits);
+  document.getElementById('limits-modal-btn-reset')?.addEventListener('click', resetCustomAlarmLimits);
   document.getElementById('limits-modal-overlay')?.addEventListener('click', (e) => {
     if (e.target.id === 'limits-modal-overlay') closeLimitsModal();
   });
@@ -1735,7 +1738,7 @@ async function executeExportWithResolution() {
 }
 
 // ================= PROCESS ALARM LIMITS & TOLERANCE MATRIX =================
-const PEN_ALARM_LIMITS = {
+let PEN_ALARM_LIMITS = {
   uht: [
     { pen: 0, tag: 'TT01 Holding Temp', unit: '°C', target: 'Holding Tube Temp', ll: null, l: null, h: null, hh: null, ccp: false },
     { pen: 1, tag: 'TT02 Pre-Heat 1', unit: '°C', target: 'SP: 90.0°C (80-90)', ll: 70.0, l: 75.0, h: 92.0, hh: 96.0, ccp: false },
@@ -1804,6 +1807,48 @@ const PEN_ALARM_LIMITS = {
   ]
 };
 
+const DEFAULT_PEN_ALARM_LIMITS = JSON.parse(JSON.stringify(PEN_ALARM_LIMITS));
+let activeLimitsSection = 'uht';
+
+async function loadCustomAlarmLimits() {
+  const host = window.location.hostname || '127.0.0.1';
+  try {
+    const res = await fetch(`http://${host}:8000/api/v1/alarm_limits`);
+    const json = await res.json();
+    if (json.status === 'success' && json.limits && Object.keys(json.limits).length > 0) {
+      applyCustomLimitsToState(json.limits);
+      localStorage.setItem('thpack_alarm_limits', JSON.stringify(json.limits));
+      return;
+    }
+  } catch (e) {
+    console.warn('Could not fetch alarm limits from server, fallback to localStorage:', e);
+  }
+
+  const local = localStorage.getItem('thpack_alarm_limits');
+  if (local) {
+    try {
+      const parsed = JSON.parse(local);
+      applyCustomLimitsToState(parsed);
+    } catch (e) {}
+  }
+}
+
+function applyCustomLimitsToState(customLimits) {
+  for (const sec in customLimits) {
+    if (PEN_ALARM_LIMITS[sec] && Array.isArray(customLimits[sec])) {
+      customLimits[sec].forEach(c => {
+        const match = PEN_ALARM_LIMITS[sec].find(p => p.pen === c.pen);
+        if (match) {
+          if (c.ll !== undefined) match.ll = c.ll;
+          if (c.l !== undefined) match.l = c.l;
+          if (c.h !== undefined) match.h = c.h;
+          if (c.hh !== undefined) match.hh = c.hh;
+        }
+      });
+    }
+  }
+}
+
 function evaluatePenAlarm(conf, val) {
   const unitSuffix = (conf.target && conf.target.includes(conf.unit)) ? '' : ` ${conf.unit}`;
   if (val === null || val === undefined || isNaN(val)) {
@@ -1853,11 +1898,13 @@ function openLimitsModal(sec) {
     const cur = sectionRecorders.cip?.currentCircuit;
     if (cur === 'cip_line1' || cur === 'cip_line2') effectiveSec = cur;
   }
+  activeLimitsSection = effectiveSec;
 
   const overlay = document.getElementById('limits-modal-overlay');
   const titleEl = document.getElementById('limits-modal-title');
-  const tbody = document.getElementById('limits-table-body');
-  if (!overlay || !tbody) return;
+  const statusEl = document.getElementById('limits-save-status');
+  if (statusEl) statusEl.textContent = '';
+  if (!overlay) return;
 
   const secNames = {
     uht: 'UHT STERILIZER PROCESS (DB1200)',
@@ -1871,7 +1918,15 @@ function openLimitsModal(sec) {
     titleEl.textContent = `ALARM LIMIT CONFIGURATION: ${secNames[effectiveSec] || effectiveSec.toUpperCase()}`;
   }
 
-  const confList = PEN_ALARM_LIMITS[effectiveSec] || PEN_ALARM_LIMITS[sec] || [];
+  renderLimitsTableRows(effectiveSec);
+  overlay.classList.add('active');
+}
+
+function renderLimitsTableRows(effectiveSec) {
+  const tbody = document.getElementById('limits-table-body');
+  if (!tbody) return;
+
+  const confList = PEN_ALARM_LIMITS[effectiveSec] || [];
   const rec = (effectiveSec === 'cip_line1' || effectiveSec === 'cip_line2') ? sectionRecorders.cip : sectionRecorders[effectiveSec];
 
   tbody.innerHTML = confList.map(conf => {
@@ -1890,23 +1945,156 @@ function openLimitsModal(sec) {
     const evalResult = evaluatePenAlarm(conf, curVal !== '--' ? parseFloat(String(curVal).replace(/,/g, '')) : null);
     const badgeClass = evalResult.status === 'CRITICAL' ? 'crit' : (evalResult.status === 'WARNING' ? 'warn' : 'ok');
 
-    const fmtLimit = lim => lim !== null ? (conf.unit === 'kg' ? Number(lim).toLocaleString('en-US') : lim) : '-';
+    const valOrEmpty = v => (v !== null && v !== undefined) ? v : '';
 
     return `
-      <tr>
+      <tr data-pen="${conf.pen}">
         <td><strong>${conf.tag}</strong> ${conf.ccp ? '<span style="color:#ef4444; font-size:10px; font-weight:700;">[CCP]</span>' : ''}</td>
         <td class="font-mono">${conf.unit}</td>
         <td class="font-mono" style="font-weight:700; color:#38bdf8;">${curVal}</td>
-        <td class="font-mono" style="color:#ef4444;">${fmtLimit(conf.ll)}</td>
-        <td class="font-mono" style="color:#fbbf24;">${fmtLimit(conf.l)}</td>
-        <td class="font-mono" style="color:#fbbf24;">${fmtLimit(conf.h)}</td>
-        <td class="font-mono" style="color:#ef4444;">${fmtLimit(conf.hh)}</td>
-        <td><span class="limits-status-badge ${badgeClass}">${evalResult.status}</span></td>
+        <td>
+          <input type="number" step="any" class="limit-input ll-input font-mono" data-sec="${effectiveSec}" data-pen="${conf.pen}" data-field="ll" value="${valOrEmpty(conf.ll)}" placeholder="-">
+        </td>
+        <td>
+          <input type="number" step="any" class="limit-input l-input font-mono" data-sec="${effectiveSec}" data-pen="${conf.pen}" data-field="l" value="${valOrEmpty(conf.l)}" placeholder="-">
+        </td>
+        <td>
+          <input type="number" step="any" class="limit-input h-input font-mono" data-sec="${effectiveSec}" data-pen="${conf.pen}" data-field="h" value="${valOrEmpty(conf.h)}" placeholder="-">
+        </td>
+        <td>
+          <input type="number" step="any" class="limit-input hh-input font-mono" data-sec="${effectiveSec}" data-pen="${conf.pen}" data-field="hh" value="${valOrEmpty(conf.hh)}" placeholder="-">
+        </td>
+        <td><span class="limits-status-badge ${badgeClass}" id="limits-row-badge-${conf.pen}">${evalResult.status}</span></td>
       </tr>
     `;
   }).join('');
 
-  overlay.classList.add('active');
+  // Add real-time input change listener to re-evaluate row status badge immediately
+  tbody.querySelectorAll('.limit-input').forEach(input => {
+    input.addEventListener('input', () => {
+      const pen = parseInt(input.dataset.pen, 10);
+      const conf = confList.find(p => p.pen === pen);
+      if (!conf) return;
+
+      const row = input.closest('tr');
+      const llVal = row.querySelector('.ll-input').value.trim();
+      const lVal = row.querySelector('.l-input').value.trim();
+      const hVal = row.querySelector('.h-input').value.trim();
+      const hhVal = row.querySelector('.hh-input').value.trim();
+
+      const tempConf = {
+        ...conf,
+        ll: llVal !== '' ? parseFloat(llVal) : null,
+        l: lVal !== '' ? parseFloat(lVal) : null,
+        h: hVal !== '' ? parseFloat(hVal) : null,
+        hh: hhVal !== '' ? parseFloat(hhVal) : null
+      };
+
+      const curCell = row.cells[2].textContent;
+      const numVal = curCell !== '--' ? parseFloat(curCell.replace(/,/g, '')) : null;
+      const evalRes = evaluatePenAlarm(tempConf, numVal);
+      const badge = document.getElementById(`limits-row-badge-${pen}`);
+      if (badge) {
+        badge.textContent = evalRes.status;
+        badge.className = `limits-status-badge ${evalRes.status === 'CRITICAL' ? 'crit' : (evalRes.status === 'WARNING' ? 'warn' : 'ok')}`;
+      }
+    });
+  });
+}
+
+async function saveCustomAlarmLimits() {
+  const statusEl = document.getElementById('limits-save-status');
+  const tbody = document.getElementById('limits-table-body');
+  if (!tbody || !activeLimitsSection) return;
+
+  const confList = PEN_ALARM_LIMITS[activeLimitsSection];
+  if (!confList) return;
+
+  const rows = tbody.querySelectorAll('tr[data-pen]');
+  rows.forEach(row => {
+    const pen = parseInt(row.dataset.pen, 10);
+    const conf = confList.find(p => p.pen === pen);
+    if (!conf) return;
+
+    const llVal = row.querySelector('.ll-input').value.trim();
+    const lVal = row.querySelector('.l-input').value.trim();
+    const hVal = row.querySelector('.h-input').value.trim();
+    const hhVal = row.querySelector('.hh-input').value.trim();
+
+    conf.ll = llVal !== '' ? parseFloat(llVal) : null;
+    conf.l = lVal !== '' ? parseFloat(lVal) : null;
+    conf.h = hVal !== '' ? parseFloat(hVal) : null;
+    conf.hh = hhVal !== '' ? parseFloat(hhVal) : null;
+  });
+
+  // Save to localStorage
+  localStorage.setItem('thpack_alarm_limits', JSON.stringify(PEN_ALARM_LIMITS));
+
+  // Save to backend server
+  const host = window.location.hostname || '127.0.0.1';
+  try {
+    const res = await fetch(`http://${host}:8000/api/v1/alarm_limits`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(PEN_ALARM_LIMITS)
+    });
+    const json = await res.json();
+    if (json.status === 'success') {
+      if (statusEl) {
+        statusEl.textContent = '✅ บันทึกเกณฑ์ Alarm ลงเซิร์ฟเวอร์สำเร็จ!';
+        statusEl.style.color = '#10b981';
+      }
+    }
+  } catch (e) {
+    if (statusEl) {
+      statusEl.textContent = '💾 บันทึกในบราวเซอร์สำเร็จ (บันทึกออฟไลน์)';
+      statusEl.style.color = '#fbbf24';
+    }
+  }
+
+  // Immediately re-evaluate pen chips
+  const rec = (activeLimitsSection === 'cip_line1' || activeLimitsSection === 'cip_line2') ? sectionRecorders.cip : sectionRecorders[activeLimitsSection];
+  if (rec && rec.chart) {
+    confList.forEach(conf => {
+      const dataArr = rec.chart.data.datasets[conf.pen]?.data;
+      if (dataArr && dataArr.length > 0) {
+        const lastVal = dataArr[dataArr.length - 1];
+        updatePenChipAlert(activeLimitsSection, conf.pen, lastVal);
+      }
+    });
+  }
+
+  setTimeout(() => {
+    if (statusEl) statusEl.textContent = '';
+  }, 4000);
+}
+
+async function resetCustomAlarmLimits() {
+  if (!activeLimitsSection || !DEFAULT_PEN_ALARM_LIMITS[activeLimitsSection]) return;
+  if (!confirm(`ต้องการคืนค่าเกณฑ์ Alarm Limit ทั้งหมดของ ${activeLimitsSection.toUpperCase()} กลับเป็นค่ามาตรฐานเริ่มต้นโรงงานหรือไม่?`)) {
+    return;
+  }
+
+  PEN_ALARM_LIMITS[activeLimitsSection] = JSON.parse(JSON.stringify(DEFAULT_PEN_ALARM_LIMITS[activeLimitsSection]));
+  renderLimitsTableRows(activeLimitsSection);
+
+  // Save reset state
+  localStorage.setItem('thpack_alarm_limits', JSON.stringify(PEN_ALARM_LIMITS));
+  const host = window.location.hostname || '127.0.0.1';
+  try {
+    await fetch(`http://${host}:8000/api/v1/alarm_limits`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(PEN_ALARM_LIMITS)
+    });
+  } catch (e) {}
+
+  const statusEl = document.getElementById('limits-save-status');
+  if (statusEl) {
+    statusEl.textContent = '🔄 คืนค่ามาตรฐานโรงงานเรียบร้อยแล้ว';
+    statusEl.style.color = '#38bdf8';
+    setTimeout(() => { statusEl.textContent = ''; }, 3000);
+  }
 }
 
 function closeLimitsModal() {

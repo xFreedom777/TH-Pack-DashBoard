@@ -9,7 +9,7 @@ if hasattr(time, "tzset"):
 import asyncio
 from datetime import datetime, date, timedelta
 from typing import Optional
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query, Request
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from master_reader import master_reader
@@ -340,6 +340,36 @@ def get_today_process_summary():
             "compliance_pct": 100.0,
             "total_steps": 0
         }
+
+# =========================================================================
+# PROCESS ALARM LIMITS USER CONFIGURATION
+# =========================================================================
+
+ALARM_LIMITS_FILE = os.path.join(os.path.dirname(__file__), "custom_alarm_limits.json")
+
+@app.get("/api/v1/alarm_limits")
+def get_alarm_limits():
+    """Returns user-customized process alarm limits from server storage."""
+    if os.path.exists(ALARM_LIMITS_FILE):
+        try:
+            with open(ALARM_LIMITS_FILE, "r", encoding="utf-8") as f:
+                return {"status": "success", "limits": json.load(f)}
+        except Exception as e:
+            return {"status": "error", "message": str(e), "limits": {}}
+    return {"status": "success", "limits": {}}
+
+@app.post("/api/v1/alarm_limits")
+async def save_alarm_limits(req: Request):
+    """Saves user-customized process alarm limits to server storage."""
+    try:
+        data = await req.json()
+        limits = data.get("limits") if isinstance(data, dict) and "limits" in data else data
+        with open(ALARM_LIMITS_FILE, "w", encoding="utf-8") as f:
+            json.dump(limits, f, indent=2, ensure_ascii=False)
+        return {"status": "success", "message": "Alarm limits saved successfully", "saved_at": time.time()}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
 
 # =========================================================================
 # PROCESS STEP LOGS & OFFICIAL REPORT GENERATION APIS

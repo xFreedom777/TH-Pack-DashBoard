@@ -1829,9 +1829,16 @@
             </table>
           </div>
         </div>
-        <div class="scada-modal-footer">
-          <span class="limits-note">* เกณฑ์แจ้งเตือนตามมาตรฐาน CCP / Critical Limit การพาสเจอไรซ์และถังปลอดเชื้อ UHT</span>
-          <button class="ctrl-btn" id="limits-modal-btn-close">ปิดหน้าต่าง</button>
+        <div class="scada-modal-footer" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <span class="limits-note">* คลิกแก้ไขตัวเลขในตารางเพื่อปรับเกณฑ์ Low-Low, Low, High, High-High ตามต้องการ</span>
+            <span id="limits-save-status" style="font-size:12px; font-weight:700; color:#10b981; min-height:16px;"></span>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <button class="ctrl-btn" id="limits-modal-btn-reset" style="background:rgba(239, 68, 68, 0.12); border:1px solid rgba(239, 68, 68, 0.4); color:#f87171;" title="คืนค่าเกณฑ์กลับเป็นค่ามาตรฐานเริ่มต้น">🔄 คืนค่ามาตรฐาน</button>
+            <button class="ctrl-btn" id="limits-modal-btn-save" style="background:#059669; border:1px solid #10b981; color:#ffffff; font-weight:700; box-shadow:0 0 10px rgba(16,185,129,0.4);" title="บันทึกการตั้งค่าเกณฑ์ใหม่ลงเซิร์ฟเวอร์">💾 บันทึกการตั้งค่า</button>
+            <button class="ctrl-btn" id="limits-modal-btn-close">ปิดหน้าต่าง</button>
+          </div>
         </div>
       </div>
     </div>

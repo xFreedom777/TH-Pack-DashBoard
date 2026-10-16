@@ -2020,6 +2020,45 @@ body {
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
+.limit-input {
+  width: 76px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(100, 116, 139, 0.4);
+  border-radius: 4px;
+  padding: 4px 6px;
+  color: #f8fafc;
+  font-size: 12px;
+  text-align: right;
+  transition: all 0.2s ease;
+}
+.limit-input:focus {
+  outline: none;
+  background: rgba(15, 23, 42, 0.98);
+  border-color: #38bdf8;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+}
+.limit-input.ll-input {
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+.limit-input.l-input {
+  color: #fcd34d;
+  border-color: rgba(251, 191, 36, 0.4);
+}
+.limit-input.h-input {
+  color: #fcd34d;
+  border-color: rgba(251, 191, 36, 0.4);
+}
+.limit-input.hh-input {
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+.limit-input::placeholder {
+  color: #475569;
+  text-align: center;
+}
+
+
 .scada-modal-footer {
   padding: 14px 24px;
   background: rgba(30, 41, 59, 0.4);
