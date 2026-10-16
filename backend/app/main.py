@@ -292,6 +292,55 @@ def get_executive_summary():
         cached_telemetry = master_reader.read_all_telemetry()
     return cached_telemetry.get("executive_kpis", {})
 
+@app.get("/api/v1/process_summary/today")
+def get_today_process_summary():
+    """
+    Returns live aggregated process metrics from MySQL process_step_logs:
+    - today_prod_liters (UHT production steps 28-42)
+    - today_water_liters (Utility & flushes)
+    - today_ccp_violations
+    - today_total_steps
+    - compliance_pct
+    """
+    try:
+        query = """
+        SELECT 
+            COALESCE(SUM(CASE WHEN step_int BETWEEN 28 AND 42 THEN (flow_avg * duration_sec / 3600.0) ELSE 0 END), 0) as prod_liters,
+            COALESCE(SUM(CASE WHEN step_int NOT BETWEEN 28 AND 42 AND flow_avg > 0 THEN (flow_avg * duration_sec / 3600.0) ELSE 0 END), 0) as water_used_liters,
+            COUNT(CASE WHEN validation_result = 'FAIL' OR (temp_primary_min < 137.0 AND step_int BETWEEN 18 AND 40) THEN 1 END) as ccp_violations,
+            COUNT(*) as total_steps
+        FROM process_step_logs
+        WHERE section = 'uht' AND DATE(start_time) = CURDATE();
+        """
+        rows = fetch_all(query)
+        row = rows[0] if rows else {}
+
+        prod_liters = round(float(row.get("prod_liters", 0)), 1)
+        water_liters = round(float(row.get("water_used_liters", 0)), 1)
+        ccp_violations = int(row.get("ccp_violations", 0))
+        total_steps = int(row.get("total_steps", 0))
+
+        compliance_pct = round(max(0.0, 100.0 - (ccp_violations * 10.0)), 1) if ccp_violations > 0 else 100.0
+
+        return {
+            "status": "success",
+            "prod_liters": prod_liters,
+            "water_used_liters": water_liters,
+            "ccp_violations": ccp_violations,
+            "compliance_pct": compliance_pct,
+            "total_steps": total_steps
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": str(e),
+            "prod_liters": 0.0,
+            "water_used_liters": 0.0,
+            "ccp_violations": 0,
+            "compliance_pct": 100.0,
+            "total_steps": 0
+        }
+
 # =========================================================================
 # PROCESS STEP LOGS & OFFICIAL REPORT GENERATION APIS
 # =========================================================================

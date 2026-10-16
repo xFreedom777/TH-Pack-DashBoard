@@ -348,7 +348,7 @@
           <div class="chart-card">
             <div class="card-head">
               <h3>วิเคราะห์ความสูญเสียและดาวน์ไทม์ (Downtime Loss Pareto)</h3>
-              <span class="subtext">เวลาหยุดชะงักสะสม (ชั่วโมง)</span>
+              <span class="subtext" id="pareto-chart-subtitle">เวลาหยุดชะงักสะสมจริง (ชั่วโมง)</span>
             </div>
             <div class="chart-container">
               <canvas id="chartPareto"></canvas>
@@ -846,11 +846,11 @@
               <div class="analytics-card-title">🏅 Heat CCP (TT05 & TT07) Compliance Rate</div>
               <span class="analytics-badge success" id="uht-ccp-badge">100% AUDIT READY</span>
             </div>
-            <div class="analytics-val-huge">100.0<span class="unit">%</span></div>
-            <div class="analytics-subtext">อุณหภูมิความร้อนฆ่าเชื้อ TT05 และ TT07 อยู่ในเกณฑ์มาตรฐาน ไม่พบประวัติอุณหภูมิวูบต่ำกว่าเกณฑ์</div>
+            <div class="analytics-val-huge" id="uht-ccp-rate">100.0<span class="unit">%</span></div>
+            <div class="analytics-subtext">อุณหภูมิความร้อนฆ่าเชื้อ TT05 และ TT07 เทียบกับเกณฑ์มาตรฐานความปลอดภัยทางอาหาร (CCP)</div>
             <div class="analytics-metrics-row">
               <div class="analytics-submetric"><span class="lbl">Critical Limit (LL):</span><span class="val text-danger">137.0 °C</span></div>
-              <div class="analytics-submetric"><span class="lbl">Under-Temp Violations:</span><span class="val text-success">0 ครั้ง (0s)</span></div>
+              <div class="analytics-submetric"><span class="lbl">Under-Temp Violations:</span><span class="val text-success" id="uht-ccp-violations">0 ครั้ง (0s)</span></div>
             </div>
           </div>
 

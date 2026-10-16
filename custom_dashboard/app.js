@@ -2719,6 +2719,7 @@ function applyLiveTelemetry(d) {
     setText('uht-total-vsd-kw', `${totalUhtKw.toFixed(2)} kW`);
     const secVal = fiq04Pv > 50 ? (totalUhtKw / (fiq04Pv / 1000.0)).toFixed(2) : '2.85';
     setText('uht-sec-val', secVal);
+    setText('uht-prod-flow-rate', `${fiq04Pv.toFixed(0)} L/h`);
   }
 
   // 2. ATANK Data
@@ -2946,6 +2947,12 @@ function applyLiveTelemetry(d) {
     setText('cip-hw-tank', `${c1.tt_hw_tnk.toFixed(1)} °C`);
     setText('cip-ac-tank', `${c1.tt_ac_tnk.toFixed(1)} °C`);
     setText('cip-cas-tank', `${c1.tt_cas_tnk.toFixed(1)} °C`);
+
+    const b1 = document.getElementById('cip1-badge');
+    if (b1) {
+      b1.textContent = c1.step_int > 0 ? `RUNNING (STEP ${c1.step_int})` : 'STANDBY';
+      b1.className = c1.step_int > 0 ? 'badge success' : 'badge';
+    }
   }
 
   if (d.cip_line2) {
@@ -2960,6 +2967,12 @@ function applyLiveTelemetry(d) {
     setText('cip2-tts', `${c2.tt_s.toFixed(1)} °C`);
     setText('cip2-ttr', `${c2.tt_r.toFixed(1)} °C`);
     setText('cip2-fts', `${c2.ft_s.toFixed(1)} L/h`);
+
+    const b2 = document.getElementById('cip2-badge');
+    if (b2) {
+      b2.textContent = c2.step_int > 0 ? `RUNNING (STEP ${c2.step_int})` : 'STANDBY';
+      b2.className = c2.step_int > 0 ? 'badge success' : 'badge';
+    }
   }
 
   // 4. PRODUCTION SUPPLY
@@ -4527,6 +4540,12 @@ function updateVsdAnalyticsUI(telemetryData) {
       .then(res => res.json())
       .then(data => renderVsdParetoUI(data))
       .catch(e => console.warn('VSD pareto fetch err:', e));
+
+    // Fetch Today Process Facts (Real Production & Water Liters, Real CCP Violations)
+    fetch(`http://${host}:8000/api/v1/process_summary/today`)
+      .then(res => res.json())
+      .then(data => renderProcessSummaryUI(data))
+      .catch(e => console.warn('Process summary fetch err:', e));
   }
 }
 
@@ -4541,6 +4560,14 @@ function renderVsdEnergyUI(energyData, vf) {
   setText('vsd-energy-daily-kwh', `${(energyData.total_daily_kwh || 0).toFixed(2)} kWh`);
   setText('vsd-energy-daily-thb', `${(energyData.total_cost_thb || 0).toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} บาท`);
   setText('vsd-energy-cost-per-liter', `${(energyData.cost_per_liter_thb || 0.007).toFixed(4)} ฿/L`);
+
+  // Update Overview Card 3 footer: Real daily kWh and cost!
+  const kpiDailyKwh = document.getElementById('kpi-daily-kwh');
+  if (kpiDailyKwh) {
+    const kwh = (energyData.total_daily_kwh || 0).toFixed(1);
+    const cost = (energyData.total_cost_thb || 0).toFixed(0);
+    kpiDailyKwh.textContent = `${kwh} kWh (${Number(cost).toLocaleString()} ฿)`;
+  }
 
   // Render or Update Energy Breakdown Bar Chart
   const ctx = document.getElementById('chartVsdEnergy');
@@ -4800,6 +4827,59 @@ function renderVsdParetoUI(paretoData) {
       }
     });
   }
+
+  // Also Update Overview Pareto Chart (charts.pareto) with REAL incidents!
+  if (charts && charts.pareto && items && items.length > 0) {
+    charts.pareto.data.labels = items.slice(0, 5).map(i => `${i.tag} ${i.name.split(' ')[0]}`);
+    charts.pareto.data.datasets[0].data = items.slice(0, 5).map(i => Number((i.downtime_minutes / 60.0).toFixed(1)));
+    charts.pareto.data.datasets[0].label = 'Downtime สะสมจริง (ชั่วโมง)';
+    charts.pareto.update('none');
+    
+    const subTitle = document.getElementById('pareto-chart-subtitle');
+    if (subTitle) {
+      subTitle.textContent = `ประวัติหยุดจริงสะสม ${paretoData.total_trip_events} ครั้ง (${(paretoData.total_downtime_minutes / 60.0).toFixed(1)} ชม.)`;
+    }
+  }
+}
+
+function renderProcessSummaryUI(data) {
+  if (!data || data.status !== 'success') return;
+
+  // 1. Overview Output KPI
+  const kpiOut = document.getElementById('kpi-output');
+  if (kpiOut && (!kpiOut.dataset.manualOverride)) {
+    kpiOut.textContent = (data.prod_liters !== undefined && data.prod_liters > 0) ? Number(data.prod_liters).toLocaleString('en-US', {maximumFractionDigits: 1}) : '0';
+    const outBar = document.querySelector('.kpi-card.gold-accent .kpi-progress-bar');
+    if (outBar) {
+      const pct = Math.min((data.prod_liters / 96000) * 100, 100);
+      outBar.style.width = `${Math.max(pct, 2)}%`;
+    }
+  }
+
+  // 2. UHT Management Tab: Total Prod Liters & Water Liters
+  setText('uht-total-prod-liters', Number(data.prod_liters || 0).toLocaleString('en-US', {maximumFractionDigits: 1}));
+  setText('uht-water-used-liters', Number(data.water_used_liters || 0).toLocaleString('en-US', {maximumFractionDigits: 1}));
+
+  // 3. CCP Compliance & Violations
+  const ccpViolations = document.getElementById('uht-ccp-violations');
+  if (ccpViolations) {
+    ccpViolations.textContent = `${data.ccp_violations} ครั้ง`;
+    ccpViolations.className = data.ccp_violations > 0 ? 'val text-danger font-bold' : 'val text-success';
+  }
+  const ccpRate = document.getElementById('uht-ccp-rate');
+  if (ccpRate) {
+    ccpRate.innerHTML = `${(data.compliance_pct || 100.0).toFixed(1)}<span class="unit">%</span>`;
+  }
+  const ccpBadge = document.getElementById('uht-ccp-badge');
+  if (ccpBadge) {
+    if (data.ccp_violations > 0) {
+      ccpBadge.textContent = `${data.ccp_violations} VIOLATION(S) ALERT`;
+      ccpBadge.className = 'analytics-badge danger';
+    } else {
+      ccpBadge.textContent = '100% AUDIT READY';
+      ccpBadge.className = 'analytics-badge success';
+    }
+  }
 }
 
 window.refreshVsdPareto = async function() {
@@ -4812,6 +4892,7 @@ window.refreshVsdPareto = async function() {
     console.warn('Failed to refresh Pareto data:', err);
   }
 };
+
 
 
 
