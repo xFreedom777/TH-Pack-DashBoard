@@ -388,9 +388,15 @@ def get_process_step_report(
     elif date_filter:
         where_clauses.append("DATE(start_time) = %s")
         params.append(date_filter)
-    if batch_id:
+    else:
+        # Default to today's date if no time range or date is specified
+        today_str = datetime.now().strftime("%Y-%m-%d")
+        where_clauses.append("DATE(start_time) = %s")
+        params.append(today_str)
+
+    if batch_id and batch_id.strip() and batch_id.strip() not in ('-', 'all', 'none', 'null'):
         where_clauses.append("batch_id = %s")
-        params.append(batch_id)
+        params.append(batch_id.strip())
 
     where_sql = "WHERE " + " AND ".join(where_clauses)
     sql = f"""
@@ -401,37 +407,46 @@ def get_process_step_report(
            sensor_summary_json, operator_name, created_at
     FROM process_step_logs
     {where_sql}
-    ORDER BY id ASC
-    LIMIT 100
+    ORDER BY start_time ASC, id ASC
+    LIMIT 500
     """
     rows = fetch_all(sql, tuple(params))
     
-    # If no data found for today, check without date filter to provide the latest records
-    if not rows:
-        fb_where = ["section = %s"]
-        fb_params = [section]
-        if route and route.strip() and route.strip().lower() != 'all':
-            fb_where.append("sku_name LIKE %s")
-            fb_params.append(f"%{route.strip()}%")
-        if exclude_standby:
-            fb_where.append("step_int > 0")
-        fallback_sql = f"""
-        SELECT id, section, batch_id, sku_id, sku_name, step_int, step_desc, step_setpoint,
-               start_time, stop_time, duration_sec, duration_formatted, status, validation_result,
-               validation_note, temp_primary_avg, temp_primary_min, temp_primary_max,
-               temp_secondary_avg, pressure_avg, flow_avg, conductivity_avg, level_avg,
-               sensor_summary_json, operator_name, created_at
-        FROM process_step_logs
-        WHERE {" AND ".join(fb_where)}
-        ORDER BY id DESC
-        LIMIT 25
-        """
-        rows = list(reversed(fetch_all(fallback_sql, tuple(fb_params))))
+    # If no data found for today, query the latest available date for this section
+    if not rows and not from_time and not to_time and not date_filter:
+        latest_date_row = fetch_all(
+            "SELECT DATE(start_time) as d FROM process_step_logs WHERE section = %s ORDER BY start_time DESC LIMIT 1",
+            (section,)
+        )
+        if latest_date_row and latest_date_row[0].get("d"):
+            latest_d = str(latest_date_row[0]["d"])
+            fb_where = ["section = %s", "DATE(start_time) = %s"]
+            fb_params = [section, latest_d]
+            if route and route.strip() and route.strip().lower() != 'all':
+                fb_where.append("sku_name LIKE %s")
+                fb_params.append(f"%{route.strip()}%")
+            if exclude_standby:
+                fb_where.append("step_int > 0")
+            fallback_sql = f"""
+            SELECT id, section, batch_id, sku_id, sku_name, step_int, step_desc, step_setpoint,
+                   start_time, stop_time, duration_sec, duration_formatted, status, validation_result,
+                   validation_note, temp_primary_avg, temp_primary_min, temp_primary_max,
+                   temp_secondary_avg, pressure_avg, flow_avg, conductivity_avg, level_avg,
+                   sensor_summary_json, operator_name, created_at
+            FROM process_step_logs
+            WHERE {" AND ".join(fb_where)}
+            ORDER BY start_time ASC, id ASC
+            LIMIT 500
+            """
+            rows = fetch_all(fallback_sql, tuple(fb_params))
+            date_filter = latest_d
 
     if from_time and to_time:
         target_date = f"{from_time.replace('T', ' ')} ถึง {to_time.replace('T', ' ')}"
+    elif date_filter:
+        target_date = date_filter
     else:
-        target_date = date_filter or datetime.now().strftime("%d/%m/%Y")
+        target_date = datetime.now().strftime("%d/%m/%Y")
     target_batch = batch_id or (rows[0]["batch_id"] if rows else "P" + datetime.now().strftime("%y%m%d") + "-01")
 
     report_meta = {"batch_id": target_batch}

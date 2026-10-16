@@ -892,7 +892,7 @@ body {
 /* ================= INSTRUMENTS GRID ================= */
 .instruments-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
   gap: 14px;
 }
 
@@ -2911,10 +2911,10 @@ body {
   justify-content: center;
   min-width: 80px;
   height: 52px;
-  background: linear-gradient(180deg, #dc2626 0%, #991b1b 100%);
-  border: 2px solid #ef4444;
+  background: linear-gradient(180deg, #059669 0%, #064e3b 100%);
+  border: 2px solid #10b981;
   border-radius: 6px;
-  box-shadow: 0 0 12px rgba(239, 68, 68, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.3);
   color: #ffffff;
   font-family: var(--font-mono);
   font-size: 26px;
@@ -2922,24 +2922,51 @@ body {
   line-height: 1;
   padding: 4px 12px;
   position: relative;
-  transition: transform 0.2s, box-shadow 0.2s;
+  text-shadow: 0 0 10px rgba(52, 211, 153, 0.8);
+  transition: transform 0.2s, box-shadow 0.2s, background 0.3s, border-color 0.3s;
 }
 
 .hmi-count-badge:hover {
   transform: scale(1.04);
-  box-shadow: 0 0 18px rgba(239, 68, 68, 0.6);
+  box-shadow: 0 0 18px rgba(16, 185, 129, 0.65);
+}
+
+.hmi-count-badge.normal {
+  background: linear-gradient(180deg, #059669 0%, #064e3b 100%);
+  border-color: #10b981;
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(52, 211, 153, 0.8);
+}
+
+.hmi-count-badge.normal:hover {
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.65);
 }
 
 .hmi-count-badge.warning {
   background: linear-gradient(180deg, #ea580c 0%, #c2410c 100%);
   border-color: #f97316;
-  box-shadow: 0 0 12px rgba(249, 115, 22, 0.4);
+  box-shadow: 0 0 14px rgba(249, 115, 22, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.8);
 }
 
-.hmi-count-badge.normal {
-  background: linear-gradient(180deg, #059669 0%, #047857 100%);
-  border-color: #10b981;
-  box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+.hmi-count-badge.warning:hover {
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.65);
+}
+
+.hmi-count-badge.critical,
+.hmi-count-badge.danger {
+  background: linear-gradient(180deg, #dc2626 0%, #991b1b 100%);
+  border-color: #ef4444;
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(239, 68, 68, 0.8);
+}
+
+.hmi-count-badge.critical:hover,
+.hmi-count-badge.danger:hover {
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.7);
 }
 
 .fdm-progress-wrap {
@@ -3093,11 +3120,27 @@ body {
   align-items: center;
   gap: 12px;
   background: var(--bg-surface);
-  border: 2px solid rgba(239, 68, 68, 0.6);
+  border: 2px solid rgba(16, 185, 129, 0.5);
   padding: 8px 14px;
   border-radius: 10px;
-  box-shadow: 0 0 15px rgba(239, 68, 68, 0.15);
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
   height: 58px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.tab-hmi-sterile-container.normal {
+  border-color: rgba(16, 185, 129, 0.6);
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+}
+
+.tab-hmi-sterile-container.warning {
+  border-color: rgba(245, 158, 11, 0.6);
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
+}
+
+.tab-hmi-sterile-container.critical {
+  border-color: rgba(239, 68, 68, 0.6);
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
 }
 
 .tab-hmi-label {
@@ -3117,8 +3160,8 @@ body {
 .tab-hmi-red-box {
   min-width: 44px;
   height: 32px;
-  background: linear-gradient(180deg, #dc2626 0%, #991b1b 100%);
-  border: 1.5px solid #ef4444;
+  background: linear-gradient(180deg, #059669 0%, #064e3b 100%);
+  border: 1.5px solid #10b981;
   border-radius: 4px;
   color: #ffffff;
   font-family: var(--font-mono);
@@ -3127,8 +3170,27 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
   padding: 0 8px;
+  transition: all 0.3s;
+}
+
+.tab-hmi-red-box.normal {
+  background: linear-gradient(180deg, #059669 0%, #064e3b 100%);
+  border-color: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+.tab-hmi-red-box.warning {
+  background: linear-gradient(180deg, #ea580c 0%, #c2410c 100%);
+  border-color: #f97316;
+  box-shadow: 0 0 8px rgba(249, 115, 22, 0.4);
+}
+
+.tab-hmi-red-box.critical {
+  background: linear-gradient(180deg, #dc2626 0%, #991b1b 100%);
+  border-color: #ef4444;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
 }
 
 /* Card 4 footer pill */

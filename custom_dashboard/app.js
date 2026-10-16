@@ -762,12 +762,12 @@ const sectionRecorders = {
     canvasId: 'chartRecorderUht',
     statusId: 'recorder-uht-status',
     chart: null,
-    history: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [], pen5: [], pen6: [], pen7: [], pen8: [], pen9: [], pen10: [], pen11: [], pen12: [], pen13: [], pen14: [], pen15: [], pen16: [], pen17: [], pen18: [], pen19: [] },
+    history: { times: [], fullTimes: [], pen0: [], pen1: [], pen2: [], pen3: [], pen4: [], pen5: [], pen6: [], pen7: [], pen8: [], pen9: [], pen10: [], pen11: [], pen12: [], pen13: [], pen14: [], pen15: [], pen16: [], pen17: [], pen18: [], pen19: [], pen20: [] },
     windowSec: 60,
     paused: false,
     mode: 'live',
     historyRange: '1d',
-    penVisibility: [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true]
+    penVisibility: [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true]
   },
   atank: {
     canvasId: 'chartRecorderAtank',
@@ -1015,6 +1015,7 @@ function initUhtRecorder() {
         { label: 'TT07 Outlet Temp (°C)', data: [], borderColor: '#84cc16', backgroundColor: 'rgba(132, 204, 22, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
         { label: 'CT Conductivity (mS/cm)', data: [], borderColor: '#a855f7', backgroundColor: 'rgba(168, 85, 247, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yCond' },
         { label: 'TT71 Aseptic Outlet (°C)', data: [], borderColor: '#eab308', backgroundColor: 'rgba(234, 179, 8, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yTemp' },
+        { label: 'PT01 Main Pressure UHT (Bar)', data: [], borderColor: '#00d2ff', backgroundColor: 'rgba(0, 210, 255, 0.08)', borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, yAxisID: 'yPress' },
         // Setpoint Dashed Curves from DB1101 (colors matching corresponding Pens)
         { label: 'SP: TT01 Holding (136°C)', data: [], borderColor: '#ef4444', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yTemp' },
         { label: 'SP: TT02 Pre-Heat 1 (90°C)', data: [], borderColor: '#06b6d4', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0, yAxisID: 'yTemp' },
@@ -1028,6 +1029,7 @@ function initUhtRecorder() {
     },
     options: getRecorderChartOptions({
       yTemp: { min: 0, max: 160, title: 'Temp (°C)', color: '#ef4444', position: 'left' },
+      yPress: { min: 0, max: 10, title: 'Press (Bar)', color: '#00d2ff', position: 'left', drawGrid: false },
       yFlow: { min: 0, max: 20000, title: 'Flow (L/h)', color: '#10b981', position: 'right' },
       yLevel: { min: 0, max: 200, title: 'Level (Liter)', color: '#8b5cf6', position: 'left', display: false },
       yPower: { min: 0, max: 45, title: 'Power (kW)', color: '#f59e0b', position: 'right' },
@@ -1399,7 +1401,7 @@ function setupSectionRecorderControls() {
 
       // Also sync visibility of matching setpoint curve in UHT recorder
       if (targetSec === 'uht') {
-        const spMap = { 0: 12, 1: 13, 3: 18, 4: 19, 6: 14, 7: 15, 8: 16, 9: 17 };
+        const spMap = { 0: 13, 1: 14, 3: 19, 4: 20, 6: 15, 7: 16, 8: 17, 9: 18 };
         if (spMap[penIdx] !== undefined) {
           rec.penVisibility[spMap[penIdx]] = rec.penVisibility[penIdx];
           rec.chart.setDatasetVisibility(spMap[penIdx], rec.penVisibility[penIdx]);
@@ -1746,7 +1748,8 @@ const PEN_ALARM_LIMITS = {
     { pen: 8, tag: 'TT03 Pre-Heat 2', unit: '°C', target: 'SP: 90.0°C (80-90)', ll: 70.0, l: 75.0, h: 92.0, hh: 96.0, ccp: false },
     { pen: 9, tag: 'TT07 Outlet Temp', unit: '°C', target: 'Heat CCP (137-144°C)', ll: null, l: null, h: 148.0, hh: 152.0, ccp: true },
     { pen: 10, tag: 'CT Conductivity', unit: 'mS/cm', target: '0.0 - 30.0', ll: null, l: null, h: 35.0, hh: 50.0, ccp: false },
-    { pen: 11, tag: 'TT71 Aseptic Outlet', unit: '°C', target: '135.0 - 145.0°C', ll: 130.0, l: 135.0, h: 145.0, hh: 150.0, ccp: false }
+    { pen: 11, tag: 'TT71 Aseptic Outlet', unit: '°C', target: '135.0 - 145.0°C', ll: 130.0, l: 135.0, h: 145.0, hh: 150.0, ccp: false },
+    { pen: 12, tag: 'PT01 Main Pressure UHT', unit: 'Bar', target: 'Main Pressure UHT', ll: 1.0, l: 1.5, h: 5.0, hh: 6.0, ccp: false }
   ],
   atank: [
     { pen: 0, tag: 'PT460 Aseptic Pressure', unit: 'bar', target: 'Dynamic SP: 1.50 / 0.50 bar', ll: 0.4, l: 0.5, h: 2.5, hh: 2.8, ccp: true },
@@ -1942,6 +1945,8 @@ function pushAllSectionRecordersData(d) {
   setText('uht-pen-tt07', `${(u.tt07 || 0).toFixed(1)} °C`);
   setText('uht-pen-ct', `${(u.ct || 0).toFixed(3)} mS/cm`);
   setText('uht-pen-tt71', `${tt71Val.toFixed(1)} °C`);
+  const pt01Val = (u.pt01 !== undefined) ? u.pt01 : 0.0;
+  setText('uht-pen-pt01', `${pt01Val.toFixed(2)} Bar`);
 
   const spHtc = (u.sp_htc !== undefined) ? u.sp_htc : 136.0;
   const isSterileStep = (u.step_int === 18);
@@ -1984,6 +1989,7 @@ function pushAllSectionRecordersData(d) {
   updatePenChipAlert('uht', 9, u.tt07);
   updatePenChipAlert('uht', 10, u.ct);
   updatePenChipAlert('uht', 11, tt71Val);
+  updatePenChipAlert('uht', 12, pt01Val);
 
   const spPh01 = (u.sp_ph01 !== undefined) ? u.sp_ph01 : 90.0;
   const spC01 = (u.sp_c01 !== undefined) ? u.sp_c01 : 25.0;
@@ -2012,8 +2018,9 @@ function pushAllSectionRecordersData(d) {
     uhtRec.history.pen9.push(u.tt07 || 0);
     uhtRec.history.pen10.push(u.ct || 0);
     uhtRec.history.pen11.push(tt71Val);
-    // Push DB1101 & DB331 Setpoints (pen12..pen19)
     if (!uhtRec.history.pen12) uhtRec.history.pen12 = [];
+    uhtRec.history.pen12.push(pt01Val);
+    // Push DB1101 & DB331 Setpoints (pen13..pen20)
     if (!uhtRec.history.pen13) uhtRec.history.pen13 = [];
     if (!uhtRec.history.pen14) uhtRec.history.pen14 = [];
     if (!uhtRec.history.pen15) uhtRec.history.pen15 = [];
@@ -2021,14 +2028,15 @@ function pushAllSectionRecordersData(d) {
     if (!uhtRec.history.pen17) uhtRec.history.pen17 = [];
     if (!uhtRec.history.pen18) uhtRec.history.pen18 = [];
     if (!uhtRec.history.pen19) uhtRec.history.pen19 = [];
-    uhtRec.history.pen12.push(spHtc);
-    uhtRec.history.pen13.push(spPh01);
-    uhtRec.history.pen14.push(spHtc); // TT05 uses the same Set Point as TT01 (spHtc)
-    uhtRec.history.pen15.push(spC02);
-    uhtRec.history.pen16.push(spPh02);
-    uhtRec.history.pen17.push(spHtc); // TT07 uses the same Set Point as TT01 (spHtc)
-    uhtRec.history.pen18.push(spFiq04);
-    uhtRec.history.pen19.push(spFiqcv08);
+    if (!uhtRec.history.pen20) uhtRec.history.pen20 = [];
+    uhtRec.history.pen13.push(spHtc);
+    uhtRec.history.pen14.push(spPh01);
+    uhtRec.history.pen15.push(spHtc); // TT05 uses the same Set Point as TT01 (spHtc)
+    uhtRec.history.pen16.push(spC02);
+    uhtRec.history.pen17.push(spPh02);
+    uhtRec.history.pen18.push(spHtc); // TT07 uses the same Set Point as TT01 (spHtc)
+    uhtRec.history.pen19.push(spFiq04);
+    uhtRec.history.pen20.push(spFiqcv08);
     trimRecorderHistory(uhtRec);
   }
 
@@ -2606,6 +2614,13 @@ function applyLiveTelemetry(d) {
     if (flowBar) flowBar.style.width = `${Math.min(100, Math.max(5, fiq04Ov))}%`;
     setText('uht-ct', `${u.ct.toFixed(3)} mS/cm`);
     setText('uht-tt01', `${u.tt01.toFixed(1)} °C`);
+    const pt01Val = (u.pt01 !== undefined) ? u.pt01 : 0.0;
+    setText('uht-pt01', `${pt01Val.toFixed(2)} Bar`);
+    const pt01Bar = document.getElementById('uht-pt01-bar');
+    if (pt01Bar) {
+      const ptPct = Math.min(100, Math.max(5, (pt01Val / 6.0) * 100));
+      pt01Bar.style.width = `${ptPct}%`;
+    }
     setText('kpi-uht-temp', `${u.tt01.toFixed(1)} °C`);
 
     setText('uht-tt01-chip', `${u.tt01.toFixed(1)}°C`);
@@ -2766,9 +2781,39 @@ function applyLiveTelemetry(d) {
   setText('uht-tab-sterile-count', uhtCnt);
   setText('atank-tab-sterile-count', atankCnt);
 
+  // Tab mini badges dynamic colors (green on normal, orange on warning, red on critical)
+  const uhtTabBox = document.getElementById('uht-tab-sterile-count');
+  if (uhtTabBox) {
+    const cls = uhtCnt >= 10 ? 'critical' : (uhtCnt >= 7 ? 'warning' : 'normal');
+    uhtTabBox.className = `tab-hmi-red-box ${cls}`;
+    const uhtTabCont = uhtTabBox.closest('.tab-hmi-sterile-container');
+    if (uhtTabCont) uhtTabCont.className = `tab-hmi-sterile-container ${cls}`;
+  }
+
+  const atankTabBox = document.getElementById('atank-tab-sterile-count');
+  if (atankTabBox) {
+    const cls = atankCnt >= 25 ? 'critical' : (atankCnt >= 18 ? 'warning' : 'normal');
+    atankTabBox.className = `tab-hmi-red-box ${cls}`;
+    const atankTabCont = atankTabBox.closest('.tab-hmi-sterile-container');
+    if (atankTabCont) atankTabCont.className = `tab-hmi-sterile-container ${cls}`;
+  }
+
   // 3. Update Decision Matrix Cards in Overview
   setText('fdm-uht-count', uhtCnt);
   setText('fdm-uht-count-sub', uhtCnt);
+
+  // HMI Badge Color for UHT (Green when Normal, Orange when Warning, Red when Critical)
+  const uhtBadge = document.getElementById('fdm-uht-badge');
+  if (uhtBadge) {
+    if (uhtCnt >= 10) {
+      uhtBadge.className = 'hmi-count-badge critical';
+    } else if (uhtCnt >= 7) {
+      uhtBadge.className = 'hmi-count-badge warning';
+    } else {
+      uhtBadge.className = 'hmi-count-badge normal';
+    }
+  }
+
   const uhtBar = document.getElementById('fdm-uht-bar');
   if (uhtBar) {
     const pct = Math.min(Math.max((uhtCnt / 10) * 100, 0), 100);
@@ -2791,6 +2836,19 @@ function applyLiveTelemetry(d) {
 
   setText('fdm-atank-count', atankCnt);
   setText('fdm-atank-count-sub', atankCnt);
+
+  // HMI Badge Color for ATANK (Green when Normal, Orange when Warning, Red when Critical)
+  const atankBadge = document.getElementById('fdm-atank-badge');
+  if (atankBadge) {
+    if (atankCnt >= 25) {
+      atankBadge.className = 'hmi-count-badge critical';
+    } else if (atankCnt >= 18) {
+      atankBadge.className = 'hmi-count-badge warning';
+    } else {
+      atankBadge.className = 'hmi-count-badge normal';
+    }
+  }
+
   const atankBar = document.getElementById('fdm-atank-bar');
   if (atankBar) {
     const pct = Math.min(Math.max((atankCnt / 25) * 100, 0), 100);
@@ -3089,12 +3147,12 @@ window.openStepReportModal = function(section) {
   const fromInput = document.getElementById('step-report-from-input');
   const toInput = document.getElementById('step-report-to-input');
   
-  if (fromInput && !fromInput.value) {
+  if (fromInput) {
     const now = new Date();
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
     fromInput.value = `${startOfDay.getFullYear()}-${pad(startOfDay.getMonth() + 1)}-${pad(startOfDay.getDate())}T00:00`;
   }
-  if (toInput && !toInput.value) {
+  if (toInput) {
     const now = new Date();
     toInput.value = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
   }
@@ -3122,7 +3180,7 @@ window.openStepReportDocument = function() {
   if (toVal) {
     url += `&to_time=${encodeURIComponent(toVal)}`;
   }
-  if (batchVal) {
+  if (batchVal && batchVal !== '-' && batchVal.toLowerCase() !== 'all' && batchVal.toLowerCase() !== 'none') {
     url += `&batch_id=${encodeURIComponent(batchVal)}`;
   }
   if (routeVal && routeVal !== 'all') {

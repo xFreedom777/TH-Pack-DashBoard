@@ -250,7 +250,7 @@
                   <span class="fdm-tank-tag">BALANCE TANK BTD01 (DB1000.DBW4)</span>
                   <span class="fdm-tank-name">UHT Sterile Time Count</span>
                 </div>
-                <div class="hmi-count-badge" id="fdm-uht-badge">
+                <div class="hmi-count-badge normal" id="fdm-uht-badge">
                   <span id="fdm-uht-count">5</span>
                 </div>
               </div>
@@ -411,12 +411,12 @@
                 <div class="step-timer-text">เวลานับ: <span id="uht-timer-val" class="font-mono">0s</span> / <span id="uht-sp-val" class="font-mono">0s</span></div>
               </div>
             </div>
-            <div class="tab-hmi-sterile-container" title="UHT Balance Tank Sterile Time Count (DB1000.DBW4)">
+            <div class="tab-hmi-sterile-container normal" title="UHT Balance Tank Sterile Time Count (DB1000.DBW4)">
               <div class="tab-hmi-label">
                 <span>BALANCE TANK BTD01</span>
                 UHT Sterile Time
               </div>
-              <div class="tab-hmi-red-box" id="uht-tab-sterile-count">5</div>
+              <div class="tab-hmi-red-box normal" id="uht-tab-sterile-count">5</div>
             </div>
           </div>
         </div>
@@ -480,6 +480,13 @@
             <div class="meter-name">Holding Temperature</div>
             <div class="meter-val font-mono highlight-gold" id="uht-tt01">34.1 <span class="unit">°C</span></div>
             <div class="meter-bar"><div class="fill gold" id="uht-tt01-bar" style="width: 25%;"></div></div>
+          </div>
+
+          <div class="meter-card">
+            <span class="meter-tag">PT01 (DB321.DBD1302)</span>
+            <div class="meter-name">Main Pressure UHT</div>
+            <div class="meter-val font-mono highlight-cyan" id="uht-pt01">-- <span class="unit">Bar</span></div>
+            <div class="meter-bar"><div class="fill cyan" id="uht-pt01-bar" style="width: 35%;"></div></div>
           </div>
         </div>
 
@@ -660,6 +667,15 @@
                 <span class="pen-val font-mono" id="uht-pen-tt71">-- °C</span>
               </div>
               <span class="pen-limit">Aseptic Outlet Stage</span>
+            </div>
+
+            <div class="pen-chip" data-section="uht" data-pen="12">
+              <span class="pen-color-dot" style="background:#00d2ff; box-shadow:0 0 8px #00d2ff;"></span>
+              <div class="pen-meta">
+                <span class="pen-tag">PEN 13: PT01 MAIN PRESS</span>
+                <span class="pen-val font-mono" id="uht-pen-pt01">-- Bar</span>
+              </div>
+              <span class="pen-limit">Main Pressure UHT</span>
             </div>
           </div>
 

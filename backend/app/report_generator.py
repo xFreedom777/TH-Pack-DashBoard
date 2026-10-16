@@ -125,6 +125,55 @@ def generate_step_report_html(section: str, batch_id: str, date_str: str, steps:
 
     total_table_cols = 5 + col_span_params + 1
 
+    # Robust consecutive step merging and noise pulse filtering:
+    # 1. Filter out micro transition spikes (< 3s) for step 0
+    # 2. Merge consecutive rows with identical step_int into a single continuous duration
+    merged_steps = []
+    for s in steps:
+        s_int = s.get("step_int", 0)
+        dur_s = s.get("duration_sec", 0) or 0
+        
+        # Omit zero/micro-glitch pulses of Step 0 (< 3s)
+        if s_int == 0 and dur_s < 3:
+            continue
+            
+        if not merged_steps:
+            merged_steps.append(dict(s))
+            continue
+            
+        prev = merged_steps[-1]
+        p_int = prev.get("step_int", 0)
+        
+        p_stop = parse_dt(prev.get("stop_time"))
+        c_stop = parse_dt(s.get("stop_time"))
+        
+        # If identical step number occurs consecutively, merge into one logical step
+        if p_int == s_int:
+            if c_stop and p_stop:
+                new_stop = max(p_stop, c_stop)
+                prev["stop_time"] = new_stop.strftime("%Y-%m-%d %H:%M:%S")
+            elif c_stop:
+                prev["stop_time"] = s.get("stop_time")
+                
+            p_start_dt = parse_dt(prev.get("start_time"))
+            p_stop_dt = parse_dt(prev.get("stop_time"))
+            if p_start_dt and p_stop_dt and p_stop_dt >= p_start_dt:
+                new_dur = int((p_stop_dt - p_start_dt).total_seconds())
+                prev["duration_sec"] = new_dur
+                h = new_dur // 3600
+                m = (new_dur % 3600) // 60
+                sec = new_dur % 60
+                prev["duration_formatted"] = f"{h:02d}:{m:02d}:{sec:02d}"
+                
+            # Preserve sensor data if current record has values and prev did not
+            for sensor_k in ("temp_primary_avg", "temp_secondary_avg", "flow_avg", "conductivity_avg", "level_avg"):
+                if s.get(sensor_k) is not None and prev.get(sensor_k) is None:
+                    prev[sensor_k] = s[sensor_k]
+        else:
+            merged_steps.append(dict(s))
+            
+    steps = merged_steps
+
     rows_html = []
     prev_stop_dt = None
 

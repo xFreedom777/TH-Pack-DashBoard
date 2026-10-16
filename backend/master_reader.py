@@ -382,8 +382,15 @@ class MasterPlantReader:
             except Exception as e_d331:
                 pass
 
-            # Read DB321 TT71 / TT171 (Aseptic Outlet Temperature) at offset 1702 (Real)
+            # Read DB321 PT01 (Main Pressure UHT) at offset 1302 (Real) & TT71 (Aseptic Outlet) at offset 1702 (Real)
+            pt01_val = 0.0
             tt71_val = 0.0
+            try:
+                d321_pt01 = self.client.db_read(321, 1302, 4)
+                pt01_val = round(get_real(d321_pt01, 0), 2)
+            except Exception as e_d321_pt01:
+                pass
+
             try:
                 d321_tt71 = self.client.db_read(321, 1702, 4)
                 tt71_val = round(get_real(d321_tt71, 0), 2)
@@ -429,6 +436,7 @@ class MasterPlantReader:
                 "tt07": tt07_val,
                 "tt71": tt71_val,
                 "tt171": tt71_val,
+                "pt01": pt01_val,
                 "ct": round(get_real(d1200, 36), 3),
                 "ft04fiq": fiq04_pv if fiq04_pv > 0 else round(get_real(d1200, 50), 1),
                 "fiq04_pv": fiq04_pv,
