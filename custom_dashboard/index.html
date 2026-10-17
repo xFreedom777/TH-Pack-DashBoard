@@ -765,70 +765,56 @@
           </div>
         </div>
 
-        <!-- S7-1500 PID Control Loops Matrix -->
-        <div class="card-head section-head" style="margin-top: 12px;">
-          <h3>🎛️ ตารางสุขภาพลูปควบคุมอัตโนมัติ (S7-1500 DB331 PID Loops Matrix)</h3>
-          <span class="badge info">5x Realtime Control Loops</span>
+        <!-- S7-1500 PID Control Loops Matrix & Tuning Parameters -->
+        <div class="card-head section-head" style="margin-top: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <h3>🎛️ ตารางพารามิเตอร์จูนเนอร์ & สุขภาพลูปควบคุม (S7-1500 DB331 PID Tuning Matrix)</h3>
+            <span class="badge info" id="pid-total-badge">14x Monitored Loops</span>
+          </div>
+          <div class="pid-filters" style="display: flex; gap: 6px; flex-wrap: wrap;">
+            <button class="btn-pen-action pid-filter-btn active" data-cat="all">ทั้งหมด (14)</button>
+            <button class="btn-pen-action pid-filter-btn" data-cat="Flow">Flow & Balance (3)</button>
+            <button class="btn-pen-action pid-filter-btn" data-cat="Heating">Heating & Steam (4)</button>
+            <button class="btn-pen-action pid-filter-btn" data-cat="Cooling">Cooling (4)</button>
+            <button class="btn-pen-action pid-filter-btn" data-cat="Pressure">Pressure (3)</button>
+          </div>
         </div>
+
+        <!-- PID Tuning Diagnostic Alert Card -->
+        <div class="pid-diagnostic-banner">
+          <div class="pid-diag-icon">⚡</div>
+          <div class="pid-diag-content">
+            <div class="pid-diag-title">
+              <strong>ข้อวินิจฉัยเชิงวิศวกรรม (Engineering Root-Cause Insight): ลูป FIQ04 (ปั๊ม Feed M4)</strong>
+              <span class="analytics-badge warning" style="margin-left: 8px;">INTEGRATOR-DOMINATED</span>
+            </div>
+            <div class="pid-diag-desc">
+              ลูป <strong>FIQ04 (DB331.1800)</strong> ตั้งค่า <code>P (Gain) = 0.00010</code> (ต่ำมากจนแทบไม่มีแรงดึง Proportional) และพึ่งพา <code>Ti = 30.0s</code> เป็นหลัก 
+              ทำให้เมื่อเกิดสภาวะเปลี่ยนผ่าน (Transient) เช่น การสลับวาล์วป้อน Product ปั๊มจะไม่สามารถลดความเร็วได้ทันที ต้องใช้เวลาสะสม Integrator ดึงรอบลงมานานถึง ~10 วินาที 
+              จึงเกิดปรากฏการณ์โฟลว์กระชากแตะ <strong>7,504.72 L/h</strong> จนถูกสั่งตัด Unsterile ทันที — แนะนำเพิ่ม Gain P เล็กน้อย หรือเพิ่ม Timer หน่วงตัด 5-10 วินาทีใน Safety Logic
+            </div>
+          </div>
+        </div>
+
         <div class="table-responsive">
           <table class="loop-matrix-table">
             <thead>
               <tr>
-                <th>Loop Tag</th>
+                <th>Loop Tag / Offset</th>
                 <th>หน้าที่ / จุดควบคุม (Description)</th>
                 <th>เป้าหมาย (SV)</th>
                 <th>ตรวจวัดจริง (PV)</th>
                 <th>สั่งขับ (OV %)</th>
+                <th title="Proportional Gain">Gain P</th>
+                <th title="Integral Reset Time">Ti (s)</th>
+                <th title="Derivative Time">Td (s)</th>
+                <th title="Output Clamp Limits">Clamp (Min-Max)</th>
                 <th>ส่วนเบี่ยงเบน (|Error|)</th>
-                <th>สถานะลูป (Loop Health)</th>
+                <th>สถานะลูป (Health)</th>
               </tr>
             </thead>
             <tbody id="uht-loops-tbody">
-              <tr>
-                <td class="loop-tag-cell">FIQ04</td>
-                <td><div class="font-bold">UHT M4 Feed Pump Flow Control</div><div class="loop-name-cell">ควบคุมอัตราการไหลน้ำมะพร้าวผ่านปั๊ม M4 ขับโดย VSD01 (15 kW)</div></td>
-                <td class="font-mono font-bold" id="loop-fiq04-sv">7000.0 L/h</td>
-                <td class="font-mono font-bold text-success" id="loop-fiq04-pv">1.1 L/h</td>
-                <td class="font-mono text-cyan" id="loop-fiq04-ov">60.0%</td>
-                <td class="font-mono text-warning" id="loop-fiq04-err">6998.9</td>
-                <td><span class="analytics-badge info" id="loop-fiq04-status">TRACKING</span></td>
-              </tr>
-              <tr>
-                <td class="loop-tag-cell">FIQCV08</td>
-                <td><div class="font-bold">UHT Add Water Balance Tank</div><div class="loop-name-cell">วาล์วเติมน้ำสะอาดเข้าแทงก์บาลานซ์สำหรับเตรียมระบบและวนน้ำ</div></td>
-                <td class="font-mono font-bold" id="loop-fiqcv08-sv">50.00 L</td>
-                <td class="font-mono font-bold text-success" id="loop-fiqcv08-pv">11.23 L</td>
-                <td class="font-mono text-cyan" id="loop-fiqcv08-ov">20.00%</td>
-                <td class="font-mono text-warning" id="loop-fiqcv08-err">38.77</td>
-                <td><span class="analytics-badge info" id="loop-fiqcv08-status">TRACKING</span></td>
-              </tr>
-              <tr>
-                <td class="loop-tag-cell">CV49FIC01</td>
-                <td><div class="font-bold">Steam Supply to HE01.18 Regulating Valve</div><div class="loop-name-cell">คอนโทรลวาล์วไอน้ำเข้าชุดแลกเปลี่ยนความร้อนตอนที่ 18</div></td>
-                <td class="font-mono font-bold" id="loop-cv49-sv">0.0 °C</td>
-                <td class="font-mono font-bold text-success" id="loop-cv49-pv">29.6 °C</td>
-                <td class="font-mono text-cyan" id="loop-cv49-ov">10.0%</td>
-                <td class="font-mono text-warning" id="loop-cv49-err">29.6</td>
-                <td><span class="analytics-badge info" id="loop-cv49-status">READY</span></td>
-              </tr>
-              <tr>
-                <td class="loop-tag-cell">CV50FIC01</td>
-                <td><div class="font-bold">Steam Supply to HE01.17 Regulating Valve</div><div class="loop-name-cell">คอนโทรลวาล์วไอน้ำเข้าชุดแลกเปลี่ยนความร้อนตอนที่ 17</div></td>
-                <td class="font-mono font-bold" id="loop-cv50-sv">0.0 °C</td>
-                <td class="font-mono font-bold text-success" id="loop-cv50-pv">18.6 °C</td>
-                <td class="font-mono text-cyan" id="loop-cv50-ov">0.0%</td>
-                <td class="font-mono text-warning" id="loop-cv50-err">18.6</td>
-                <td><span class="analytics-badge success" id="loop-cv50-status">CLOSED</span></td>
-              </tr>
-              <tr>
-                <td class="loop-tag-cell">CV64FIC01</td>
-                <td><div class="font-bold">Cooling Water HE01.20 Regulating Valve</div><div class="loop-name-cell">คอนโทรลวาล์วน้ำหล่อเย็นควบคุมอุณหภูมิลดความร้อนตอนที่ 20</div></td>
-                <td class="font-mono font-bold" id="loop-cv64-sv">60.0 °C</td>
-                <td class="font-mono font-bold text-success" id="loop-cv64-pv">30.8 °C</td>
-                <td class="font-mono text-cyan" id="loop-cv64-ov">0.0%</td>
-                <td class="font-mono text-warning" id="loop-cv64-err">29.2</td>
-                <td><span class="analytics-badge success" id="loop-cv64-status">CLOSED</span></td>
-              </tr>
+              <!-- Dynamically rendered by renderPidMatrix() -->
             </tbody>
           </table>
         </div>

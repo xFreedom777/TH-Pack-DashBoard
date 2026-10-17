@@ -344,7 +344,7 @@ class MasterPlantReader:
             except Exception as e_d1101:
                 pass
 
-            # Read DB331 Control Loops (FIQCV08, CV64FIC01, CV49FIC01, CV50FIC01, FIQ04)
+            # Read DB331 Control Loops with complete PID Tuning Parameters (P, Ti, Td, Limits)
             fiqcv08_pv = round(get_real(d1200, 4), 2)
             fiqcv08_sv = 50.0
             fiqcv08_ov = 20.0
@@ -353,32 +353,85 @@ class MasterPlantReader:
             cv50_sv, cv50_pv, cv50_ov = 0.0, 18.6, 0.0
             fiq04_sv, fiq04_pv, fiq04_ov = 7000.0, round(get_real(d1200, 50), 1), 60.0
 
+            loops_dict = {}
             try:
-                d331_loops = self.client.db_read(331, 800, 1020)
-                # Offset 800: FIQCV08 (Add Water)
-                fiqcv08_sv = round(get_real(d331_loops, 2), 2)
-                fiqcv08_pv = round(get_real(d331_loops, 6), 2)
-                fiqcv08_ov = round(get_real(d331_loops, 14), 2)
+                d331_c1 = self.client.db_read(331, 0, 900)
+                d331_c2 = self.client.db_read(331, 900, 960)
 
-                # Offset 900: CV64FIC01 (Cooling Water)
-                cv64_sv = round(get_real(d331_loops, 102), 2)
-                cv64_pv = round(get_real(d331_loops, 106), 2)
-                cv64_ov = round(get_real(d331_loops, 114), 2)
+                loops_cfg = [
+                    (1, 0, 'tt03_ph', 'HE01.01', 'HE01.01 Pre-Heat 1 Temp', 'คุมอุณหภูมิแลกเปลี่ยนความร้อนตอนที่ 1', 'Heating', '°C'),
+                    (1, 100, 'tt04_ph', 'HE01.05', 'HE01.05 Pre-Heat 2 Temp', 'คุมอุณหภูมิแลกเปลี่ยนความร้อนตอนที่ 5', 'Heating', '°C'),
+                    (1, 500, 'fiq03', 'FIQ03', 'Homogenizer Backpressure', 'คุมแรงดันต้านชุดโฮโมจีไนเซอร์ (Aseptic)', 'Pressure', 'bar'),
+                    (1, 600, 'fiq10', 'FIQ10', 'Hot Water Unit Flow Rate', 'คุมอัตราการไหลระบบน้ำร้อนฆ่าเชื้อ', 'Flow', 'L/h'),
+                    (1, 700, 'fic44', 'FIC44', 'Hot Water Steam Regulating Valve', 'คุมวาล์วสตรีมเข้าชุดน้ำร้อน HE-02', 'Heating', '°C'),
+                    (1, 800, 'fiqcv08', 'FIQCV08', 'Balance Tank Add Water Loop', 'วาล์วเติมน้ำสะอาดลงแทงก์สมดุล Balance Tank', 'Flow', 'L'),
+                    (2, 0, 'cv64', 'CV64FIC01', 'Cooling Water HE01.20 Regulating', 'คอนโทรลวาล์วน้ำหล่อเย็นคุมอุณหภูมิตอนที่ 20', 'Cooling', '°C'),
+                    (2, 100, 'cv49', 'CV49FIC01', 'Steam Supply HE01.18 Regulating', 'คอนโทรลวาล์วไอน้ำสตรีมความร้อนฆ่าเชื้อตอนที่ 18', 'Heating', '°C'),
+                    (2, 200, 'cv50', 'CV50FIC01', 'Steam Supply HE01.17 Regulating', 'คอนโทรลวาล์วไอน้ำสตรีมเสริมความร้อนฆ่าเชื้อตอนที่ 17', 'Heating', '°C'),
+                    (2, 300, 'cv67', 'CV67FIC01', 'Final Cooling Water HE01.21 Valve', 'คอนโทรลวาล์วน้ำหล่อเย็นขั้นตอนสุดท้ายตอนที่ 21', 'Cooling', '°C'),
+                    (2, 400, 'cv63', 'CV63FIC01', 'Ice Water HE01.16 Regulating Valve', 'คอนโทรลวาล์วน้ำเย็นจัดคุมอุณหภูมิส่งออกตอนที่ 16', 'Cooling', '°C'),
+                    (2, 500, 'pt_in', 'PT_IN', 'Supply Pump Pressure Control', 'คุมแรงดันปั๊มส่งเข้าชุดฟิลเตอร์กรอง', 'Pressure', 'bar'),
+                    (2, 800, 'cv26', 'CV26FIC01', 'Product Cooling HE01.15 Valve', 'คอนโทรลวาล์วหล่อเย็นผลิตภัณฑ์ตอนที่ 15', 'Cooling', '°C'),
+                    (2, 900, 'fiq04', 'FIQ04', 'M4 Feed Pump Flow Control (VSD01)', 'ควบคุมอัตราการไหลน้ำมะพร้าวผ่านปั๊ม M4 (15 kW)', 'Flow', 'L/h')
+                ]
 
-                # Offset 1000: CV49FIC01 (Steam HE01.18)
-                cv49_sv = round(get_real(d331_loops, 202), 2)
-                cv49_pv = round(get_real(d331_loops, 206), 2)
-                cv49_ov = round(get_real(d331_loops, 214), 2)
+                for ch, off, key, tag, name, desc, cat, unit in loops_cfg:
+                    data = d331_c1 if ch == 1 else d331_c2
+                    sv = round(get_real(data, off + 2), 2 if unit != 'L/h' else 1)
+                    pv = round(get_real(data, off + 6), 2 if unit != 'L/h' else 1)
+                    ov = round(get_real(data, off + 14), 1)
+                    p = round(get_real(data, off + 20), 5)
+                    ti_ms = get_dword(data, off + 24)
+                    td_ms = get_dword(data, off + 28)
+                    ov_max = round(get_real(data, off + 32), 1)
+                    ov_min = round(get_real(data, off + 36), 1)
+                    ti_s = round(ti_ms / 1000.0, 1) if ti_ms else 0.0
+                    td_s = round(td_ms / 1000.0, 1) if td_ms else 0.0
+                    err = round(abs(sv - pv), 2 if unit != 'L/h' else 1)
 
-                # Offset 1100: CV50FIC01 (Steam HE01.17)
-                cv50_sv = round(get_real(d331_loops, 302), 2)
-                cv50_pv = round(get_real(d331_loops, 306), 2)
-                cv50_ov = round(get_real(d331_loops, 314), 2)
+                    st = 'TRACKING'
+                    if ov == 0.0 and sv == 0.0:
+                        st = 'CLOSED'
+                    elif ov >= ov_max - 0.1 and ov > 0:
+                        st = 'CLAMP_MAX'
+                    elif ov <= ov_min + 0.1 and ov_min > 0:
+                        st = 'CLAMP_MIN'
+                    elif err <= 0.05 * max(abs(sv), 1.0) and sv > 0:
+                        st = 'LOCKED'
 
-                # Offset 1800: FIQ04 (M4 Feed Flow / VSD01)
-                fiq04_sv = round(get_real(d331_loops, 1002), 1)
-                fiq04_pv = round(get_real(d331_loops, 1006), 2)
-                fiq04_ov = round(get_real(d331_loops, 1014), 1)
+                    loops_dict[key] = {
+                        'tag': tag,
+                        'name': name,
+                        'desc': desc,
+                        'cat': cat,
+                        'unit': unit,
+                        'sv': sv,
+                        'pv': pv,
+                        'ov': ov,
+                        'err': err,
+                        'p': p,
+                        'ti': ti_s,
+                        'td': td_s,
+                        'ov_min': ov_min,
+                        'ov_max': ov_max,
+                        'status': st
+                    }
+
+                fiqcv08_sv = loops_dict['fiqcv08']['sv']
+                fiqcv08_pv = loops_dict['fiqcv08']['pv']
+                fiqcv08_ov = loops_dict['fiqcv08']['ov']
+                cv64_sv = loops_dict['cv64']['sv']
+                cv64_pv = loops_dict['cv64']['pv']
+                cv64_ov = loops_dict['cv64']['ov']
+                cv49_sv = loops_dict['cv49']['sv']
+                cv49_pv = loops_dict['cv49']['pv']
+                cv49_ov = loops_dict['cv49']['ov']
+                cv50_sv = loops_dict['cv50']['sv']
+                cv50_pv = loops_dict['cv50']['pv']
+                cv50_ov = loops_dict['cv50']['ov']
+                fiq04_sv = loops_dict['fiq04']['sv']
+                fiq04_pv = loops_dict['fiq04']['pv']
+                fiq04_ov = loops_dict['fiq04']['ov']
             except Exception as e_d331:
                 pass
 
@@ -465,13 +518,7 @@ class MasterPlantReader:
                     "ccp_compliant": ((tt05_val >= 135.0 and tt07_val >= 135.0) if uht_step_int in [16, 18] else True),
                     "holding_time_s": 16.0
                 },
-                "loops": {
-                    "fiq04": {"tag": "FIQ04", "name": "M4 Feed Pump Flow Control (VSD01)", "sv": fiq04_sv, "pv": fiq04_pv, "ov": fiq04_ov, "unit": "L/h"},
-                    "fiqcv08": {"tag": "FIQCV08", "name": "Balance Tank Add Water Loop", "sv": fiqcv08_sv, "pv": fiqcv08_pv, "ov": fiqcv08_ov, "unit": "Liter"},
-                    "cv49": {"tag": "CV49FIC01", "name": "Steam Supply to HE01.18 Regulating Valve", "sv": cv49_sv, "pv": cv49_pv, "ov": cv49_ov, "unit": "°C"},
-                    "cv50": {"tag": "CV50FIC01", "name": "Steam Supply to HE01.17 Regulating Valve", "sv": cv50_sv, "pv": cv50_pv, "ov": cv50_ov, "unit": "°C"},
-                    "cv64": {"tag": "CV64FIC01", "name": "Cooling Water HE01.20 Regulating Valve", "sv": cv64_sv, "pv": cv64_pv, "ov": cv64_ov, "unit": "°C"}
-                }
+                "loops": loops_dict
             }
 
             # 1.1 READ DB1000 (HMI DATA) FOR STERILE TIME COUNTS

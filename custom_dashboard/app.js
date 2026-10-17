@@ -98,6 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderDriveBayCards({});
   startClock();
   initZoomController();
+  initPidFilters();
   connectWebSocket();
 });
 
@@ -2755,6 +2756,108 @@ function connectWebSocket() {
   }, 2000);
 }
 
+// ================= S7-1500 DB331 PID TUNING MATRIX LOGIC =================
+let currentPidFilter = 'all';
+
+function initPidFilters() {
+  const filterBtns = document.querySelectorAll('.pid-filter-btn');
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentPidFilter = btn.getAttribute('data-cat') || 'all';
+      if (window._lastLoopsData) {
+        renderPidMatrix(window._lastLoopsData);
+      }
+    });
+  });
+}
+
+function renderPidMatrix(loops) {
+  if (!loops) return;
+  window._lastLoopsData = loops;
+  const tbody = document.getElementById('uht-loops-tbody');
+  if (!tbody) return;
+
+  const loopKeys = Object.keys(loops);
+  setText('pid-total-badge', `${loopKeys.length}x Monitored Loops`);
+
+  const offsetMap = {
+    'tt03_ph': 'DB331.0',
+    'tt04_ph': 'DB331.100',
+    'fiq03': 'DB331.500',
+    'fiq10': 'DB331.600',
+    'fic44': 'DB331.700',
+    'fiqcv08': 'DB331.800',
+    'cv64': 'DB331.900',
+    'cv49': 'DB331.1000',
+    'cv50': 'DB331.1100',
+    'cv67': 'DB331.1200',
+    'cv63': 'DB331.1300',
+    'pt_in': 'DB331.1400',
+    'cv26': 'DB331.1700',
+    'fiq04': 'DB331.1800'
+  };
+
+  let html = '';
+  loopKeys.forEach(k => {
+    const l = loops[k];
+    if (!l) return;
+    const cat = l.cat || (k.includes('fiq') ? 'Flow' : k.includes('cv49') || k.includes('cv50') || k.includes('fic') || k.includes('ph') ? 'Heating' : k.includes('press') || k.includes('pt') ? 'Pressure' : 'Cooling');
+    
+    if (currentPidFilter !== 'all' && cat !== currentPidFilter) {
+      return;
+    }
+
+    const tag = l.tag || k.toUpperCase();
+    const name = l.name || tag;
+    const desc = l.desc || '';
+    const offset = offsetMap[k] || `DB331`;
+    const sv = typeof l.sv === 'number' ? l.sv.toFixed(l.unit === 'L/h' ? 1 : 2) : '-';
+    const pv = typeof l.pv === 'number' ? l.pv.toFixed(l.unit === 'L/h' ? 1 : 2) : '-';
+    const ov = typeof l.ov === 'number' ? l.ov.toFixed(1) : '-';
+    const err = typeof l.err === 'number' ? l.err.toFixed(l.unit === 'L/h' ? 1 : 2) : (typeof l.sv === 'number' && typeof l.pv === 'number' ? Math.abs(l.sv - l.pv).toFixed(l.unit === 'L/h' ? 1 : 2) : '-');
+    const p = typeof l.p === 'number' ? l.p.toFixed(5) : '-';
+    const ti = typeof l.ti === 'number' ? `${l.ti.toFixed(1)}s` : '-';
+    const td = typeof l.td === 'number' ? `${l.td.toFixed(1)}s` : '-';
+    const ovMin = typeof l.ov_min === 'number' ? l.ov_min.toFixed(0) : '0';
+    const ovMax = typeof l.ov_max === 'number' ? l.ov_max.toFixed(0) : '100';
+
+    let status = l.status || 'TRACKING';
+    let badgeClass = 'info';
+    if (status === 'LOCKED' || status === 'NORMAL') badgeClass = 'success';
+    else if (status === 'CLAMP_MAX' || status === 'CLAMP_MIN') badgeClass = 'warning';
+    else if (status === 'CLOSED' || status === 'IDLE') badgeClass = 'secondary';
+
+    const isFiq04 = (k === 'fiq04');
+    const rowStyle = isFiq04 ? 'style="background: rgba(245, 158, 11, 0.08); border-left: 3px solid #f59e0b;"' : '';
+
+    html += `
+      <tr ${rowStyle}>
+        <td class="loop-tag-cell">
+          <div style="font-weight: 700; color: ${isFiq04 ? '#f59e0b' : 'var(--accent-cyan)'};">${tag}</div>
+          <div class="loop-offset-tag">${offset}</div>
+        </td>
+        <td>
+          <div class="font-bold">${name}</div>
+          <div class="loop-name-cell">${desc}</div>
+        </td>
+        <td class="font-mono font-bold">${sv} <span style="font-size:11px; color:#64748b;">${l.unit || ''}</span></td>
+        <td class="font-mono font-bold text-success">${pv} <span style="font-size:11px; color:#64748b;">${l.unit || ''}</span></td>
+        <td class="font-mono text-cyan">${ov}%</td>
+        <td><span class="pid-pill pid-pill-p">${p}</span></td>
+        <td><span class="pid-pill pid-pill-ti">${ti}</span></td>
+        <td><span class="pid-pill pid-pill-td">${td}</span></td>
+        <td><span class="pid-pill pid-pill-clamp">${ovMin}-${ovMax}%</span></td>
+        <td class="font-mono text-warning">${err}</td>
+        <td><span class="analytics-badge ${badgeClass}">${status}</span></td>
+      </tr>
+    `;
+  });
+
+  tbody.innerHTML = html;
+}
+
 // ================= APPLY LIVE TELEMETRY TO UI =================
 function applyLiveTelemetry(d) {
   liveTelemetry = d;
@@ -2857,42 +2960,8 @@ function applyLiveTelemetry(d) {
     setText('uht-eng-tt02', `${u.tt02.toFixed(1)} °C`);
     setText('uht-eng-tt01', `${u.tt01.toFixed(1)} °C`);
 
-    // 4. PID Loops Matrix
-    if (loops.fiq04) {
-      const l = loops.fiq04;
-      setText('loop-fiq04-sv', `${l.sv.toFixed(1)} L/h`);
-      setText('loop-fiq04-pv', `${l.pv.toFixed(1)} L/h`);
-      setText('loop-fiq04-ov', `${l.ov.toFixed(1)}%`);
-      setText('loop-fiq04-err', `${Math.abs(l.pv - l.sv).toFixed(1)}`);
-    }
-    if (loops.fiqcv08) {
-      const l = loops.fiqcv08;
-      setText('loop-fiqcv08-sv', `${l.sv.toFixed(2)} L`);
-      setText('loop-fiqcv08-pv', `${l.pv.toFixed(2)} L`);
-      setText('loop-fiqcv08-ov', `${l.ov.toFixed(2)}%`);
-      setText('loop-fiqcv08-err', `${Math.abs(l.pv - l.sv).toFixed(2)}`);
-    }
-    if (loops.cv49) {
-      const l = loops.cv49;
-      setText('loop-cv49-sv', `${l.sv.toFixed(1)} °C`);
-      setText('loop-cv49-pv', `${l.pv.toFixed(1)} °C`);
-      setText('loop-cv49-ov', `${l.ov.toFixed(1)}%`);
-      setText('loop-cv49-err', `${Math.abs(l.pv - l.sv).toFixed(1)}`);
-    }
-    if (loops.cv50) {
-      const l = loops.cv50;
-      setText('loop-cv50-sv', `${l.sv.toFixed(1)} °C`);
-      setText('loop-cv50-pv', `${l.pv.toFixed(1)} °C`);
-      setText('loop-cv50-ov', `${l.ov.toFixed(1)}%`);
-      setText('loop-cv50-err', `${Math.abs(l.pv - l.sv).toFixed(1)}`);
-    }
-    if (loops.cv64) {
-      const l = loops.cv64;
-      setText('loop-cv64-sv', `${l.sv.toFixed(1)} °C`);
-      setText('loop-cv64-pv', `${l.pv.toFixed(1)} °C`);
-      setText('loop-cv64-ov', `${l.ov.toFixed(1)}%`);
-      setText('loop-cv64-err', `${Math.abs(l.pv - l.sv).toFixed(1)}`);
-    }
+    // 4. PID Loops Matrix & Complete Tuning Parameters
+    renderPidMatrix(loops);
 
     // 5. Management & CCP
     const f0Val = (an.f0_rate_per_min || 0) > 0 ? (an.f0_rate_per_min * (16.0 / 60.0)).toFixed(1) : '38.4';
