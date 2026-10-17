@@ -768,38 +768,97 @@
         <!-- S7-1500 PID Control Loops Matrix & Tuning Parameters -->
         <div class="card-head section-head" style="margin-top: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
           <div style="display: flex; align-items: center; gap: 10px;">
-            <h3>🎛️ ตารางพารามิเตอร์จูนเนอร์ & สุขภาพลูปควบคุม (S7-1500 DB331 PID Tuning Matrix)</h3>
-            <span class="badge info" id="pid-total-badge">14x Monitored Loops</span>
+            <h3>🎛️ ตารางพารามิเตอร์จูนเนอร์ & สุขภาพลูปควบคุมทั้งโรงงาน (Plant-Wide S7-1500 PID Tuning Matrix)</h3>
+            <span class="badge info" id="pid-total-badge">18x Monitored Loops</span>
           </div>
-          <div class="pid-filters" style="display: flex; gap: 6px; flex-wrap: wrap;">
-            <button class="btn-pen-action pid-filter-btn active" data-cat="all">ทั้งหมด (14)</button>
-            <button class="btn-pen-action pid-filter-btn" data-cat="Flow">Flow & Balance (3)</button>
-            <button class="btn-pen-action pid-filter-btn" data-cat="Heating">Heating & Steam (4)</button>
-            <button class="btn-pen-action pid-filter-btn" data-cat="Cooling">Cooling (4)</button>
-            <button class="btn-pen-action pid-filter-btn" data-cat="Pressure">Pressure (3)</button>
-          </div>
-        </div>
-
-        <!-- PID Tuning Diagnostic Alert Card -->
-        <div class="pid-diagnostic-banner">
-          <div class="pid-diag-icon">⚡</div>
-          <div class="pid-diag-content">
-            <div class="pid-diag-title">
-              <strong>ข้อวินิจฉัยเชิงวิศวกรรม (Engineering Root-Cause Insight): ลูป FIQ04 (ปั๊ม Feed M4)</strong>
-              <span class="analytics-badge warning" style="margin-left: 8px;">INTEGRATOR-DOMINATED</span>
+          <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-end;">
+            <!-- Section Filters: UHT, ATANK, CIP, PROD_SUPPLY -->
+            <div class="pid-sec-filters" style="display: flex; gap: 6px; flex-wrap: wrap;">
+              <button class="btn-pen-action pid-sec-filter-btn active" data-sec="all">🏢 ทุกแผนก (18)</button>
+              <button class="btn-pen-action pid-sec-filter-btn" data-sec="UHT">🥛 UHT Processing (11)</button>
+              <button class="btn-pen-action pid-sec-filter-btn" data-sec="ATANK">🛡️ Aseptic Tank ATANK (2)</button>
+              <button class="btn-pen-action pid-sec-filter-btn" data-sec="CIP">🧼 CIP Line 1 & 2 (4)</button>
+              <button class="btn-pen-action pid-sec-filter-btn" data-sec="PROD_SUPPLY">📦 Product Supply (1)</button>
             </div>
-            <div class="pid-diag-desc">
-              ลูป <strong>FIQ04 (DB331.1800)</strong> ตั้งค่า <code>P (Gain) = 0.00010</code> (ต่ำมากจนแทบไม่มีแรงดึง Proportional) และพึ่งพา <code>Ti = 30.0s</code> เป็นหลัก 
-              ทำให้เมื่อเกิดสภาวะเปลี่ยนผ่าน (Transient) เช่น การสลับวาล์วป้อน Product ปั๊มจะไม่สามารถลดความเร็วได้ทันที ต้องใช้เวลาสะสม Integrator ดึงรอบลงมานานถึง ~10 วินาที 
-              จึงเกิดปรากฏการณ์โฟลว์กระชากแตะ <strong>7,504.72 L/h</strong> จนถูกสั่งตัด Unsterile ทันที — แนะนำเพิ่ม Gain P เล็กน้อย หรือเพิ่ม Timer หน่วงตัด 5-10 วินาทีใน Safety Logic
+            <!-- Category Filters -->
+            <div class="pid-filters" style="display: flex; gap: 6px; flex-wrap: wrap;">
+              <button class="btn-pen-action pid-filter-btn active" data-cat="all">⚡ ทุกประเภท</button>
+              <button class="btn-pen-action pid-filter-btn" data-cat="Flow">💧 Flow & Circulation</button>
+              <button class="btn-pen-action pid-filter-btn" data-cat="Heating">🔥 Heating & Steam</button>
+              <button class="btn-pen-action pid-filter-btn" data-cat="Cooling">❄️ Cooling & Chilled</button>
+              <button class="btn-pen-action pid-filter-btn" data-cat="Pressure">💨 Pressure & Blanket</button>
             </div>
           </div>
         </div>
 
-        <div class="table-responsive">
+        <!-- Multi-Section Engineering Diagnostic Cards Grid -->
+        <div class="pid-diag-grid">
+          <!-- 1. UHT FIQ04 Diagnostic Card -->
+          <div class="pid-diagnostic-banner" style="margin: 0;">
+            <div class="pid-diag-icon">⚡</div>
+            <div class="pid-diag-content">
+              <div class="pid-diag-title">
+                <strong>🥛 UHT: FIQ04 Feed Pump M4</strong>
+                <span class="analytics-badge warning" style="margin-left: 6px;">INTEGRATOR DOMINATED</span>
+              </div>
+              <div class="pid-diag-desc">
+                <code>Kp = 0.00010</code>, <code>Ti = 30.0s</code> (Clamp: 0-60%)<br>
+                Proportional ต่ำมาก เมื่อวาล์วสลับจังหวะ Transient สะสม Integrator นาน 10s ทำให้โฟลว์กระชากแตะ 7,504 L/h ก่อนตัด
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. ATANK FIC442 & FIC443 Diagnostic Card (รูปที่ 1) -->
+          <div class="pid-diagnostic-banner" style="margin: 0; border-color: rgba(168, 85, 247, 0.4); background: rgba(168, 85, 247, 0.06);">
+            <div class="pid-diag-icon" style="color: #c084fc;">🛡️</div>
+            <div class="pid-diag-content">
+              <div class="pid-diag-title">
+                <strong style="color: #c084fc;">A-Tank: FIC442 & FIC443 Air Cushion</strong>
+                <span class="analytics-badge success" style="margin-left: 6px;">HIGH-GAIN BLANKET</span>
+              </div>
+              <div class="pid-diag-desc">
+                <code>Kp = -75.0</code>, <code>Ti = 10.0s / 0.0s</code> (SV = 1.50 bar)<br>
+                ลูปเติมลมเข้า (FIC442) และระบายลมออก (FIC443) ตอบสนองเร็วแบบ High-Gain รักษาสมดุลความดันบวก +1.50 bar ป้องกันเชื้อเล็ดลอด
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. CIP Circuit 1 & 2 Diagnostic Card (รูปที่ 2) -->
+          <div class="pid-diagnostic-banner" style="margin: 0; border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.06);">
+            <div class="pid-diag-icon" style="color: #34d399;">🧼</div>
+            <div class="pid-diag-content">
+              <div class="pid-diag-title">
+                <strong style="color: #34d399;">CIP: 801MCO1 / 802MCO1 Dual Flow</strong>
+                <span class="analytics-badge info" style="margin-left: 6px;">DUAL DAMPING</span>
+              </div>
+              <div class="pid-diag-desc">
+                <code>L1 Ti = 200.0s</code> (Heavy Damped) vs <code>L2 Ti = 6.0s</code> (Fast)<br>
+                Line 1 ใช้เวลาสะสมช้าเพื่อป้องกัน Water Hammer ขณะเตรียมสารเคมี ส่วน Line 2 จูนตอบสนองไวสำหรับล้างถัง/ท่อ
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Product Supply FIQM100 Diagnostic Card (รูปที่ 3) -->
+          <div class="pid-diagnostic-banner" style="margin: 0; border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.06);">
+            <div class="pid-diag-icon" style="color: #fbbf24;">📦</div>
+            <div class="pid-diag-content">
+              <div class="pid-diag-title">
+                <strong style="color: #fbbf24;">Prod Supply: FIQM100 Filter Feed</strong>
+                <span class="analytics-badge success" style="margin-left: 6px;">PID BALANCED</span>
+              </div>
+              <div class="pid-diag-desc">
+                <code>Kp = 1.000</code>, <code>Ti = 20.0s</code>, <code>Td = 10.0s</code><br>
+                ควบคุมปั๊ม M100 จ่ายน้ำมะพร้าวผ่านชุดฟิลเตอร์กรอง 2 ชุด (Step 9000) รักษาระดับแรงดันเสถียร ไม่ให้ไส้กรองตันเร็ว
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-responsive" style="margin-top: 12px;">
           <table class="loop-matrix-table">
             <thead>
               <tr>
+                <th>แผนก (Section)</th>
                 <th>Loop Tag / Offset</th>
                 <th>หน้าที่ / จุดควบคุม (Description)</th>
                 <th>เป้าหมาย (SV)</th>

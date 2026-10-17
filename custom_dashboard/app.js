@@ -2757,15 +2757,29 @@ function connectWebSocket() {
 }
 
 // ================= S7-1500 DB331 PID TUNING MATRIX LOGIC =================
-let currentPidFilter = 'all';
+// ================= S7-1500 DB331 PID TUNING MATRIX LOGIC =================
+let currentPidSecFilter = 'all';
+let currentPidCatFilter = 'all';
 
 function initPidFilters() {
-  const filterBtns = document.querySelectorAll('.pid-filter-btn');
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      filterBtns.forEach(b => b.classList.remove('active'));
+  const secFilterBtns = document.querySelectorAll('.pid-sec-filter-btn');
+  secFilterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      secFilterBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      currentPidFilter = btn.getAttribute('data-cat') || 'all';
+      currentPidSecFilter = btn.getAttribute('data-sec') || 'all';
+      if (window._lastLoopsData) {
+        renderPidMatrix(window._lastLoopsData);
+      }
+    });
+  });
+
+  const catFilterBtns = document.querySelectorAll('.pid-filter-btn');
+  catFilterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      catFilterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentPidCatFilter = btn.getAttribute('data-cat') || 'all';
       if (window._lastLoopsData) {
         renderPidMatrix(window._lastLoopsData);
       }
@@ -2783,8 +2797,11 @@ function renderPidMatrix(loops) {
   setText('pid-total-badge', `${loopKeys.length}x Monitored Loops`);
 
   const offsetMap = {
-    'tt03_ph': 'DB331.0',
-    'tt04_ph': 'DB331.100',
+    '801tic01': 'DB331.0',
+    '802tic01': 'DB331.100',
+    '801mco1': 'DB331.200',
+    '802mco1': 'DB331.300',
+    'cip_flush': 'DB331.400',
     'fiq03': 'DB331.500',
     'fiq10': 'DB331.600',
     'fic44': 'DB331.700',
@@ -2794,18 +2811,33 @@ function renderPidMatrix(loops) {
     'cv50': 'DB331.1100',
     'cv67': 'DB331.1200',
     'cv63': 'DB331.1300',
-    'pt_in': 'DB331.1400',
+    'fiqm100': 'DB331.1400',
+    'fic442': 'DB331.1500',
+    'fic443': 'DB331.1600',
     'cv26': 'DB331.1700',
     'fiq04': 'DB331.1800'
+  };
+
+  const sectionLabels = {
+    'UHT': '🥛 UHT',
+    'ATANK': '🛡️ A-TANK',
+    'CIP': '🧼 CIP',
+    'PROD_SUPPLY': '📦 PROD SUPPLY'
   };
 
   let html = '';
   loopKeys.forEach(k => {
     const l = loops[k];
     if (!l) return;
-    const cat = l.cat || (k.includes('fiq') ? 'Flow' : k.includes('cv49') || k.includes('cv50') || k.includes('fic') || k.includes('ph') ? 'Heating' : k.includes('press') || k.includes('pt') ? 'Pressure' : 'Cooling');
-    
-    if (currentPidFilter !== 'all' && cat !== currentPidFilter) {
+    const sec = l.sec || (k.includes('fic442') || k.includes('fic443') ? 'ATANK' : k.includes('801') || k.includes('802') ? 'CIP' : k.includes('fiqm100') ? 'PROD_SUPPLY' : 'UHT');
+    const cat = l.cat || (k.includes('fiq') || k.includes('mco') ? 'Flow' : k.includes('cv49') || k.includes('cv50') || k.includes('fic44') || k.includes('tic') ? 'Heating' : k.includes('press') || k.includes('pt') || k.includes('fic442') || k.includes('fic443') ? 'Pressure' : 'Cooling');
+
+    // Filter by Section
+    if (currentPidSecFilter !== 'all' && sec !== currentPidSecFilter) {
+      return;
+    }
+    // Filter by Category
+    if (currentPidCatFilter !== 'all' && cat !== currentPidCatFilter) {
       return;
     }
 
@@ -2830,12 +2862,24 @@ function renderPidMatrix(loops) {
     else if (status === 'CLOSED' || status === 'IDLE') badgeClass = 'secondary';
 
     const isFiq04 = (k === 'fiq04');
-    const rowStyle = isFiq04 ? 'style="background: rgba(245, 158, 11, 0.08); border-left: 3px solid #f59e0b;"' : '';
+    const isAtank = (sec === 'ATANK');
+    const isCip = (sec === 'CIP');
+    const isProd = (sec === 'PROD_SUPPLY');
+
+    let rowStyle = '';
+    if (isFiq04) rowStyle = 'style="background: rgba(245, 158, 11, 0.08); border-left: 3px solid #f59e0b;"';
+    else if (isAtank) rowStyle = 'style="background: rgba(168, 85, 247, 0.04); border-left: 3px solid #a855f7;"';
+    else if (isCip) rowStyle = 'style="background: rgba(16, 185, 129, 0.04); border-left: 3px solid #10b981;"';
+    else if (isProd) rowStyle = 'style="background: rgba(245, 158, 11, 0.04); border-left: 3px solid #f59e0b;"';
+
+    const secLabel = sectionLabels[sec] || sec;
+    const secClass = `pid-sec-${sec.toLowerCase()}`;
 
     html += `
       <tr ${rowStyle}>
+        <td><span class="pid-sec-badge ${secClass}">${secLabel}</span></td>
         <td class="loop-tag-cell">
-          <div style="font-weight: 700; color: ${isFiq04 ? '#f59e0b' : 'var(--accent-cyan)'};">${tag}</div>
+          <div style="font-weight: 700; color: ${isFiq04 ? '#f59e0b' : isAtank ? '#c084fc' : isCip ? '#34d399' : 'var(--accent-cyan)'};">${tag}</div>
           <div class="loop-offset-tag">${offset}</div>
         </td>
         <td>
@@ -2925,7 +2969,7 @@ function applyLiveTelemetry(d) {
 
     // UHT Subtab 2 & 3 Analytics Live Binding (Zero PLC Load)
     const an = u.analytics || {};
-    const loops = u.loops || {};
+    const loops = d.loops || u.loops || {};
 
     // 1. Plate Fouling Index (HE01 Bank)
     const foulingIdx = an.fouling_index !== undefined ? an.fouling_index : 12.5;

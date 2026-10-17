@@ -311,6 +311,7 @@ class MasterPlantReader:
             "cip_line2": {},
             "prod_supply": {},
             "vsd_fleet": {},
+            "loops": {},
             "executive_kpis": {}
         }
 
@@ -359,23 +360,35 @@ class MasterPlantReader:
                 d331_c2 = self.client.db_read(331, 900, 960)
 
                 loops_cfg = [
-                    (1, 0, 'tt03_ph', 'HE01.01', 'HE01.01 Pre-Heat 1 Temp', 'คุมอุณหภูมิแลกเปลี่ยนความร้อนตอนที่ 1', 'Heating', '°C'),
-                    (1, 100, 'tt04_ph', 'HE01.05', 'HE01.05 Pre-Heat 2 Temp', 'คุมอุณหภูมิแลกเปลี่ยนความร้อนตอนที่ 5', 'Heating', '°C'),
-                    (1, 500, 'fiq03', 'FIQ03', 'Homogenizer Backpressure', 'คุมแรงดันต้านชุดโฮโมจีไนเซอร์ (Aseptic)', 'Pressure', 'bar'),
-                    (1, 600, 'fiq10', 'FIQ10', 'Hot Water Unit Flow Rate', 'คุมอัตราการไหลระบบน้ำร้อนฆ่าเชื้อ', 'Flow', 'L/h'),
-                    (1, 700, 'fic44', 'FIC44', 'Hot Water Steam Regulating Valve', 'คุมวาล์วสตรีมเข้าชุดน้ำร้อน HE-02', 'Heating', '°C'),
-                    (1, 800, 'fiqcv08', 'FIQCV08', 'Balance Tank Add Water Loop', 'วาล์วเติมน้ำสะอาดลงแทงก์สมดุล Balance Tank', 'Flow', 'L'),
-                    (2, 0, 'cv64', 'CV64FIC01', 'Cooling Water HE01.20 Regulating', 'คอนโทรลวาล์วน้ำหล่อเย็นคุมอุณหภูมิตอนที่ 20', 'Cooling', '°C'),
-                    (2, 100, 'cv49', 'CV49FIC01', 'Steam Supply HE01.18 Regulating', 'คอนโทรลวาล์วไอน้ำสตรีมความร้อนฆ่าเชื้อตอนที่ 18', 'Heating', '°C'),
-                    (2, 200, 'cv50', 'CV50FIC01', 'Steam Supply HE01.17 Regulating', 'คอนโทรลวาล์วไอน้ำสตรีมเสริมความร้อนฆ่าเชื้อตอนที่ 17', 'Heating', '°C'),
-                    (2, 300, 'cv67', 'CV67FIC01', 'Final Cooling Water HE01.21 Valve', 'คอนโทรลวาล์วน้ำหล่อเย็นขั้นตอนสุดท้ายตอนที่ 21', 'Cooling', '°C'),
-                    (2, 400, 'cv63', 'CV63FIC01', 'Ice Water HE01.16 Regulating Valve', 'คอนโทรลวาล์วน้ำเย็นจัดคุมอุณหภูมิส่งออกตอนที่ 16', 'Cooling', '°C'),
-                    (2, 500, 'pt_in', 'PT_IN', 'Supply Pump Pressure Control', 'คุมแรงดันปั๊มส่งเข้าชุดฟิลเตอร์กรอง', 'Pressure', 'bar'),
-                    (2, 800, 'cv26', 'CV26FIC01', 'Product Cooling HE01.15 Valve', 'คอนโทรลวาล์วหล่อเย็นผลิตภัณฑ์ตอนที่ 15', 'Cooling', '°C'),
-                    (2, 900, 'fiq04', 'FIQ04', 'M4 Feed Pump Flow Control (VSD01)', 'ควบคุมอัตราการไหลน้ำมะพร้าวผ่านปั๊ม M4 (15 kW)', 'Flow', 'L/h')
+                    # CIP Section (Circuit 1 & 2)
+                    (1, 0, '801tic01', '801TIC01', 'CIP Circuit 1 Steam Heat Valve', 'คุมวาล์วไอน้ำทำความร้อนวงล้าง CIP Line 1', 'Heating', '°C', 'CIP'),
+                    (1, 100, '802tic01', '802TIC01', 'CIP Circuit 2 Steam Heat Valve', 'คุมวาล์วไอน้ำทำความร้อนวงล้าง CIP Line 2', 'Heating', '°C', 'CIP'),
+                    (1, 200, '801mco1', '801MCO1', 'CIP Circuit 1 Supply Flow (VSD05)', 'คุมอัตราการไหลวงล้าง CIP Line 1 ผ่านปั๊ม VSD05 (5.5 kW)', 'Flow', 'L/h', 'CIP'),
+                    (1, 300, '802mco1', '802MCO1', 'CIP Circuit 2 Supply Flow (VSD04)', 'คุมอัตราการไหลวงล้าง CIP Line 2 ผ่านปั๊ม VSD04 (5.5 kW)', 'Flow', 'L/h', 'CIP'),
+
+                    # UHT Section
+                    (1, 400, 'cip_flush', 'CIP_FLUSH', 'High Flow Plant Circulation Loop', 'ลูปอัตราการไหลสูงสำหรับล้าง CIP และน้ำวนระบบ', 'Flow', 'L/h', 'UHT'),
+                    (1, 500, 'fiq03', 'FIQ03', 'Homogenizer Backpressure Control', 'คุมแรงดันต้านชุดโฮโมจีไนเซอร์ (Aseptic)', 'Pressure', 'bar', 'UHT'),
+                    (1, 600, 'fiq10', 'FIQ10', 'Hot Water Unit Flow Rate', 'คุมอัตราการไหลระบบน้ำร้อนฆ่าเชื้อ', 'Flow', 'L/h', 'UHT'),
+                    (1, 700, 'fic44', 'FIC44', 'Hot Water Steam Regulating Valve', 'คุมวาล์วสตรีมเข้าชุดน้ำร้อน HE-02', 'Heating', '°C', 'UHT'),
+                    (1, 800, 'fiqcv08', 'FIQCV08', 'Balance Tank Add Water Loop', 'วาล์วเติมน้ำสะอาดลงแทงก์สมดุล Balance Tank', 'Flow', 'L', 'UHT'),
+                    (2, 0, 'cv64', 'CV64FIC01', 'Cooling Water HE01.20 Regulating', 'คอนโทรลวาล์วน้ำหล่อเย็นคุมอุณหภูมิตอนที่ 20', 'Cooling', '°C', 'UHT'),
+                    (2, 100, 'cv49', 'CV49FIC01', 'Steam Supply HE01.18 Regulating', 'คอนโทรลวาล์วไอน้ำสตรีมความร้อนฆ่าเชื้อตอนที่ 18', 'Heating', '°C', 'UHT'),
+                    (2, 200, 'cv50', 'CV50FIC01', 'Steam Supply HE01.17 Regulating', 'คอนโทรลวาล์วไอน้ำสตรีมเสริมความร้อนฆ่าเชื้อตอนที่ 17', 'Heating', '°C', 'UHT'),
+                    (2, 300, 'cv67', 'CV67FIC01', 'Final Cooling Water HE01.21 Valve', 'คอนโทรลวาล์วน้ำหล่อเย็นขั้นตอนสุดท้ายตอนที่ 21', 'Cooling', '°C', 'UHT'),
+                    (2, 400, 'cv63', 'CV63FIC01', 'Ice Water HE01.16 Regulating Valve', 'คอนโทรลวาล์วน้ำเย็นจัดคุมอุณหภูมิส่งออกตอนที่ 16', 'Cooling', '°C', 'UHT'),
+                    (2, 800, 'cv26', 'CV26FIC01', 'Product Cooling HE01.15 Valve', 'คอนโทรลวาล์วหล่อเย็นผลิตภัณฑ์ตอนที่ 15', 'Cooling', '°C', 'UHT'),
+                    (2, 900, 'fiq04', 'FIQ04', 'M4 Feed Pump Flow Control (VSD01)', 'ควบคุมอัตราการไหลน้ำมะพร้าวผ่านปั๊ม M4 (15 kW)', 'Flow', 'L/h', 'UHT'),
+
+                    # Product Supply Section (รูปที่ 3)
+                    (2, 500, 'fiqm100', 'FIQM100', 'Prod Supply Filter Feed Pump M100', 'คุมแรงดันและอัตราปั๊มส่งผลิตภัณฑ์จ่ายฟิลเตอร์กรอง (VSD08)', 'Pressure', 'bar', 'PROD_SUPPLY'),
+
+                    # A-Tank Section (รูปที่ 1)
+                    (2, 600, 'fic442', 'FIC442', 'A-Tank Sterile Air Inlet Blanket Valve', 'คุมวาล์วเติมแรงดันลมสเตอร์ไรล์เข้าถังปลอดเชื้อ A-Tank', 'Pressure', 'bar', 'ATANK'),
+                    (2, 700, 'fic443', 'FIC443', 'A-Tank Sterile Air Vent / Exhaust Valve', 'คุมวาล์วระบายแรงดันลมส่วนเกินออกจากถัง A-Tank', 'Pressure', 'bar', 'ATANK')
                 ]
 
-                for ch, off, key, tag, name, desc, cat, unit in loops_cfg:
+                for ch, off, key, tag, name, desc, cat, unit, sec in loops_cfg:
                     data = d331_c1 if ch == 1 else d331_c2
                     sv = round(get_real(data, off + 2), 2 if unit != 'L/h' else 1)
                     pv = round(get_real(data, off + 6), 2 if unit != 'L/h' else 1)
@@ -404,6 +417,7 @@ class MasterPlantReader:
                         'name': name,
                         'desc': desc,
                         'cat': cat,
+                        'sec': sec,
                         'unit': unit,
                         'sv': sv,
                         'pv': pv,
@@ -432,6 +446,7 @@ class MasterPlantReader:
                 fiq04_sv = loops_dict['fiq04']['sv']
                 fiq04_pv = loops_dict['fiq04']['pv']
                 fiq04_ov = loops_dict['fiq04']['ov']
+                res["loops"] = loops_dict
             except Exception as e_d331:
                 pass
 
@@ -596,7 +611,8 @@ class MasterPlantReader:
                 "sp_pt_prod": sp_pt[3],
                 "ycip": get_bool(d1301, 18, 0),
                 "ypressure": get_bool(d1301, 18, 1),
-                "sterile_count": atank_sterile_count
+                "sterile_count": atank_sterile_count,
+                "loops": {k: v for k, v in loops_dict.items() if v.get('sec') == 'ATANK'}
             }
 
             # Filler Changeover Decision State
@@ -716,7 +732,8 @@ class MasterPlantReader:
                 "sp_ac_ct_ok": sp_ac_ct_ok,
                 "sp_ac_tt": sp_ac_tt,
                 "sp_wa_ct": sp_wa_ct,
-                "sp_wa_tt": sp_wa_tt
+                "sp_wa_tt": sp_wa_tt,
+                "loops": {k: v for k, v in loops_dict.items() if k in ['801tic01', '801mco1']}
             }
 
             # 4. READ DB1802 (CIP CIRCUIT 2)
@@ -815,7 +832,8 @@ class MasterPlantReader:
                 "sp_ac_ct_ok": sp_ac_ct_ok_2,
                 "sp_ac_tt": sp_ac_tt_2,
                 "sp_wa_ct": sp_wa_ct_2,
-                "sp_wa_tt": sp_wa_tt_2
+                "sp_wa_tt": sp_wa_tt_2,
+                "loops": {k: v for k, v in loops_dict.items() if k in ['802tic01', '802mco1']}
             }
 
             # 5. READ DB1100 (PRODUCTION SUPPLY)
@@ -844,7 +862,8 @@ class MasterPlantReader:
                 "status_code": xstat,
                 "status_name": stat_name,
                 "sp_pt_in": sp_pt_in,
-                "pid_ov": pid_ov
+                "pid_ov": pid_ov,
+                "loops": {k: v for k, v in loops_dict.items() if v.get('sec') == 'PROD_SUPPLY'}
             }
 
             # 6. READ DB371 (VSD INVERTER FLEET)
